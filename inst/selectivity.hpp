@@ -1,4 +1,0 @@
-/*
- * Selectivity functions
- */
-
