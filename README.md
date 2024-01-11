@@ -25,14 +25,14 @@ srv_obs
 srv_sd  
 srv_ind
 
-patc_obs  
+patc_obs  # proportion at age and time - catch: age comps
 patc_ind  
 patc_iss
 
-pltc_obs  
+pltc_obs  # proportion at length and time - catch: length comps
 pltc_ind  
 pltc_iss
 
-pats_obs  
+pats_obs  # proportion at age and time - survey: age comps
 pats_ind  
 pats_iss
