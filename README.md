@@ -18,12 +18,14 @@ _obs = observations
 _sd = standard deviation (or cv)  
 _ind = index of 1 (use) or 0 (do not use), length T
 
-catch_obs  
-catch_sd
 
-srv_obs  
-srv_sd  
-srv_ind
+catch_obs - observed catch matrix dim T, n_fleet 
+catch_sd - observed catch matrix dim T, n_fleet
+catch_ind - 1 = include, 0 = exclude, matrix dim T, n_fleet
+
+srv_obs - observed survey matrix dim TS, n_srv 
+srv_sd  - observed survey matrix dim TS, n_srv
+srv_ind - 1 = include, 0 = exclude, matrix dim T, n_srv
 
 patc_obs  
 patc_ind  
