@@ -27,8 +27,8 @@ srv_obs - observed survey matrix dim TS, n_srv
 srv_sd  - observed survey matrix dim TS, n_srv
 srv_ind - 1 = include, 0 = exclude, matrix dim T, n_srv
 
-patc_obs  
-patc_ind  
+patc_obs  # proportion at age and time - catch: age comps
+patc_ind  # prob not these names but the general idea is there
 patc_iss
 
 
@@ -48,3 +48,4 @@ works of the Software outside of the United States.
 [U.S. Department of Commerce](https://www.commerce.gov/) | [National
 Oceanographic and Atmospheric Administration](https://www.noaa.gov) |
 [NOAA Fisheries](https://www.fisheries.noaa.gov/)
+
