@@ -45,7 +45,7 @@ F_to_mu <- function(fy){
 #'
 listN <- function(...){
     anonList <- list(...)
-    names(anonList) <- as_character(substitute(list(...)))[-1]
+    names(anonList) <- as.character(substitute(list(...)))[-1]
     anonList
 }
 
