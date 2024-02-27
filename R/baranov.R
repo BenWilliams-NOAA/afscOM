@@ -35,8 +35,8 @@ baranov <- function(fy, naa, waa, mort, selex, ret=NA, dmr=NA) {
         stop("One or more inputs is of different dimensions.")
     }
 
-    faa <- retained.F(fy, selex, ret) + discard.F(dmr, selex, ret)
-    caa <- catch.at.age(faa, naa, waa, mort)
+    faa <- retained_F(fy, selex, ret) + discard_F(dmr, selex, ret)
+    caa <- catch_at_age(faa, naa, waa, mort)
     catch <- sum(caa)
     return(catch)
 }

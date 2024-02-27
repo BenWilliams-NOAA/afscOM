@@ -8,9 +8,9 @@
 #'
 #' @return fishing-mortality-at-age (fy*selex*ret)
 #' 
-#' @export retained.F
+#' @export retained_F
 #'
-retained.F <- function(fy, selex, ret){
+retained_F <- function(fy, selex, ret){
     return(fy*selex*ret)
 }
 
@@ -24,9 +24,9 @@ retained.F <- function(fy, selex, ret){
 #'
 #' @return discard-mortality-at-age (selex*(1-ret)*dmr)
 #' 
-#' @export discard.F
+#' @export discard_F
 #'
-discard.F <- function(dmr, selex, ret){
+discard_F <- function(dmr, selex, ret){
     return(selex*(1-ret)*dmr)
 }
 
@@ -42,9 +42,9 @@ discard.F <- function(dmr, selex, ret){
 #'
 #' @return catch-at-age vector
 #' 
-#' @export catch.at.age
+#' @export catch_at_age
 #'
-catch.at.age <- function(faa, naa, waa, mort){
+catch_at_age <- function(faa, naa, waa, mort){
     if(all(sapply(list(faa, naa, waa, mort), length) != length(naa))){
         stop("One or more inputs is of different dimensions.")
     }
