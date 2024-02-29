@@ -29,23 +29,30 @@ simulate_catch <- function(TAC, fleet.props, dem_params, naa, options){
     for(f in 1:model_params$nfleets){
         tac <- TAC*fleet.props[f]
         
+        dp.f <- rlang::duplicate(dem_params)
+        dp.f$sel <- subset_matrix(dp.f$sel, f, d=5, drop=TRUE)
+        dp.f$ret <- subset_matrix(dp.f$ret, f, d=5, drop=TRUE)
+        dp.f$dmr <- subset_matrix(dp.f$dmr, f, d=5, drop=TRUE)
+
         F_f <- find_F(
             f_guess = 0.05, 
             naa     = naa,
-            waa     = dem_params$waa,
-            mort    = dem_params$mort,
-            selex   = dem_params$sel[,,f],
-            ret     = dem_params$ret[,,f],
-            dmr     = dem_params$dmr[,,f],
+            waa     = dp.f$waa,
+            mort    = dp.f$mort,
+            selex   = dp.f$sel,
+            ret     = dp.f$ret,
+            dmr     = dp.f$dmr,
             prov_catch = tac
         )
 
-        ret_faa <- retained_F(F_f, dem_params$sel[,,f], dem_params$ret[,,f])
-        disc_faa <- discard_F(dem_params$dmr[,,f], dem_params$sel[,,f], dem_params$ret[,,f])
+        # ret_faa <- retained_F(F_f, dem_params$sel[,,,,f], dem_params$ret[,,,,f])
+        # disc_faa <- discard_F(dem_params$dmr[,,,,f], dem_params$sel[,,,,f], dem_params$ret[,,,,f])
+        ret_faa <- retained_F(F_f, dp.f$sel, dp.f$ret)
+        disc_faa <- discard_F(dp.f$dmr, dp.f$sel, dp.f$ret)
         faa_tmp[,,,,f] <- ret_faa + disc_faa
 
-        land_caa_tmp[,,,,f] <- catch_at_age(ret_faa, naa, dem_params$waa, dem_params$mort)
-        disc_caa_tmp[,,,,f] <- catch_at_age(disc_faa, naa, dem_params$waa, dem_params$mort)
+        land_caa_tmp[,,,,f] <- catch_at_age(ret_faa, naa, dp.f$waa, dp.f$mort)
+        disc_caa_tmp[,,,,f] <- catch_at_age(disc_faa, naa, dp.f$waa, dp.f$mort)
         caa_tmp[,,,,f] <- land_caa_tmp[,,,,f] + disc_caa_tmp[,,,,f]
     }
 
