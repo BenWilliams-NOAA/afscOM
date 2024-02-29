@@ -1,14 +1,18 @@
-#' Title
+#' Simulate catches in one region during on year
 #' 
 #' Description
 #'
-#' @param $$
+#' @param TAC the total catch to be removed across all fleets
+#' @param fleet.props the proportion of the TAC that should be taken by each fleet
+#' @param dem_params demographic parameter matrices for population
+#' @param naa the current numbers-at-age in the popultion
+#' @param option list of model options
 #'
-#' @export
+#' @export simualte_catch
 #'
 #' @example
 #'
-simulate_catch <- function(TAC, dem_params, naa, options){
+simulate_catch <- function(TAC, fleet.props, dem_params, naa, options){
 
     model_params <- get_model_dimensions(dem_params$sel)
 
@@ -23,7 +27,7 @@ simulate_catch <- function(TAC, dem_params, naa, options){
     faa_tmp         <- array(NA, dim=c(1, model_params$nages, model_params$nsexes, 1, model_params$nfleets))
 
     for(f in 1:model_params$nfleets){
-        tac <- TAC*options$fleet_apportionment[f]
+        tac <- TAC*fleet.props[f]
         
         F_f <- find_F(
             f_guess = 0.05, 

@@ -19,7 +19,10 @@ test_that("single year catch simulation", {
   naa[,2] <- assessment$natage.male["2023",]*1e6
 
   tac <- 7000
-  catch_vars <- simulate_catch(tac, dem_params, naa=naa, options=model_options)
+  suppressWarnings({
+    catch_vars <- simulate_catch(tac, fleet.props=c(0.70, 0.30), dem_params=dem_params, naa=naa, options=model_options)
+  })
+  
   total_catch <- apply(catch_vars$caa_tmp, 1, sum)
   fleet_catch <- apply(catch_vars$caa_tmp, c(1, 5), sum)
 
