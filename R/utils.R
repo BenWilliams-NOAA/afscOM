@@ -64,13 +64,86 @@ listN <- function(...){
 #'
 #' @example 
 #'
-subset_dem_params <- function(dem_params, r, d=1){
+subset_dem_params <- function(dem_params, r, d=1, drop=TRUE){
+    tmp <- rlang::duplicate(dem_params)
+    ps <- names(tmp)
+    for(n in ps){
+        tmp[[n]] <- subset_matrix(dem_params[[n]], r, d, drop)
+    }
+    return(tmp)
+}
+
+#' Subset matrix of undetermined dimensions
+#' 
+#' Return a subset or a multidimensional matrix or array of undetermined
+#' size along a specific dimension. Specifically designed to return a
+#' single index along the specified dimension (e.g. one year or one region).
+#'
+#' @param mat the input matrix to subset
+#' @param r the index along the dimensions of interest to subset by
+#' @param d the dimension to subset by
+#' @param drop whether to drop the subsetted dimension
+#' 
+#' @return a subsetted matrix or array
+#'
+#' @export subset_matrix
+#'
+#' @example
+#'
+subset_matrix <- function(mat, r, d=1, drop=TRUE){
+    tmp <- rlang::duplicate(mat)
+    ndims <- length(dim(mat))
+    idxs <- c(as.list(rep(TRUE, d-1)), list(r), as.list(rep(TRUE, ndims-d)))
+    t <- do.call('[', c(list(mat), idxs, drop=FALSE))
+    if(drop){
+        tmp <- adrop(t, drop=d)
+    }else{
+        tmp <- t
+    }
+    return(tmp)
+}
+
+# TODO: generalize this to allow extending across other dimensions
+
+#' Extend demographic parameter matrices to more years
+#' 
+#' Description
+#'
+#' @param dem_params a list of demographic parameter matrices
+#' @param dimension the dimension along which to extend (should always be 1)
+#' @param e the new number of years along the first dimension
+#' @param new.dimnames new set of names for the first dimension
+#' 
+#' @return a new list of demographic parameter matrices spanning `e` years
+#' with the values from the last year in the original matrix continued for
+#' all future years 
+#'
+#' @export extend_years
+#'
+#' @example
+#'
+extend_years <- function(dem_params, dimension, e, new.dimnames=NA){
     tmp <- rlang::duplicate(dem_params)
     ps <- names(tmp)
     for(n in ps){
         ndims <- length(dim(dem_params[[n]]))
-        idxs <- c(as.list(rep(TRUE, d-1)), list(r), as.list(rep(TRUE, ndims-d)))
-        tmp[[n]] <- do.call('[', c(list(dem_params[[n]]), idxs))
+        new.dims <- dim(dem_params[[n]])
+        new.dims[dimension] <- e
+        new.dimnames <- if(all(is.na(new.dimnames))) 1:e else new.dimnames
+        t <- array(NA, dim=new.dims, dimnames = c("time"=list(new.dimnames), dimnames(dem_params[[n]])[2:length(dimnames(dem_params[[n]]))]))
+        last <- subset_matrix(dem_params[[n]], r=nrow(dem_params[[n]]), d=1)
+        afill(t) <- dem_params[[n]]
+
+        afill_dimensions <- as.vector(c(TRUE, rep(FALSE, ndims-1)), mode="list")
+        for(i in which(afill_dimensions == FALSE)){
+            afill_dimensions[[i]] <- rlang::missing_arg()
+        }
+        afill_params <- afill_dimensions
+        afill_params$x <- t
+        afill_params$value <- last
+
+        t <- do.call("afill<-", afill_params)
+        tmp[[n]] <- t
     }
     return(tmp)
 }
