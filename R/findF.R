@@ -55,3 +55,25 @@ find_F <- function(f_guess, naa, waa, mort, selex, ret=NA, dmr=NA, prov_catch){
     )
     return(exp(c_to_f@coef))
 }
+
+findF_bisection <- function(f_guess, naa, waa, mort, selex, ret=NA, dmr=NA, prov_catch){
+
+    range <- vector(length=2)
+    range[1] <- 0
+    range[2] <- 1
+    n.iter <- 20
+    i <- 1
+    for(i in 1:n.iter) {
+      midpoint <- mean(range)
+      pred_catch <- baranov(midpoint, naa, waa, mort, selex, ret, dmr)
+      if(pred_catch < prov_catch) {
+        range[1] <- midpoint
+        range[2] <- range[2]
+      }else {
+        range[1] <- range[1]
+        range[2] <- midpoint
+      }
+    }
+    Fmort <- midpoint
+    return(Fmort)
+}
