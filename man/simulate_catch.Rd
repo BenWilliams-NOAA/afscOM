@@ -13,7 +13,7 @@ simulate_catch(TAC, fleet.props, dem_params, naa, options)
 
 \item{dem_params}{demographic parameter matrices for population}
 
-\item{naa}{the current numbers-at-age in the popultion}
+\item{naa}{the current numbers-at-age in the population}
 
 \item{option}{list of model options}
 }

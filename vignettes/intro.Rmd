@@ -15,6 +15,11 @@ knitr::opts_chunk$set(
 )
 ```
 
+The `afscOM` package can be downloaded and installed using: 
+
 ```{r setup}
+remotes::install_github("BenWilliams-NOAA/afscOM")`
 library(afscOM)
 ```
+
+

@@ -1,7 +1,7 @@
 #' Project population forward by 1 year
-#' 
+#'
 #' Given a TAC, the previous population age structure, demographic information
-#' (e.g. natural mortality, selectivity, retention, etc.), and recruitment, 
+#' (e.g. natural mortality, selectivity, retention, etc.), and recruitment,
 #' determine the numbers-at-age present in the population for the following year.
 #'
 #' @param TAC the total catch to be removed from the population
@@ -13,10 +13,8 @@
 #'
 #' @return list of derived quantities included landed catch-at-age,
 #' discarded catch-at-age, total catch-at-age, F-at-age, and numbers-at-age.
-#' 
-#' @export project
 #'
-#' @example
+#' @export
 #'
 project <- function(TAC, fleet.props, dem_params, prev_naa, recruitment, options=NA){
 
@@ -41,7 +39,7 @@ project <- function(TAC, fleet.props, dem_params, prev_naa, recruitment, options
     # NOTE: need to think real carefully about how to do this in a modular way
     rec <- array(NA, dim=c(1, 1, model_params$nsexes, model_params$nregions))
     global.rec <- recruitment
-    
+
     # If no user-definied regional apportionment for recruitment than regionally
     # apportion based on the regional prevalence of age-1 individuals in the previous
     # timestep.

@@ -31,3 +31,9 @@ Uses the Baranov catch equation to compute the instantenous
 fishing mortality rate (F) that would yield a specific level of
 catch_
 }
+\examples{
+\dontrun{
+find_F(f_guess=0.1, naa=naa, waa=waa, mort=mort, selex=selex, prov_catch=0.12)
+}
+
+}

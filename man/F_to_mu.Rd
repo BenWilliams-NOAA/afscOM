@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{F_to_mu}
 \alias{F_to_mu}
-\title{F_to_mu}
+\title{instantaneous rate to harvest rate}
 \usage{
 F_to_mu(fy)
 }
@@ -13,5 +13,7 @@ F_to_mu(fy)
 mu, the corresponding harvest rate
 }
 \description{
-
+Converts between instantaneous fishing mortality
+rate F and harvest rate -the proportion of the
+population harvest; mu_
 }

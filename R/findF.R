@@ -1,5 +1,5 @@
 #' Find F given a desired level of catch
-#' 
+#'
 #' Uses the Baranov catch equation to compute the instantenous
 #' fishing mortality rate (F) that would yield a specific level of
 #' catch_
@@ -14,13 +14,16 @@
 #' @param prov_catch desired catch level
 #'
 #' @return the fishing mortality rate that yields the desired catch level
-#' 
+#'
 #' @export find_F
 #'
-#' @example
+#' @examples
+#' \dontrun{
+#' find_F(f_guess=0.1, naa=naa, waa=waa, mort=mort, selex=selex, prov_catch=0.12)
+#' }
 #'
 find_F <- function(f_guess, naa, waa, mort, selex, ret=NA, dmr=NA, prov_catch){
-    
+
     # Quick switch so as to not run the optimization routine
     # if no catch is desired.
     if(prov_catch == 0){

@@ -25,6 +25,6 @@ discarded catch-at-age, total catch-at-age, F-at-age, and numbers-at-age.
 }
 \description{
 Given a TAC, the previous population age structure, demographic information
-(e.g. natural mortality, selectivity, retention, etc.), and recruitment, 
+(e.g. natural mortality, selectivity, retention, etc.), and recruitment,
 determine the numbers-at-age present in the population for the following year.
 }
