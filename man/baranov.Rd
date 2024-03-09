@@ -19,12 +19,23 @@ baranov(fy, naa, waa, mort, selex, ret = NA, dmr = NA)
 
 \item{ret}{retention-at-age vector (optional)}
 
-\item{dmr}{instanteous discard mortality rate -at-age vector (optional)
-
-If `ret` or `dmr` parameters are not provided, retention is assumed to be 1.0
-for all ages.}
+\item{dmr}{instanteous discard mortality rate -at-age vector (optional)}
+}
+\value{
+the amount of catch resulting from fishing the population at `fy`
 }
 \description{
 An implementation of the Baranov catch equations allowing for
 fishery retenetion and discarding practices.
+}
+\examples{
+\dontrun{
+naa <- c(100, 50, 25, 10)
+waa <- c(1, 2, 3, 4)
+mort <- c(0.2, 0.2, 0.2, 0.2)
+selex <- c(0.0, 0.5, 1.0, 1.0)
+
+# catch should be 14.35
+catch <- baranov(0.1, naa, waa, mort, selex)
+}
 }

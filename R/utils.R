@@ -1,12 +1,12 @@
-#' mu_to_F
-#' #'
-#' Converts between harvest rate (the proportion
-#' of the population harvest; \{mu}) and instantenous
-#' fishing mortality rate (F)_
-#' 
+#' harvest rate to instantaneous
+#'
+#' Converts between harvest rate - the proportion
+#' of the population harvest; mu and instantaneous
+#' fishing mortality rate F_
+#'
 #' @param mu, a harvest rate
 #'
-#' @return F, the corresponding instantenous fishing mortality rate
+#' @return F, the corresponding instantaneous fishing mortality rate
 #'
 #' @export mu_to_F
 #'
@@ -14,11 +14,11 @@ mu_to_F <- function(mu){
     return(-log(1-mu))
 }
 
-#' F_to_mu
-#' 
+#' instantaneous rate to harvest rate
+#'
 #' Converts between instantaneous fishing mortality
-#' rate (F) and harvest rate (the proportion of the
-#' population harvest; \{mu})_
+#' rate F and harvest rate -the proportion of the
+#' population harvest; mu_
 #'
 #' @param fy, an instantaneous fishing mortality rate
 #'
@@ -31,18 +31,13 @@ F_to_mu <- function(fy){
 }
 
 #' Set variable names as names of list
-#' 
+#'
 #' Automatically use variable names as list object names when
 #' a sequence of variables is provided to a list constructor_
 #'
 #' @param ... R variables containung values to be put in a list
 #'
 #' @export listN
-#'
-#' @example 
-#' a = b = d = e = 1
-#' listN(a, b, d, e)
-#'
 listN <- function(...){
     anonList <- list(...)
     names(anonList) <- as.character(substitute(list(...)))[-1]
@@ -50,19 +45,18 @@ listN <- function(...){
 }
 
 #' Subset demographic parameter matrices by first dimensions
-#' 
+#'
 #' Access an arbitrary row across all demographic parameter
 #' matrices of indeterminate dimension
 #'
 #' @param dem_params a list of arrays with more than 2 dimensions
 #' @param r the index along the first dimension to access
-#' 
+#'
 #' @return a list with the same elements as dem_params but containing
 #' a single row from each list element
 #'
 #' @export subset_dem_params
 #'
-#' @example 
 #'
 subset_dem_params <- function(dem_params, r, d=1, drop=TRUE){
     tmp <- rlang::duplicate(dem_params)
@@ -74,7 +68,7 @@ subset_dem_params <- function(dem_params, r, d=1, drop=TRUE){
 }
 
 #' Subset matrix of undetermined dimensions
-#' 
+#'
 #' Return a subset or a multidimensional matrix or array of undetermined
 #' size along a specific dimension. Specifically designed to return a
 #' single index along the specified dimension (e.g. one year or one region).
@@ -83,12 +77,11 @@ subset_dem_params <- function(dem_params, r, d=1, drop=TRUE){
 #' @param r the index along the dimensions of interest to subset by
 #' @param d the dimension to subset by
 #' @param drop whether to drop the subsetted dimension
-#' 
+#'
 #' @return a subsetted matrix or array
 #'
 #' @export subset_matrix
 #'
-#' @example
 #'
 subset_matrix <- function(mat, r, d=1, drop=TRUE){
     tmp <- rlang::duplicate(mat)
@@ -106,21 +99,20 @@ subset_matrix <- function(mat, r, d=1, drop=TRUE){
 # TODO: generalize this to allow extending across other dimensions
 
 #' Extend demographic parameter matrices to more years
-#' 
+#'
 #' Description
 #'
 #' @param dem_params a list of demographic parameter matrices
 #' @param dimension the dimension along which to extend (should always be 1)
 #' @param e the new number of years along the first dimension
 #' @param new.dimnames new set of names for the first dimension
-#' 
+#'
 #' @return a new list of demographic parameter matrices spanning `e` years
 #' with the values from the last year in the original matrix continued for
-#' all future years 
+#' all future years
 #'
 #' @export extend_years
 #'
-#' @example
 #'
 extend_years <- function(dem_params, dimension, e, new.dimnames=NA){
     tmp <- rlang::duplicate(dem_params)

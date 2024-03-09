@@ -1,0 +1,25 @@
+---
+title: "intro"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{intro}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+The `afscOM` package can be downloaded and installed using: 
+
+```{r setup}
+remotes::install_github("BenWilliams-NOAA/afscOM")`
+library(afscOM)
+```
+
+

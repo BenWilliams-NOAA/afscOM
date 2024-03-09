@@ -1,16 +1,14 @@
 #' Simulate catches in one region during on year
-#' 
+#'
 #' Description
 #'
 #' @param TAC the total catch to be removed across all fleets
 #' @param fleet.props the proportion of the TAC that should be taken by each fleet
 #' @param dem_params demographic parameter matrices for population
-#' @param naa the current numbers-at-age in the popultion
+#' @param naa the current numbers-at-age in the population
 #' @param option list of model options
 #'
-#' @export simualte_catch
-#'
-#' @example
+#' @export
 #'
 simulate_catch <- function(TAC, fleet.props, dem_params, naa, options){
 
@@ -34,14 +32,14 @@ simulate_catch <- function(TAC, fleet.props, dem_params, naa, options){
         # }
 
         tac <- TAC*fleet.props[f]
-        
+
         dp.f <- rlang::duplicate(dem_params)
         dp.f$sel <- subset_matrix(dp.f$sel, f, d=5, drop=TRUE)
         dp.f$ret <- subset_matrix(dp.f$ret, f, d=5, drop=TRUE)
         dp.f$dmr <- subset_matrix(dp.f$dmr, f, d=5, drop=TRUE)
 
         F_f <- findF_bisection(
-            f_guess = 0.05, 
+            f_guess = 0.05,
             naa     = naa,
             waa     = dp.f$waa,
             mort    = dp.f$mort,

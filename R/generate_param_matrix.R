@@ -1,20 +1,19 @@
 #' Generate a filled parameter matrix
-#' 
+#'
 #' Fills an empty matrix of the dimensions (nyears, nages, nsexes, nregions, nfleets)
 #' with a vector or matrix of values across the specified dimensions. This allows for
 #' quicky filling parameter matrices when parameters only vary across a subset of the
 #' required dimensions.
 #'
 #' @param vals a single value, or a vector or matrix of values, to fill the output matrix with. If a vector or matrix, all dimensions must be named, and names must match with those specified with the `dimension.names` argument
-#' @param settings names list containing `model.params` that 
+#' @param settings names list containing `model.params` that
 #' @param by a character vector specifying which dimensions the input values correspond to
 #' @param include_fleet_dim whether to expand the output matrix to include a 5th dimension, indicating fleet structure
 #'
 #' @return a 4d or 5d array of dimensions (nyears, nages, nsexes, nregions, nfleets) filled across the specified dimensions by the specfied values.
-#' 
+#'
 #' @export generate_param_matrix
 #'
-#' @example
 #'
 generate_param_matrix <- function(vals, dimension_names, by=NA, include_fleet_dim=FALSE){
 
@@ -34,7 +33,7 @@ generate_param_matrix <- function(vals, dimension_names, by=NA, include_fleet_di
     }
 
     dim_order <- c("time", "age", "sex", "region", "fleet")
-    
+
     ndims <- 4
     if(include_fleet_dim){
         ndims <- 5
