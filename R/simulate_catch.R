@@ -29,9 +29,9 @@ simulate_catch <- function(TAC, fleet.props, dem_params, naa, options){
     for(f in 1:model_params$nfleets){
 
         # Skip if the fleet in question is a survey fleet
-        if(model_options$fleet_is_survey[f]){
-            next;
-        }
+        # if("fleet_is_survey" %in% model_options & model_options$fleet_is_survey[f]){
+        #     next;
+        # }
 
         tac <- TAC*fleet.props[f]
         
