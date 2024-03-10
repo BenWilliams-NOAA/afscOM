@@ -23,13 +23,16 @@ test_that("single year age-structure population", {
 
   tac <- 3114310
   suppressWarnings({
-    catch_vars <- simulate_catch(tac, fleet.props=c(1.0, 0.0), dem_params=dem_params, naa=naa, options=model_options)
-    pop_vars <- simulate_population(prev.naa=naa, faa=catch_vars$faa, recruitment=rec, dem_params=dem_params, options=options)
+    catch_vars <- simulate_catch(tac, fleet.props=c(0.70, 0.30), dem_params=dem_params, naa=naa, options=model_options)
+    pop_vars <- simulate_population(prev.naa=naa, faa=catch_vars$faa_tmp, recruitment=rec, dem_params=dem_params, options=options)
   })
 
   total_catch <- apply(catch_vars$caa_tmp, 1, sum)
   expect_equal(total_catch, tac, tolerance=1e-6)
 
+  fleet_catch <- apply(catch_vars$caa_tmp, c(1, 5), sum)
+  expect_equal(fleet_catch, matrix(c(2180017, 934293), nrow=1), tolerance=1e-5)
+
   ssb <- sum(pop_vars$naa[,,1,]*dem_params$waa[,,1,]*dem_params$mat[,,1,])/1e6
-  expect_equal(ssb, 279.8009, tolerance=1e-4)
+  expect_equal(ssb, 278.52, tolerance=1e-4)
 })

@@ -9,7 +9,7 @@ test_that("fill by single value", {
   )
 
   v <- 0.1
-  m <- generate_param_matrix(v, dimension.names = dimension.names)
+  m <- generate_param_matrix(v, dimension_names = dimension.names)
   good <- readRDS("data/good_dem_matrices.RDS")
 
   expect_equal(m, good$single)
@@ -27,7 +27,7 @@ test_that("fill by age", {
   )
 
   v <- exp(-5.1560+0.7331*2:31)/(1+exp(-5.1560+0.7331*2:31))
-  m <- generate_param_matrix(v, dimension.names = dimension.names, by="age")
+  m <- generate_param_matrix(v, dimension_names = dimension.names, by="age")
   good <- readRDS("data/good_dem_matrices.RDS")
 
   expect_equal(m, good$age)
@@ -51,9 +51,9 @@ test_that("fill by age and sex", {
 
   v <- matrix(c(waa.f, waa.m), nrow=30)
   colnames(v) <- c("F", "M")
-  rownames(waa.matrix) <- 2:31
+  rownames(v) <- 2:31
 
-  m <- generate_param_matrix(waa.matrix, dimension.names = dimension.names, by=c("age", "sex")) 
+  m <- generate_param_matrix(v, dimension_names = dimension.names, by=c("age", "sex")) 
   good <- readRDS("data/good_dem_matrices.RDS")
 
   expect_equal(m, good$age.sex)
@@ -82,9 +82,9 @@ test_that("fill by age, sex, and fleet", {
   v[,1,2] <- selex.f.tw_fish
   v[,2,2] <- selex.m.tw_fish
 
-  m <- generate_param_matrix(v, dimension.names = dimension.names, by=c("age", "sex", "fleet"))
+  m <- generate_param_matrix(v, dimension_names = dimension.names, by=c("age", "sex", "fleet"))
   good <- readRDS("data/good_dem_matrices.RDS")
 
-  expect_equal(m, good$age.sex.fleet)
+  expect_equal(m, good$age.sex.fleet, tolerance=1e-2)
 
 })

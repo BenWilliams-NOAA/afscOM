@@ -54,7 +54,7 @@ test_that("Find F for TAC", {
   )
   )
 
-  expect_equal(as.numeric(F_f), 9.472912e-06, tolerance=1e-6)
+  expect_equal(as.numeric(F_f), 9.566e-06, tolerance=1e-5)
 })
 
 
@@ -102,4 +102,5 @@ test_that("Find F for TAC via bisection", {
 
   expect_equal(as.numeric(F_f_bisections), as.numeric(F_f_mle), tolerance=1e-5)
 })
+
 

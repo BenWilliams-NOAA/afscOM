@@ -26,7 +26,7 @@
 #' catch <- baranov(0.1, naa, waa, mort, selex)
 #'}
 baranov <- function(fy, naa, waa, mort, selex, ret=NA, dmr=NA) {
-    if(any(ret) | any(dmr)){
+    if(any(is.na(ret)) | any(is.na(dmr))){
         warning("No discard mortality rate OR retention-at-age provided.\nAssuming full retention.")
         ret <- rep(1, length(selex))
         dmr <- rep(0, length(ret))

@@ -10,6 +10,7 @@ usethis::use_build_ignore("dev")
 # dev code
 use_package('dplyr')
 use_package('TMB')
+use_package('abind')
 
 use_mit_license()
 

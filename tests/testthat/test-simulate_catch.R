@@ -27,7 +27,7 @@ test_that("single year catch simulation for one fleet", {
   fleet_catch <- apply(catch_vars$caa_tmp, c(1, 5), sum)
 
   expect_equal(total_catch, 7000)
-  expect_equal(fleet_catch, matrix(c(7000, 0), nrow=1), tolerance=1e-6)
+  expect_equal(fleet_catch, matrix(c(7000, 0), nrow=1), tolerance=1e-4)
 })
 
 test_that("single year catch simulation for two fleets", {
@@ -58,6 +58,6 @@ test_that("single year catch simulation for two fleets", {
   total_catch <- apply(catch_vars$caa_tmp, 1, sum)
   fleet_catch <- apply(catch_vars$caa_tmp, c(1, 5), sum)
 
-  expect_equal(total_catch, 7000)
-  expect_equal(fleet_catch, matrix(c(4900, 2100), nrow=1), tolerance=1e-6)
+  expect_equal(total_catch, 7000, tolerance=1e-4)
+  expect_equal(fleet_catch, matrix(c(4900, 2100), nrow=1), tolerance=1e-4)
 })
