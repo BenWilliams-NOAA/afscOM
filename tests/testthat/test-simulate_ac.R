@@ -29,3 +29,34 @@ test_that("domestic LL survey age composition calculation", {
   expect_equal(t(pred), ll_preds, tolerance=1e-5)
 })
 
+
+test_that("Domestic LL Fishery Age composition calculation", {
+  
+  assessment <- dget("data/test.rdat")
+
+  ll_ac_years <- as.numeric(rownames(assessment$eac.fish1))
+  ll_ac_years <- ll_ac_years-1960+1
+
+  naa <- array(NA, dim=c(nrow(assessment$natage.female), 30, 2, 1), dimnames = list("time"=1:nrow(assessment$natage.female), "age"=2:31, "sex"=c("F", "M"), "region"="alaska"))
+  naa[,,1,1] <- assessment$natage.female
+  naa[,,2,1] <- assessment$natage.male
+
+  s <- array(NA, dim=c(nrow(assessment$natage.female), 30, 2), dimnames=list("time"=1:nrow(assessment$natage.female), "age"=c(2:31), "sex"=c("F", "M")))
+  s[,,1] <- assessment$surv.f
+  s[,,2] <- assessment$surv.m
+  survival <- generate_param_matrix(s, dimension_names = list("time"=1:nrow(assessment$natage.female), "age"=2:31, "sex"=c("F", "M"), "region"="alaska"), by = c("time", "age", "sex"))
+  zaa <- -log(survival)
+  
+  faa <- array(NA, dim=c(nrow(assessment$natage.female), 30, 2, 1), dimnames = list("time"=1:nrow(assessment$natage.female), "age"=2:31, "sex"=c("F", "M"), "region"="alaska"))
+  faa[,,1,1] <- assessment$faa.fish1.f
+  faa[,,2,1] <- assessment$faa.fish1.m
+
+  ll_preds <- assessment$eac.fish1
+  dimnames(ll_preds) <- list()
+
+  pred <- sapply(ll_ac_years, function(y){
+    simulate_caa(naa[y,,,, drop=FALSE], faa[y,,,, drop=FALSE], zaa[y,,,, drop=FALSE], age_err = assessment$age_error)
+  })
+
+  expect_equal(t(pred), ll_preds, tolerance=1e-5)
+})

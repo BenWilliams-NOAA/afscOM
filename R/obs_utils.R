@@ -59,3 +59,29 @@ simulate_ac <- function(naa, sel, age_err=NA){
     }
     return(eac/sum(eac))
 }
+
+#' Simulate catch-at-age composition data
+#' 
+#' Generate an age composition vector based on
+#' fishing induced mortality.
+#'
+#' @param naa numbers-at-age vector
+#' @param faa fishing-mortality-at-age vector
+#' @param zaa total-mortality-at-age vector
+#' @param age_err aging-error matrix
+#'
+#' @export simulate_caa
+#'
+#' @example
+#'
+simulate_caa <- function(naa, faa, zaa, age_err=NA){
+    
+    caa <- naa*faa*(1-exp(-zaa))/zaa
+    caa.prop <- array(apply(caa, c(3), \(x) x/rowSums(x)), dim=dim(naa), dimnames=dimnames(naa))
+    eac <- apply(caa.prop, c(1, 2), sum)/2
+    
+    if(!all(is.na(age_err))){
+        eac <- eac %*% age_err
+    }
+    return(t(apply(eac, 1, \(x) x/sum(x))))
+}
