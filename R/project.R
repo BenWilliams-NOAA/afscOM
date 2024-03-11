@@ -33,6 +33,7 @@ project <- function(TAC, fleet.props, dem_params, prev_naa, recruitment, options
     disc_caa_tmp    = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions, model_params$nfleets))
     caa_tmp         = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions, model_params$nfleets))
     faa_tmp         = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions, model_params$nfleets))
+    zaa_tmp         = array(0, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions))
     naa_tmp         = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions))
 
     # Do recruitment here because there isn't regional recruitment
@@ -68,10 +69,17 @@ project <- function(TAC, fleet.props, dem_params, prev_naa, recruitment, options
         caa_tmp[,,,r,] <- catch_vars$caa_tmp
         faa_tmp[,,,r,] <- catch_vars$faa_tmp
 
+        tot_faa <- array(apply(faa_tmp, c(2, 3), sum), dim=c(1, model_params$nages, model_params$nsexes, 1))
+        zaa_tmp[,,,r] <- tot_faa+dem_params$mort
+
         pop_vars <- simulate_population(prev.naa=prev_naa, faa=catch_vars$faa_tmp, recruitment=rec, dem_params=dp.r, options=options)
         naa_tmp[,,,r] <- pop_vars$naa
     }
     # state_vars <- simulate_movement(dem_params, state_vars)
-    # simulate_observations()
-    return(listN(land_caa_tmp, disc_caa_tmp, caa_tmp, faa_tmp, naa_tmp))
+    obs <- simulate_observations(naa_tmp, dem_params$waa, dem_params$surv_sel, faa_tmp, zaa_tmp, obs_pars = list(surv_ll_q=6.14, surv_tw_q=0.851, ll_idx=1))
+    surv_preds <- obs$preds
+    surv_obs <- obs$obs
+
+
+    return(listN(land_caa_tmp, disc_caa_tmp, caa_tmp, faa_tmp, naa_tmp, surv_preds, surv_obs))
 }
