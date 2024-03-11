@@ -37,7 +37,20 @@ simulate_rpw <- function(q, naa, waa, sel, zaa){
     return(q*sum(naa*exp(-zaa/2)*sel*waa))
 }
 
-
+#' Simulate survey age composition data
+#' 
+#' Generate an age composition vector based on
+#' a survey occurring halfway through the year,
+#' and for which ageing error may exist.
+#'
+#' @param naa numbers-at-age vector
+#' @param sel selectivity-at-age vector
+#' @param age_err aging-error matrix
+#'
+#' @export simulate_ac
+#'
+#' @example
+#'
 simulate_ac <- function(naa, sel, age_err=NA){
     eac <- naa*sel
     eac <- apply(eac, c(1, 2), sum)
