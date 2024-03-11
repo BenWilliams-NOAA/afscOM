@@ -36,3 +36,13 @@ simulate_rpw <- function(q, naa, waa, sel, zaa){
     #total_naa <- apply(naa, 2, sum)
     return(q*sum(naa*exp(-zaa/2)*sel*waa))
 }
+
+
+simulate_ac <- function(naa, sel, age_err=NA){
+    eac <- naa*sel
+    eac <- apply(eac, c(1, 2), sum)
+    if(!all(is.na(age_err))){
+        eac <- eac %*% age_err
+    }
+    return(eac/sum(eac))
+}
