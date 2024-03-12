@@ -13,6 +13,8 @@ use_package('TMB')
 use_package('abind')
 use_package('rlang')
 use_package('bbmle')
+
+use_r('data')
 # create the package
 devtools::document()
 devtools::build()
