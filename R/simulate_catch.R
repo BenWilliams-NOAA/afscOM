@@ -1,4 +1,4 @@
-#' Simulate catches in one region during on year
+    #' Simulate catches in one region during on year
 #'
 #' Description
 #'
@@ -38,7 +38,7 @@ simulate_catch <- function(TAC, fleet.props, dem_params, naa, options){
         dp.f$ret <- subset_matrix(dp.f$ret, f, d=5, drop=TRUE)
         dp.f$dmr <- subset_matrix(dp.f$dmr, f, d=5, drop=TRUE)
 
-        F_f <- find_F(
+        F_f <- findF_bisection(
             f_guess = 0.05,
             naa     = naa,
             waa     = dp.f$waa,
