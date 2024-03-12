@@ -1,12 +1,10 @@
 #' Simulate Observations from Fisheries and Surveys
-#' 
+#'
 #' Description
 #'
 #' @param $$
 #'
 #' @export
-#'
-#' @example
 #'
 simulate_observations <- function(naa, waa, selex, faa, zaa, obs_pars, age_error=NA){
 

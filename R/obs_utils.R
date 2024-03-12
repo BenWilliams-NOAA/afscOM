@@ -1,5 +1,5 @@
 #' Simulate Relative Population Numbers Index
-#' 
+#'
 #' Generate a relative population number index based on
 #' a survey occurring halfway through the year.
 #'
@@ -10,7 +10,6 @@
 #'
 #' @export simulate_rpn
 #'
-#' @example
 #'
 simulate_rpn <- function(q, naa, sel, zaa){
     #total_naa <- apply(naa, 2, sum)
@@ -18,7 +17,7 @@ simulate_rpn <- function(q, naa, sel, zaa){
 }
 
 #' Simulate Relative Population Weight Index
-#' 
+#'
 #' Generate a relative population weight index based on
 #' a survey occurring halfway through the year.
 #'
@@ -30,7 +29,6 @@ simulate_rpn <- function(q, naa, sel, zaa){
 #'
 #' @export simulate_rpw
 #'
-#' @example
 #'
 simulate_rpw <- function(q, naa, waa, sel, zaa){
     #total_naa <- apply(naa, 2, sum)
@@ -38,7 +36,7 @@ simulate_rpw <- function(q, naa, waa, sel, zaa){
 }
 
 #' Simulate survey age composition data
-#' 
+#'
 #' Generate an age composition vector based on
 #' a survey occurring halfway through the year,
 #' and for which ageing error may exist.
@@ -49,7 +47,6 @@ simulate_rpw <- function(q, naa, waa, sel, zaa){
 #'
 #' @export simulate_ac
 #'
-#' @example
 #'
 simulate_ac <- function(naa, sel, age_err=NA){
     eac <- naa*sel
@@ -61,7 +58,7 @@ simulate_ac <- function(naa, sel, age_err=NA){
 }
 
 #' Simulate catch-at-age composition data
-#' 
+#'
 #' Generate an age composition vector based on
 #' fishing induced mortality.
 #'
@@ -72,14 +69,13 @@ simulate_ac <- function(naa, sel, age_err=NA){
 #'
 #' @export simulate_caa
 #'
-#' @example
 #'
 simulate_caa <- function(naa, faa, zaa, age_err=NA){
-    
+
     caa <- naa*faa*(1-exp(-zaa))/zaa
     caa.prop <- array(apply(caa, c(3), \(x) x/rowSums(x)), dim=dim(naa), dimnames=dimnames(naa))
     eac <- apply(caa.prop, c(1, 2), sum)/2
-    
+
     if(!all(is.na(age_err))){
         eac <- eac %*% age_err
     }

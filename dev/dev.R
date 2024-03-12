@@ -11,6 +11,11 @@ usethis::use_build_ignore("dev")
 use_package('dplyr')
 use_package('TMB')
 use_package('abind')
+use_package('rlang')
+use_package('bbmle')
+# create the package
+devtools::document()
+devtools::build()
 
 use_mit_license()
 
@@ -19,9 +24,7 @@ usethis::use_vignette('intro')
 # use_r('fish_age_comp')
 # use_r('slx_a50_a95')
 
-# create the package
-devtools::document()
-devtools::build()
+
 
 remotes::install_github("BenWilliams-NOAA/afscOM")
 # create website

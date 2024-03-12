@@ -89,7 +89,7 @@ subset_matrix <- function(mat, r, d=1, drop=TRUE){
     idxs <- c(as.list(rep(TRUE, d-1)), list(r), as.list(rep(TRUE, ndims-d)))
     t <- do.call('[', c(list(mat), idxs, drop=FALSE))
     if(drop){
-        tmp <- adrop(t, drop=d)
+        tmp <- abind::adrop(t, drop=d)
     }else{
         tmp <- t
     }

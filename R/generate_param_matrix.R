@@ -60,12 +60,12 @@ generate_param_matrix <- function(vals, dimension_names, by=NA, include_fleet_di
     provided_dimensions <- dim_order %in% by
     afill_dimensions <- as.vector(!provided_dimensions, mode="list")
     for(i in which(provided_dimensions == TRUE)){
-        afill_dimensions[[i]] <- missing_arg()
+        afill_dimensions[[i]] <- rlang::missing_arg()
     }
     afill_params <- afill_dimensions[1:ndims]
     afill_params$x <- tmp
     afill_params$value <- vals
 
-    tmp <- do.call("afill<-", afill_params)
+    tmp <- do.call(abind::"afill<-", afill_params)
     return(tmp)
 }
