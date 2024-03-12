@@ -1,8 +1,7 @@
 rm(list=ls())
 
-library(devtools)
-devtools::load_all()
-
+# remotes::install_github('BenWilliams-NOAA/afscOM')
+library(afscOM)
 assessment <- dget("data/test.rdat")
 
 #' 1. Define model dimensions and dimension names
@@ -11,7 +10,7 @@ assessment <- dget("data/test.rdat")
 #'  - nsexes: number of sexes (1 = females only)
 #'  - nregions: number of spatial regions
 #'  - nfleets: number of fishing fleets (survey fleets are handled seperately)
-#' 
+#'
 #' Dimension names must be defined in order to use the helper function
 #' `generate_param_matrix` which handles filling complex multi-dimensional
 #' arrays with smaller dimensions values, vectors, or matrices.
@@ -38,7 +37,7 @@ dimension_names <- list(
 #'  - sel: selectivity-at-age
 #'  - ret: retention-at-age
 #'  - dmr: discard-mortality-at-age
-#'  - surv_sel: survey selectivity-at-age 
+#'  - surv_sel: survey selectivity-at-age
 
 M <- 0.113179
 mort <- generate_param_matrix(M, dimension_names = dimension_names)
@@ -99,11 +98,11 @@ init_naa[,,1,] <- assessment$natage.female["1960",]
 init_naa[,,2,] <- assessment$natage.male["1960",]
 
 #' 4. Define recruitment timeseries
-#' Where possible (e.g. where recruitment is independent of 
-#' the population state), recruitment should be defined 
-#' external to the OM simulation loop to ensure reproducability 
-#' across model runs. 
-#' 
+#' Where possible (e.g. where recruitment is independent of
+#' the population state), recruitment should be defined
+#' external to the OM simulation loop to ensure reproducability
+#' across model runs.
+#'
 #' Here we using the recruitment timeseries from the 2023 Alaska
 #' sablefish assessment.
 
@@ -116,7 +115,7 @@ recruitment <- assessment$natage.female[,1]*2
 #'  - TAC: the total allowable catch each year across the entire model
 #'  - region apportionment: the proportion of the TAC allocated to each
 #'                          region in the model
-#'  - fleet apportionment: the proportion of the TAC allocation to each 
+#'  - fleet apportionment: the proportion of the TAC allocation to each
 #'                         fishing fleet in each region in the model
 #' The apportionment timeseries are place in a `model_options` list.
 
@@ -132,7 +131,7 @@ model_options <- list(
 #' 6. Setup empty array to collect derived quantities from the OM
 #' It is left to the user to decide what information to store, and
 #' in what format they would like to store it.
-#' 
+#'
 #' Here, we are storing all OM outputs as they are returned from the
 #' OM.
 land_caa    = array(NA, dim=c(nyears, nages, nsexes, nregions, nfleets))
@@ -157,11 +156,11 @@ survey_preds <- list(
 #' options. In order to simulate multiple years, the `project`
 #' function MUST be wrapped in a loop over the intended number
 #' of simulation years.
-#' 
+#'
 #' The `project` function does not "know" about the presence of
-#' an external "year loop", and thus expects arguments to 
+#' an external "year loop", and thus expects arguments to
 #' represent data for a single year at a time. Helper functions
-#' have been provided to help with correctly subsetting the 
+#' have been provided to help with correctly subsetting the
 #' demographic matrices to ensure input data is of the correct
 #' dimensionality.
 
@@ -172,11 +171,11 @@ for(y in 1:nyears){
     dp.y <- subset_dem_params(dem_params = dem_params, y, d=1, drop=FALSE)
     fleet.props <- unlist(lapply(model_options$fleet_apportionment, \(x) x[y]))
     out_vars <- project(
-        TAC=TACs[y], 
-        dem_params=dp.y, 
-        prev_naa=naa[y,,,, drop = FALSE], 
-        recruitment=recruitment[y+1], 
-        fleet.props = fleet.props, 
+        TAC=TACs[y],
+        dem_params=dp.y,
+        prev_naa=naa[y,,,, drop = FALSE],
+        recruitment=recruitment[y+1],
+        fleet.props = fleet.props,
         options=model_options
     )
 
@@ -196,17 +195,17 @@ for(y in 1:nyears){
 }
 
 #' 8. Plot OM Results
-#' 
+#'
 
 ssb <- apply(naa[1:64,,1,]*dem_params$waa[,,1,]*dem_params$mat[,,1,], 1, sum)
 bio <- apply(naa[1:64,,,]*dem_params$waa[,,,], 1, sum)
 catch <- apply(caa, 1, sum)
 
 ssb_comp <- data.frame(
-    year=1960:2023, 
-    assess_ssb=assessment$t.series[, "spbiom"], 
-    om_ssb=ssb, 
-    assess_catch=TACs, 
+    year=1960:2023,
+    assess_ssb=assessment$t.series[, "spbiom"],
+    om_ssb=ssb,
+    assess_catch=TACs,
     om_catch=catch,
     assess_bio=assessment$t.series[, "totbiom"],
     om_bio = bio
