@@ -37,7 +37,8 @@ baranov <- function(fy, naa, waa, mort, selex, ret=NA, dmr=NA) {
     }
 
     faa <- retained_F(fy, selex, ret) + discard_F(dmr, selex, ret)
-    caa <- catch_at_age(faa, naa, waa, mort)
-    catch <- sum(caa)
+    zaa <- faa + mort
+    caa <- naa*faa*(1-exp(-zaa))/zaa
+    catch <- sum(caa*waa)
     return(catch)
 }

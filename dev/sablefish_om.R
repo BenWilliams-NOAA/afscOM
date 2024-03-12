@@ -1,7 +1,10 @@
 rm(list=ls())
 
 # remotes::install_github('BenWilliams-NOAA/afscOM')
-library(afscOM)
+#library(afscOM)
+library(devtools)
+devtools::load_all()
+
 assessment <- dget("data/test.rdat")
 
 #' 1. Define model dimensions and dimension names
@@ -19,6 +22,7 @@ nages  <- 30
 nsexes <- 2
 nregions <- 1
 nfleets <- 2
+nsurveys <- 2
 
 dimension_names <- list(
     "time" = 1:nyears,
@@ -27,6 +31,8 @@ dimension_names <- list(
     "region" = "alaska",
     "fleet" = c("Fixed", "Trawl")
 )
+
+model_params <- set_model_params(nyears, nages, nsexes, nregions, nfleets)
 
 #' 2. Generate list with appropiate demographic parameters
 #' Required parameters are:
@@ -66,9 +72,9 @@ selex_mat[,1,2] <- assessment$agesel[,"fish3sel.f"]
 selex_mat[,2,2] <- assessment$agesel[,"fish3sel.m"]
 sel <- generate_param_matrix(selex_mat, dimension_names = dimension_names, by=c("age", "sex", "fleet"), include_fleet_dim = TRUE)
 sel[(36:56),,1,,1] <- matrix(rep(assessment$agesel[, "fish4sel.f"], length(36:56)), ncol=nages, byrow=TRUE)
-sel[(36:56),,1,,1] <- matrix(rep(assessment$agesel[, "fish4sel.m"], length(36:56)), ncol=nages, byrow=TRUE)
+sel[(36:56),,2,,1] <- matrix(rep(assessment$agesel[, "fish4sel.m"], length(36:56)), ncol=nages, byrow=TRUE)
 sel[(57:64),,1,,1] <- matrix(rep(assessment$agesel[, "fish5sel.f"], length(57:64)), ncol=nages, byrow=TRUE)
-sel[(57:64),,1,,1] <- matrix(rep(assessment$agesel[, "fish5sel.m"], length(57:64)), ncol=nages, byrow=TRUE)
+sel[(57:64),,2,,1] <- matrix(rep(assessment$agesel[, "fish5sel.m"], length(57:64)), ncol=nages, byrow=TRUE)
 
 survey_selex_mat <- array(NA, dim=c(nages, nsexes, 2), dimnames=dimension_names[c("age", "sex", "fleet")])
 survey_selex_mat[,1,1] <- assessment$agesel[,"srv1sel.f"]
@@ -77,7 +83,7 @@ survey_selex_mat[,1,2] <- assessment$agesel[,"srv7sel.f"]
 survey_selex_mat[,2,2] <- assessment$agesel[,"srv7sel.m"]
 survey_sel <- generate_param_matrix(survey_selex_mat, dimension_names = dimension_names, by=c("age", "sex", "fleet"), include_fleet_dim = TRUE)
 survey_sel[(57:64),,1,,1] <- matrix(rep(assessment$agesel[, "srv10sel.f"], length(57:64)), ncol=nages, byrow=TRUE)
-survey_sel[(57:64),,1,,1] <- matrix(rep(assessment$agesel[, "srv10sel.m"], length(57:64)), ncol=nages, byrow=TRUE)
+survey_sel[(57:64),,2,,1] <- matrix(rep(assessment$agesel[, "srv10sel.m"], length(57:64)), ncol=nages, byrow=TRUE)
 
 dem_params <- list(
     waa=waa,
@@ -89,6 +95,8 @@ dem_params <- list(
     dmr=dmr,
     surv_sel=survey_sel
 )
+
+#dem_params <- validate_dem_params(dem_params, model_params)
 
 #' 3. Define starting population condition (NAA)
 #' Here, we will use the NAA in 1960 from the 2023
@@ -117,7 +125,7 @@ recruitment <- assessment$natage.female[,1]*2
 #'                          region in the model
 #'  - fleet apportionment: the proportion of the TAC allocation to each
 #'                         fishing fleet in each region in the model
-#' The apportionment timeseries are place in a `model_options` list.
+#' The apportionment timeseries are placed in a `model_options` list.
 
 TACs <- (assessment$t.series[,"Catch_HAL"]+assessment$t.series[,"Catch_TWL"])
 fixed_fleet_prop <- assessment$t.series[,"Catch_HAL"]/(assessment$t.series[,"Catch_HAL"]+assessment$t.series[,"Catch_TWL"])
@@ -127,6 +135,29 @@ model_options <- list(
     region_apportionment = list(1),
     fleet_apportionment = list(fixed_fleet_prop, trawl_fleet_prop)
 )
+
+#' 6. Define parameters for observation processes
+#' Observation process parameters include catchability coefficients 
+#' (q), observation errors, and sample sizes for age/length comps.
+
+# obs_pars <- list(
+#     surv_ll = list(
+#         q = 6.41538,
+#         rpn_se = 20.0,
+#         rpw_se = 20.0,
+#         ac_samps = 100
+#     ),
+#     surv_tw = list(
+#         q = 0.8580,
+#         rpw_se = 20.0,
+#         ac_samps = 100
+#     ),
+#     fish_fx = list(
+#         ac_samps 100
+#     )
+# )
+
+# model_options$obs_pars <- obs_pars
 
 #' 6. Setup empty array to collect derived quantities from the OM
 #' It is left to the user to decide what information to store, and
@@ -200,6 +231,7 @@ for(y in 1:nyears){
 ssb <- apply(naa[1:64,,1,]*dem_params$waa[,,1,]*dem_params$mat[,,1,], 1, sum)
 bio <- apply(naa[1:64,,,]*dem_params$waa[,,,], 1, sum)
 catch <- apply(caa, 1, sum)
+f <- apply(apply(faa, c(1, 5), \(x) max(x)), 1, sum)
 
 ssb_comp <- data.frame(
     year=1960:2023,
@@ -208,34 +240,59 @@ ssb_comp <- data.frame(
     assess_catch=TACs,
     om_catch=catch,
     assess_bio=assessment$t.series[, "totbiom"],
-    om_bio = bio
+    om_bio = bio,
+    assess_f = assessment$t.series[,"fmort"],
+    om_f = f
 )
 
 library(ggplot2)
 
-ggplot(ssb_comp, aes(x=year))+
-    geom_line(aes(y=assess_ssb), col="black", size=1)+
-    geom_line(aes(y=om_ssb), col="red", size=1)+
+p1 <- ggplot(ssb_comp, aes(x=year))+
+    geom_line(aes(y=assess_ssb), col="black", size=0.7)+
+    geom_line(aes(y=om_ssb), col="red", size=0.7)+
     scale_y_continuous(limits=c(0, 300), breaks=seq(0, 300, 50))+
     scale_x_continuous(breaks=seq(1960, 2020, 10))+
     coord_cartesian(expand=0)+
-    labs(y="SSB", x="Year", main="Spawning Biomass Comparison")+
+    labs(y="SSB", x="Year", title="Spawning Biomass Comparison")+
     theme_bw()
 
-ggplot(ssb_comp, aes(x=year))+
-    geom_line(aes(y=assess_catch), col="black", size=1)+
-    geom_line(aes(y=om_catch), col="red", size=1)+
+p2 <- ggplot(ssb_comp, aes(x=year))+
+    geom_line(aes(y=assess_catch), col="black", size=0.7)+
+    geom_line(aes(y=om_catch), col="red", size=0.7)+
     scale_y_continuous(limits=c(0, 60), breaks=seq(0, 60, 10))+
     scale_x_continuous(breaks=seq(1960, 2020, 10))+
     coord_cartesian(expand=0)+
-    labs(y="Catch", x="Year", main="Total Catch Comparison")+
+    labs(y="Catch", x="Year", title="Total Catch Comparison")+
     theme_bw()
 
-ggplot(ssb_comp, aes(x=year))+
-    geom_line(aes(y=assess_bio), col="black", size=1)+
-    geom_line(aes(y=om_bio), col="red", size=1)+
+p3 <- ggplot(ssb_comp, aes(x=year))+
+    geom_line(aes(y=assess_bio), col="black", size=0.7)+
+    geom_line(aes(y=om_bio), col="red", size=0.7)+
     scale_y_continuous(limits=c(0, 750), breaks=seq(0, 750, 100))+
     scale_x_continuous(breaks=seq(1960, 2020, 10))+
     coord_cartesian(expand=0)+
-    labs(y="SSB", x="Year", main="Total Biomass Comparison")+
+    labs(y="Biomass", x="Year", title="Total Biomass Comparison")+
     theme_bw()
+
+p4 <- ggplot(ssb_comp, aes(x=year))+
+    geom_line(aes(y=assess_f), col="black", size=0.7)+
+    geom_line(aes(y=om_f), col="red", size=0.7)+
+    scale_y_continuous(limits=c(0, 0.2), breaks=seq(0, 0.2, 0.05))+
+    scale_x_continuous(breaks=seq(1960, 2020, 10))+
+    coord_cartesian(expand=0)+
+    labs(y="F", x="Year", title="Fishing Mortality Comparison")+
+    theme_bw()
+
+library(gridExtra)
+
+p <- gridExtra::grid.arrange(p1, p2, p3, p4, ncol=2, nrow=2)
+ggsave("~/Desktop/sablefish_assess_om.png", plot=p, width=8, height=8, units=c("in"))
+
+(faa[,,1,1,1] - assessment$faa.fish1.f)/assessment$faa.fish1.f
+# caa[,,1,1,1] - assessment$
+y=30
+faa[y,,1,1,1] - assessment$faa.fish1.f[y,]
+
+100*(ssb - assessment$t.series[,"spbiom"])/assessment$t.series[,"spbiom"]
+
+ - assessment$t.series[,"fmort"]
