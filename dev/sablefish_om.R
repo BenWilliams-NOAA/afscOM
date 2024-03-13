@@ -1,9 +1,9 @@
 rm(list=ls())
 
 # remotes::install_github('BenWilliams-NOAA/afscOM')
-#library(afscOM)
-library(devtools)
-devtools::load_all()
+library(afscOM)
+# library(devtools)
+# devtools::load_all()
 
 assessment <- dget("data/test.rdat")
 
@@ -47,6 +47,7 @@ model_params <- set_model_params(nyears, nages, nsexes, nregions, nfleets)
 
 M <- 0.113179
 mort <- generate_param_matrix(M, dimension_names = dimension_names)
+mort[,,2,] <- mort[,,2,]-0.00819813
 
 prop_males <- 0.5
 sexrat <- generate_param_matrix(prop_males, dimension_names = dimension_names)
@@ -161,7 +162,7 @@ model_options <- list(
 
 obs_pars <- list(
     surv_ll = list(
-        q = 6.41538,
+        q = 6.41338,
         rpn_cv = 0.20,
         rpw_cv = 0.10,
         ac_samps = 1000
@@ -383,4 +384,25 @@ ggplot(tw_surv_data, aes(x=Year, y=obssrv7, group=1))+
     labs(y="TW Survey RPW", x="Year", title="TW Survey RPW Comparison")+
     theme_bw()
 
+## -----------
 
+new_zaa <- apply(faa, c(1, 2, 3, 4), sum)+dem_params$mort
+
+naa[(1990:2023)-1960+1,,1,] - assessment$natage.female[(1990:2023)-1960+1,]
+
+new_naa <- array(NA, dim=c(nrow(assessment$natage.female), 30, 2, 1), dimnames = list("time"=1:nrow(assessment$natage.female), "age"=2:31, "sex"=c("F", "M"), "region"="alaska"))
+new_naa[,,1,1] <- assessment$natage.female
+new_naa[,,2,1] <- assessment$natage.male
+
+years <- (1990:2023)-1960+1
+sapply(years, function(y){
+    simulate_rpn(assessment$parameters["q1"], new_naa[y,,,, drop=FALSE], subset_matrix(dem_params$surv_sel[y,,,,1, drop=FALSE], 1, d=5), zaa[y,,,, drop=FALSE])
+})
+assessment$obssrv3[,"predsrv3"]
+as.vector(survey_preds$ll_rpn[years])
+
+sel
+
+new_naa == naa
+new_zaa - zaa
+dem_params$sel[,,,,1,drop=FALSE] - sel
