@@ -16,7 +16,7 @@
 #'
 #' @export
 #'
-project <- function(TAC, fleet.props, dem_params, prev_naa, recruitment, options=NA){
+project <- function(removals, fleet.props, dem_params, prev_naa, recruitment, options=NA){
 
     model_params <- get_model_dimensions(dem_params$sel)
 
@@ -59,11 +59,20 @@ project <- function(TAC, fleet.props, dem_params, prev_naa, recruitment, options
     }
 
     for(r in 1:model_params$nregions){
-        tac <- TAC*options$region_apportionment[r]
+        
+        if(options$removals_input == "catch"){
+            # Apportion catch-based removals based on provided
+            # regional apportionment scheme.
+            remove <- removals*options$region_apportionment[r]
+        }else{
+            # Removals were input as F, subset to correct dimensions
+            remove <- subset_matrix(removals, r=r, d=4, drop=FALSE)
+        }
+        
         dp.r <- subset_dem_params(dem_params=dem_params, r=r, d=4, drop=FALSE)
         prev_naa <- subset_dem_params(prev_naa, r=r, d=4, drop=FALSE)
         catch_vars <- simulate_catch(
-            TAC=tac, 
+            removals=remove, 
             dem_params=dp.r, 
             naa=prev_naa, 
             fleet.props = fleet.props, 

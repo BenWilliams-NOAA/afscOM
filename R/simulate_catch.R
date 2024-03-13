@@ -10,7 +10,7 @@
 #'
 #' @export
 #'
-simulate_catch <- function(TAC, fleet.props, dem_params, naa, options){
+simulate_catch <- function(removals, fleet.props, dem_params, naa, options){
 
     model_params <- get_model_dimensions(dem_params$sel)
 
@@ -31,23 +31,31 @@ simulate_catch <- function(TAC, fleet.props, dem_params, naa, options){
         #     next;
         # }
 
-        tac <- TAC*fleet.props[f]
-
         dp.f <- rlang::duplicate(dem_params)
         dp.f$sel <- subset_matrix(dp.f$sel, f, d=5, drop=TRUE)
         dp.f$ret <- subset_matrix(dp.f$ret, f, d=5, drop=TRUE)
         dp.f$dmr <- subset_matrix(dp.f$dmr, f, d=5, drop=TRUE)
 
-        F_f <- findF_bisection(
-            f_guess = 0.05,
-            naa     = naa,
-            waa     = dp.f$waa,
-            mort    = dp.f$mort,
-            selex   = dp.f$sel,
-            ret     = dp.f$ret,
-            dmr     = dp.f$dmr,
-            prov_catch = tac
-        )
+        if(options$removals_input == "catch"){
+            # Apportion catch-based removals based on provided
+            # fleet apportionment scheme.
+            remove <- removals*fleet.props[f]
+
+            # Solve for F that removes catch
+            F_f <- findF_bisection(
+                f_guess = 0.05,
+                naa     = naa,
+                waa     = dp.f$waa,
+                mort    = dp.f$mort,
+                selex   = dp.f$sel,
+                ret     = dp.f$ret,
+                dmr     = dp.f$dmr,
+                prov_catch = remove
+            )
+        }else{
+            # Removals were input as F
+            F_f <- removals[,,,,f]
+        }
 
         # ret_faa <- retained_F(F_f, dem_params$sel[,,,,f], dem_params$ret[,,,,f])
         # disc_faa <- discard_F(dem_params$dmr[,,,,f], dem_params$sel[,,,,f], dem_params$ret[,,,,f])
