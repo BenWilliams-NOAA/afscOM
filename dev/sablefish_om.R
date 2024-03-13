@@ -1,9 +1,9 @@
 rm(list=ls())
 
 # remotes::install_github('BenWilliams-NOAA/afscOM')
-#library(afscOM)
-library(devtools)
-devtools::load_all()
+library(afscOM)
+#library(devtools)
+#devtools::load_all()
 
 assessment <- dget("data/test.rdat")
 
@@ -116,6 +116,7 @@ init_naa[,,2,] <- assessment$natage.male["1960",]
 
 # Multiply by 2 because two sexes
 recruitment <- assessment$natage.female[,1]*2
+recruitment <- c(recruitment, recruitment[64])
 
 
 #' 5. Define catch history
@@ -140,22 +141,22 @@ model_options <- list(
 #' Observation process parameters include catchability coefficients 
 #' (q), observation errors, and sample sizes for age/length comps.
 
-# obs_pars <- list(
-#     surv_ll = list(
-#         q = 6.41538,
-#         rpn_se = 20.0,
-#         rpw_se = 20.0,
-#         ac_samps = 100
-#     ),
-#     surv_tw = list(
-#         q = 0.8580,
-#         rpw_se = 20.0,
-#         ac_samps = 100
-#     ),
-#     fish_fx = list(
-#         ac_samps 100
-#     )
-# )
+obs_pars <- list(
+    surv_ll = list(
+        q = 6.41538,
+        rpn_cv = 0.20,
+        rpw_cv = 0.10,
+        ac_samps = 100
+    ),
+    surv_tw = list(
+        q = 0.8580,
+        rpw_cv = 0.10,
+        ac_samps = 100
+    ),
+    fish_fx = list(
+        ac_samps = 100
+    )
+)
 
 # model_options$obs_pars <- obs_pars
 
@@ -178,6 +179,12 @@ survey_preds <- list(
     tw_rpw = array(NA, dim=c(nyears, 1, 1, nregions)),
     ll_ac = array(NA, dim=c(nyears, nages, 1, nregions)),
     fxfish_caa = array(NA, dim=c(nyears, nages, 1, nregions))
+)
+
+survey_obs <- list(
+    ll_rpn = array(NA, dim=c(nyears, 1, 1, nregions)),
+    ll_rpw = array(NA, dim=c(nyears, 1, 1, nregions)),
+    tw_rpw = array(NA, dim=c(nyears, 1, 1, nregions))
 )
 
 #' 7. Run the OM forward in time
@@ -222,6 +229,10 @@ for(y in 1:nyears){
     survey_preds$tw_rpw[y,,,] <- out_vars$surv_preds$tw_rpw
     survey_preds$ll_ac[y,,,] <- out_vars$surv_preds$ll_ac
     survey_preds$fxfish_caa[y,,,] <- out_vars$surv_preds$fxfish_caa
+
+    survey_obs$ll_rpn[y,,,] <- out_vars$surv_obs$ll_rpn
+    survey_obs$ll_rpw[y,,,] <- out_vars$surv_obs$ll_rpw
+    survey_obs$tw_rpw[y,,,] <- out_vars$surv_obs$tw_rpw
 
 }
 

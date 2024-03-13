@@ -62,7 +62,13 @@ project <- function(TAC, fleet.props, dem_params, prev_naa, recruitment, options
         tac <- TAC*options$region_apportionment[r]
         dp.r <- subset_dem_params(dem_params=dem_params, r=r, d=4, drop=FALSE)
         prev_naa <- subset_dem_params(prev_naa, r=r, d=4, drop=FALSE)
-        catch_vars <- simulate_catch(TAC=tac, dem_params=dp.r, naa=prev_naa, fleet.props = fleet.props, options=options)
+        catch_vars <- simulate_catch(
+            TAC=tac, 
+            dem_params=dp.r, 
+            naa=prev_naa, 
+            fleet.props = fleet.props, 
+            options=options
+        )
 
         land_caa_tmp[,,,r,] <- catch_vars$land_caa_tmp
         disc_caa_tmp[,,,r,] <- catch_vars$disc_caa_tmp
@@ -76,7 +82,14 @@ project <- function(TAC, fleet.props, dem_params, prev_naa, recruitment, options
         naa_tmp[,,,r] <- pop_vars$naa
     }
     # state_vars <- simulate_movement(dem_params, state_vars)
-    obs <- simulate_observations(naa_tmp, dem_params$waa, dem_params$surv_sel, faa_tmp, zaa_tmp, obs_pars = list(surv_ll_q=6.14, surv_tw_q=0.851, ll_idx=1))
+    obs <- simulate_observations(
+        naa = naa_tmp, 
+        waa = dem_params$waa, 
+        selex = dem_params$surv_sel, 
+        faa = faa_tmp, 
+        zaa = zaa_tmp, 
+        obs_pars = options$obs_pars
+    )
     surv_preds <- obs$preds
     surv_obs <- obs$obs
 

@@ -15,15 +15,18 @@ simulate_observations <- function(naa, waa, selex, faa, zaa, obs_pars, age_error
     twfish_faa <- subset_matrix(faa, r=2, d=5, drop=TRUE)
 
     # Simulate Domestic LL Survey RPN (log-normal)
-    ll_rpn_pred <- simulate_rpn(obs_pars$surv_ll_q, naa, ll_selex, zaa)
-    # ll_rpn_obs  <- rlnorm(1, meanlog = log(ll_rpn_pred), sdlog=obs_pars$ll_rpn_se)
+    ll_rpn_pred <- simulate_rpn(obs_pars$surv_ll$q, naa, ll_selex, zaa)
+    sds <- sqrt(log(obs_pars$surv_ll$rpn_cv^2 + 1))
+    ll_rpn_obs  <- rlnorm(1, meanlog=log(ll_rpn_pred)-(sds^2)/2, sdlog = sds)
 
-    ll_rpw_pred <- simulate_rpw(obs_pars$surv_ll_q, naa, waa, ll_selex, zaa)
-    # ll_rpw_obs  <- rlnorm(1, meanlog = log(ll_rpw_pred), sdlog=obs_pars$ll_rpw_se)
+    ll_rpw_pred <- simulate_rpw(obs_pars$surv_ll$q, naa, waa, ll_selex, zaa)
+    sds <- sqrt(log(obs_pars$surv_ll$rpw_cv^2 + 1))
+    ll_rpw_obs  <- rlnorm(1, meanlog=log(ll_rpw_pred)-(sds^2)/2, sdlog = sds)
 
     # Simulate Trawl Survey RPW (log-normal)
-    tw_rpw_pred <- simulate_rpw(obs_pars$surv_tw_q, naa, waa, tw_selex, zaa)
-    # tw_rpw_obs  <- rlnorm(1, meanlog = log(tw_rpw_pred), sdlog=obs_pars$tw_rpw_se)
+    tw_rpw_pred <- simulate_rpw(obs_pars$surv_tw$q, naa, waa, tw_selex, zaa)
+    sds <- sqrt(log(obs_pars$surv_tw$rpw_cv^2 + 1))
+    tw_rpw_obs  <- rlnorm(1, meanlog=log(tw_rpw_pred)-(sds^2)/2, sdlog = sds)
 
     # Simulate Domestic LL Survey Age Compositions (multinomial)
     ll_ac_pred <- simulate_ac(naa, ll_selex, age_err=age_error)
@@ -39,11 +42,11 @@ simulate_observations <- function(naa, waa, selex, faa, zaa, obs_pars, age_error
 
     # Simulate Trawl Fishery Age Compositions (mulitnomial)
     preds <- listN(ll_rpn_pred, ll_rpw_pred, tw_rpw_pred, ll_ac_pred, fxfish_caa_pred)
-    # obs   <- listN(ll_rpn_obs, ll_rpw_obs, tw_rpw_obs, ll_ac_obs, fxfish_caa_obs)
+    obs   <- listN(ll_rpn_obs, ll_rpw_obs, tw_rpw_obs)
 
     return(list(
         preds=preds,
-        obs=list()
+        obs=obs
     ))
 
 }
