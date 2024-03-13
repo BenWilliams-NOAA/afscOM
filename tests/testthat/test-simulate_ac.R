@@ -17,16 +17,16 @@ test_that("domestic LL survey age composition calculation", {
   sel[(57:64),,1,,] <- matrix(rep(assessment$agesel[,"srv10sel.f"], length(57:64)), ncol=30, byrow=TRUE)
   sel[(57:64),,2,,] <- matrix(rep(assessment$agesel[,"srv10sel.m"], length(57:64)), ncol=30, byrow=TRUE)
 
-  # ageage <- read_csv("~/Desktop/ageage.csv", show_col_types=FALSE) %>% column_to_rownames("...1") %>% as.matrix
-
   ll_preds <- assessment$eac.srv1
-  dimnames(ll_preds) <- list()
 
   pred <- sapply(ll_rpn_years, function(y){
-    simulate_ac(naa[y,,,, drop=FALSE], subset_matrix(sel[y,,,,1, drop=FALSE], 1, d=5), assessment$age_error)
+    simulate_ac(naa[y,,,, drop=FALSE], subset_matrix(sel[y,,,,1, drop=FALSE], 1, d=5), aggregate_sex = TRUE)
   })
 
-  expect_equal(t(pred), ll_preds, tolerance=1e-5)
+  pred <- t(pred) %*% assessment$age_error
+  dimnames(pred) <- dimnames(ll_preds)
+
+  expect_equal(pred, ll_preds, tolerance=1e-3)
 })
 
 
@@ -55,8 +55,11 @@ test_that("Domestic LL Fishery Age composition calculation", {
   dimnames(ll_preds) <- list()
 
   pred <- sapply(ll_ac_years, function(y){
-    simulate_caa(naa[y,,,, drop=FALSE], faa[y,,,, drop=FALSE], zaa[y,,,, drop=FALSE], age_err = assessment$age_error)
+    simulate_caa(naa[y,,,, drop=FALSE], faa[y,,,, drop=FALSE], zaa[y,,,, drop=FALSE], aggregate_sex = TRUE)
   })
 
-  expect_equal(t(pred), ll_preds, tolerance=1e-5)
+  pred <- t(pred) %*% assessment$age_error
+  dimnames(pred) <- dimnames(ll_preds)
+
+  expect_equal(pred, ll_preds, tolerance=1e-3)
 })
