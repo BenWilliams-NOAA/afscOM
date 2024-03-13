@@ -94,9 +94,9 @@ project <- function(removals, fleet.props, dem_params, prev_naa, recruitment, op
     surv_preds <- list()
     surv_obs <- list()
 
-    if(options$simulate_observations | !("simulate_observations" %in% names(options))){
+    if(!("simulate_observations" %in% names(options)) || options$simulate_observations){
         obs <- simulate_observations(
-            naa = naa_tmp, 
+            naa = prev_naa, 
             waa = dem_params$waa, 
             selex = dem_params$surv_sel, 
             faa = faa_tmp, 
