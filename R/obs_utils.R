@@ -124,8 +124,32 @@ simulate_lognormal_obs <- function(pred, cv){
     return(rlnorm(1, meanlog=log(pred)-(sds^2)/2, sdlog = sds))
 }
 
-    if(!all(is.na(age_err))){
-        eac <- eac %*% age_err
-    }
-    return(t(apply(eac, 1, \(x) x/sum(x))))
+#' Simulate observations from a multinomial distribution
+#' #'
+#' A wrapper function around `rmultinom` that generates a
+#' single vector of observations from a multinomial distribution
+#' where each of the `K` multinomial classes has probability
+#' `pred`. This function will automatically handle generating
+#' multinomial draws across multiple sexes. Aging error can be
+#' optionally applied. 
+#'
+#' @param pred the probability associated with each class
+#' @param samp_size multinomical sample size
+#' @param age_err whether to automaticaly apply ageing error
+#'
+#' @export simulate_multinomial_obs
+#'
+#' @example simulate_multinomial_obs(c(0.25, 0.50, 0.25), 100)
+#'
+simulate_multinomial_obs <- function(pred, samp_size, age_err=NA){
+    multi <- apply(pred, 3, function(x){
+                tmp <- rmultinom(1, samp_size, prob=x)
+                tmp <- (tmp[,1]/sum(tmp[,1]))
+                # Include aging error if available
+                if(!all(is.na(age_err))){
+                    tmp <- tmp %*% age_err
+                }
+                return(tmp)
+            })
+    return(multi)
 }

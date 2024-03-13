@@ -146,19 +146,19 @@ obs_pars <- list(
         q = 6.41538,
         rpn_cv = 0.20,
         rpw_cv = 0.10,
-        ac_samps = 100
+        ac_samps = 1000
     ),
     surv_tw = list(
         q = 0.8580,
         rpw_cv = 0.10,
-        ac_samps = 100
+        ac_samps = 1000
     ),
     fish_fx = list(
-        ac_samps = 100
+        ac_samps = 1000
     )
 )
 
-# model_options$obs_pars <- obs_pars
+model_options$obs_pars <- obs_pars
 
 #' 6. Setup empty array to collect derived quantities from the OM
 #' It is left to the user to decide what information to store, and
@@ -177,14 +177,16 @@ survey_preds <- list(
     ll_rpn = array(NA, dim=c(nyears, 1, 1, nregions)),
     ll_rpw = array(NA, dim=c(nyears, 1, 1, nregions)),
     tw_rpw = array(NA, dim=c(nyears, 1, 1, nregions)),
-    ll_ac = array(NA, dim=c(nyears, nages, 1, nregions)),
-    fxfish_caa = array(NA, dim=c(nyears, nages, 1, nregions))
+    ll_ac = array(NA, dim=c(nyears, nages, nsexes, nregions)),
+    fxfish_caa = array(NA, dim=c(nyears, nages, nsexes, nregions))
 )
 
 survey_obs <- list(
     ll_rpn = array(NA, dim=c(nyears, 1, 1, nregions)),
     ll_rpw = array(NA, dim=c(nyears, 1, 1, nregions)),
-    tw_rpw = array(NA, dim=c(nyears, 1, 1, nregions))
+    tw_rpw = array(NA, dim=c(nyears, 1, 1, nregions)),
+    ll_acs = array(NA, dim=c(nyears, nages, nsexes, nregions)),
+    fxfish_acs = array(NA, dim=c(nyears, nages, nsexes, nregions))
 )
 
 #' 7. Run the OM forward in time
@@ -233,6 +235,8 @@ for(y in 1:nyears){
     survey_obs$ll_rpn[y,,,] <- out_vars$surv_obs$ll_rpn
     survey_obs$ll_rpw[y,,,] <- out_vars$surv_obs$ll_rpw
     survey_obs$tw_rpw[y,,,] <- out_vars$surv_obs$tw_rpw
+    survey_obs$ll_acs[y,,,] <- out_vars$surv_obs$ll_ac_obs
+    survey_obs$fxfish_acs[y,,,] <- out_vars$surv_obs$fxfish_caa_obs
 
 }
 
