@@ -4,7 +4,7 @@
 #' (e.g. natural mortality, selectivity, retention, etc.), and recruitment,
 #' determine the numbers-at-age present in the population for the following year.
 #'
-#' @param TAC the total catch to be removed from the population
+#' @param removals population removals (either in catch or F units)
 #' @param fleet.props the proportion of the TAC allocated to each fleet
 #' @param dem_params list of demographic parameter matrices
 #' @param prev_naa the NAA in the previous timestep
