@@ -91,17 +91,21 @@ project <- function(removals, fleet.props, dem_params, prev_naa, recruitment, op
         naa_tmp[,,,r] <- pop_vars$naa
     }
     # state_vars <- simulate_movement(dem_params, state_vars)
-    obs <- simulate_observations(
-        naa = naa_tmp, 
-        waa = dem_params$waa, 
-        selex = dem_params$surv_sel, 
-        faa = faa_tmp, 
-        zaa = zaa_tmp, 
-        obs_pars = options$obs_pars
-    )
-    surv_preds <- obs$preds
-    surv_obs <- obs$obs
+    surv_preds <- list()
+    surv_obs <- list()
 
+    if(options$simulate_observations | !("simulate_observations" %in% names(options))){
+        obs <- simulate_observations(
+            naa = naa_tmp, 
+            waa = dem_params$waa, 
+            selex = dem_params$surv_sel, 
+            faa = faa_tmp, 
+            zaa = zaa_tmp, 
+            obs_pars = options$obs_pars
+        )
+        surv_preds <- obs$preds
+        surv_obs <- obs$obs
+    }
 
     return(listN(land_caa_tmp, disc_caa_tmp, caa_tmp, faa_tmp, naa_tmp, surv_preds, surv_obs))
 }
