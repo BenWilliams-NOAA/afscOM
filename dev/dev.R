@@ -15,6 +15,7 @@ use_package('rlang')
 use_package('bbmle')
 
 use_r('data')
+use_r('simulate')
 # create the package
 devtools::document()
 devtools::build()
