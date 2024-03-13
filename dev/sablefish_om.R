@@ -1,9 +1,9 @@
 rm(list=ls())
 
 # remotes::install_github('BenWilliams-NOAA/afscOM')
-library(afscOM)
-#library(devtools)
-#devtools::load_all()
+#library(afscOM)
+library(devtools)
+devtools::load_all()
 
 assessment <- dget("data/test.rdat")
 
@@ -127,14 +127,32 @@ recruitment <- c(recruitment, recruitment[64])
 #'  - fleet apportionment: the proportion of the TAC allocation to each
 #'                         fishing fleet in each region in the model
 #' The apportionment timeseries are placed in a `model_options` list.
+#' 
+#' Alternatively, a timeseries of fishing mortality rates, F, can be
+#' provided in lieu of TACs. In this case, the timeseries of F for each
+#' fleet, in each area, must be provided in an array of dimensions
+#' [nyears, 1, 1, nregions, nfleets]. 
+#' 
+#' Always specify the `removals_input` in the `model_options` list. 
+#' `removals_input` can be either "catch" or "F", depending on what
+#' data you are providing as removals input.
 
 TACs <- (assessment$t.series[,"Catch_HAL"]+assessment$t.series[,"Catch_TWL"])
-fixed_fleet_prop <- assessment$t.series[,"Catch_HAL"]/(assessment$t.series[,"Catch_HAL"]+assessment$t.series[,"Catch_TWL"])
-trawl_fleet_prop <- 1-fixed_fleet_prop
+# fixed_fleet_prop <- assessment$t.series[,"Catch_HAL"]/(assessment$t.series[,"Catch_HAL"]+assessment$t.series[,"Catch_TWL"])
+# trawl_fleet_prop <- 1-fixed_fleet_prop
+
+# model_options <- list(
+#     region_apportionment = list(1),
+#     fleet_apportionment = list(fixed_fleet_prop, trawl_fleet_prop),
+#     removals_input = "catch"
+# )
+
+
+f_timeseries <- assessment$t.series[,c("F_HAL", "F_TWL")] %>% as.matrix
+f_timeseries <- array(f_timeseries, dim=c(nyears, 1, 1, 1, 2), dimnames = list("time"=1:nyears, age="all",  sex="all", "region"="alaska", "fleet"=c("Fixed", "Trawl")))
 
 model_options <- list(
-    region_apportionment = list(1),
-    fleet_apportionment = list(fixed_fleet_prop, trawl_fleet_prop)
+    removals_input = "F"
 )
 
 #' 6. Define parameters for observation processes
@@ -204,14 +222,16 @@ survey_obs <- list(
 #' demographic matrices to ensure input data is of the correct
 #' dimensionality.
 
+set.seed(1007)
 for(y in 1:nyears){
 
     # Subset the demographic parameters list to only the current year
     # and DO NOT drop lost dimensions.
     dp.y <- subset_dem_params(dem_params = dem_params, y, d=1, drop=FALSE)
+    removals_input <- subset_matrix(f_timeseries, y, d=1, drop=FALSE)
     fleet.props <- unlist(lapply(model_options$fleet_apportionment, \(x) x[y]))
     out_vars <- project(
-        TAC=TACs[y],
+        removals = removals_input,
         dem_params=dp.y,
         prev_naa=naa[y,,,, drop = FALSE],
         recruitment=recruitment[y+1],
@@ -263,51 +283,104 @@ ssb_comp <- data.frame(
 library(ggplot2)
 
 p1 <- ggplot(ssb_comp, aes(x=year))+
-    geom_line(aes(y=assess_ssb), col="black", size=0.7)+
-    geom_line(aes(y=om_ssb), col="red", size=0.7)+
+    geom_line(aes(y=assess_ssb, color="Assessment"), size=0.7)+
+    geom_line(aes(y=om_ssb, color="OM"), size=0.7)+
     scale_y_continuous(limits=c(0, 300), breaks=seq(0, 300, 50))+
     scale_x_continuous(breaks=seq(1960, 2020, 10))+
     coord_cartesian(expand=0)+
+    scale_color_manual(name="Model", values=c("black", "red"))+
     labs(y="SSB", x="Year", title="Spawning Biomass Comparison")+
     theme_bw()
 
 p2 <- ggplot(ssb_comp, aes(x=year))+
-    geom_line(aes(y=assess_catch), col="black", size=0.7)+
-    geom_line(aes(y=om_catch), col="red", size=0.7)+
+    geom_line(aes(y=assess_catch, color="Assessment"), size=0.7)+
+    geom_line(aes(y=om_catch, color="OM"), size=0.7)+
     scale_y_continuous(limits=c(0, 60), breaks=seq(0, 60, 10))+
     scale_x_continuous(breaks=seq(1960, 2020, 10))+
     coord_cartesian(expand=0)+
+    scale_color_manual(name="Model", values=c("black", "red"))+
     labs(y="Catch", x="Year", title="Total Catch Comparison")+
     theme_bw()
 
 p3 <- ggplot(ssb_comp, aes(x=year))+
-    geom_line(aes(y=assess_bio), col="black", size=0.7)+
-    geom_line(aes(y=om_bio), col="red", size=0.7)+
+    geom_line(aes(y=assess_bio, color="Assessment"), size=0.7)+
+    geom_line(aes(y=om_bio, color="OM"), size=0.7)+
     scale_y_continuous(limits=c(0, 750), breaks=seq(0, 750, 100))+
     scale_x_continuous(breaks=seq(1960, 2020, 10))+
     coord_cartesian(expand=0)+
+    scale_color_manual(name="Model", values=c("black", "red"))+
     labs(y="Biomass", x="Year", title="Total Biomass Comparison")+
     theme_bw()
 
 p4 <- ggplot(ssb_comp, aes(x=year))+
-    geom_line(aes(y=assess_f), col="black", size=0.7)+
-    geom_line(aes(y=om_f), col="red", size=0.7)+
+    geom_line(aes(y=assess_f, color="Assessment"), size=0.7)+
+    geom_line(aes(y=om_f, color="OM"), size=0.7)+
     scale_y_continuous(limits=c(0, 0.2), breaks=seq(0, 0.2, 0.05))+
     scale_x_continuous(breaks=seq(1960, 2020, 10))+
     coord_cartesian(expand=0)+
+    scale_color_manual(name="Model", values=c("black", "red"))+
     labs(y="F", x="Year", title="Fishing Mortality Comparison")+
     theme_bw()
 
-library(gridExtra)
+library(patchwork)
 
-p <- gridExtra::grid.arrange(p1, p2, p3, p4, ncol=2, nrow=2)
-ggsave("~/Desktop/sablefish_assess_om.png", plot=p, width=8, height=8, units=c("in"))
+p <- (p1+p2)/(p3+p4)+plot_layout(guides="collect")
+p
+#ggsave("~/Desktop/sablefish_assess_om.png", plot=p, width=8, height=8, units=c("in"))
 
-(faa[,,1,1,1] - assessment$faa.fish1.f)/assessment$faa.fish1.f
-# caa[,,1,1,1] - assessment$
-y=30
-faa[y,,1,1,1] - assessment$faa.fish1.f[y,]
+ll_surv_data <- data.frame(assessment$obssrv3) %>% rownames_to_column("Year")
+ll_surv_data$Year <- as.numeric(ll_surv_data$Year)
+ll_surv_data$om_pred <- survey_preds$ll_rpn[31:64,,,]
+ll_surv_data$om <- survey_obs$ll_rpn[31:64,,,]
+ll_surv_data$om.lci <- ll_surv_data$om -1.96*0.20*ll_surv_data$om
+ll_surv_data$om.uci <- ll_surv_data$om +1.96*0.20*ll_surv_data$om
 
-100*(ssb - assessment$t.series[,"spbiom"])/assessment$t.series[,"spbiom"]
+ggplot(ll_surv_data, aes(x=Year, y=obssrv3, group=1))+
+    geom_pointrange(aes(ymin=obssrv3.lci, ymax=obssrv3.uci))+
+    geom_line(aes(y=predsrv3), color="black")+
+    geom_line(aes(y=om_pred), color="blue")+
+    geom_pointrange(aes(y=om, ymin=om.lci, ymax=om.uci), color="blue")+
+    scale_y_continuous(limits=c(0, 3000), breaks=seq(0, 3000, 250))+
+    scale_x_continuous(limits=c(1960, 2025), breaks=seq(1960, 2023, 10))+
+    coord_cartesian(expand=0)+
+    labs(y="LL Survey RPN", x="Year", title="LL Survey RPN Comparison")+
+    theme_bw()
 
- - assessment$t.series[,"fmort"]
+
+ll_surv_data <- data.frame(assessment$obssrv1) %>% rownames_to_column("Year")
+ll_surv_data$Year <- as.numeric(ll_surv_data$Year)
+ll_surv_data$om_pred <- survey_preds$ll_rpw[31:64,,,]
+ll_surv_data$om <- survey_obs$ll_rpw[31:64,,,]
+ll_surv_data$om.lci <- ll_surv_data$om -1.96*0.10*ll_surv_data$om
+ll_surv_data$om.uci <- ll_surv_data$om +1.96*0.10*ll_surv_data$om
+
+ggplot(ll_surv_data, aes(x=Year, y=obssrv1, group=1))+
+    geom_pointrange(aes(ymin=obssrv1.lci, ymax=obssrv1.uci))+
+    geom_line(aes(y=predsrv1), color="black")+
+    geom_line(aes(y=om_pred), color="blue")+
+    geom_pointrange(aes(y=om, ymin=om.lci, ymax=om.uci), color="blue")+
+    scale_y_continuous(limits=c(0, 5500), breaks=seq(0, 5500, 500))+
+    scale_x_continuous(limits=c(1960, 2025), breaks=seq(1960, 2023, 10))+
+    coord_cartesian(expand=0)+
+    labs(y="LL Survey RPW", x="Year", title="LL Survey RPW Comparison")+
+    theme_bw()
+
+tw_surv_data <- data.frame(assessment$obssrv7) %>% rownames_to_column("Year")
+tw_surv_data$Year <- as.numeric(tw_surv_data$Year)
+tw_surv_data$om_pred <- survey_preds$tw_rpw[tw_surv_data$Year-1960+1,,,]
+tw_surv_data$om <- survey_obs$tw_rpw[tw_surv_data$Year-1960+1,,,]
+tw_surv_data$om.lci <- tw_surv_data$om -1.96*0.10*tw_surv_data$om
+tw_surv_data$om.uci <- tw_surv_data$om +1.96*0.10*tw_surv_data$om
+
+ggplot(tw_surv_data, aes(x=Year, y=obssrv7, group=1))+
+    geom_pointrange(aes(ymin=obssrv7.lci, ymax=obssrv7.uci))+
+    geom_line(aes(y=predsrv7), color="black")+
+    geom_line(aes(y=om_pred), color="blue")+
+    geom_pointrange(aes(y=om, ymin=om.lci, ymax=om.uci), color="blue")+
+    scale_y_continuous(limits=c(0, 500), breaks=seq(0, 500, 100))+
+    scale_x_continuous(limits=c(1960, 2025), breaks=seq(1960, 2023, 10))+
+    coord_cartesian(expand=0)+
+    labs(y="TW Survey RPW", x="Year", title="TW Survey RPW Comparison")+
+    theme_bw()
+
+

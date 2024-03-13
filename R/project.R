@@ -4,7 +4,7 @@
 #' (e.g. natural mortality, selectivity, retention, etc.), and recruitment,
 #' determine the numbers-at-age present in the population for the following year.
 #'
-#' @param TAC the total catch to be removed from the population
+#' @param removals population removals (either in catch or F units)
 #' @param fleet.props the proportion of the TAC allocated to each fleet
 #' @param dem_params list of demographic parameter matrices
 #' @param prev_naa the NAA in the previous timestep
@@ -16,7 +16,7 @@
 #'
 #' @export
 #'
-project <- function(TAC, fleet.props, dem_params, prev_naa, recruitment, options=NA){
+project <- function(removals, fleet.props, dem_params, prev_naa, recruitment, options=NA){
 
     model_params <- get_model_dimensions(dem_params$sel)
 
@@ -59,11 +59,20 @@ project <- function(TAC, fleet.props, dem_params, prev_naa, recruitment, options
     }
 
     for(r in 1:model_params$nregions){
-        tac <- TAC*options$region_apportionment[r]
+        
+        if(options$removals_input == "catch"){
+            # Apportion catch-based removals based on provided
+            # regional apportionment scheme.
+            remove <- removals*options$region_apportionment[r]
+        }else{
+            # Removals were input as F, subset to correct dimensions
+            remove <- subset_matrix(removals, r=r, d=4, drop=FALSE)
+        }
+        
         dp.r <- subset_dem_params(dem_params=dem_params, r=r, d=4, drop=FALSE)
         prev_naa <- subset_dem_params(prev_naa, r=r, d=4, drop=FALSE)
         catch_vars <- simulate_catch(
-            TAC=tac, 
+            removals=remove, 
             dem_params=dp.r, 
             naa=prev_naa, 
             fleet.props = fleet.props, 
@@ -82,17 +91,21 @@ project <- function(TAC, fleet.props, dem_params, prev_naa, recruitment, options
         naa_tmp[,,,r] <- pop_vars$naa
     }
     # state_vars <- simulate_movement(dem_params, state_vars)
-    obs <- simulate_observations(
-        naa = naa_tmp, 
-        waa = dem_params$waa, 
-        selex = dem_params$surv_sel, 
-        faa = faa_tmp, 
-        zaa = zaa_tmp, 
-        obs_pars = options$obs_pars
-    )
-    surv_preds <- obs$preds
-    surv_obs <- obs$obs
+    surv_preds <- list()
+    surv_obs <- list()
 
+    if(options$simulate_observations | !("simulate_observations" %in% names(options))){
+        obs <- simulate_observations(
+            naa = naa_tmp, 
+            waa = dem_params$waa, 
+            selex = dem_params$surv_sel, 
+            faa = faa_tmp, 
+            zaa = zaa_tmp, 
+            obs_pars = options$obs_pars
+        )
+        surv_preds <- obs$preds
+        surv_obs <- obs$obs
+    }
 
     return(listN(land_caa_tmp, disc_caa_tmp, caa_tmp, faa_tmp, naa_tmp, surv_preds, surv_obs))
 }
