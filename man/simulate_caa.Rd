@@ -4,7 +4,7 @@
 \alias{simulate_caa}
 \title{Simulate catch-at-age composition data}
 \usage{
-simulate_caa(naa, faa, zaa, age_err = NA)
+simulate_caa(naa, faa, zaa, aggregate_sex = FALSE)
 }
 \arguments{
 \item{naa}{numbers-at-age vector}
@@ -13,7 +13,7 @@ simulate_caa(naa, faa, zaa, age_err = NA)
 
 \item{zaa}{total-mortality-at-age vector}
 
-\item{age_err}{aging-error matrix}
+\item{aggregate_sex}{whether to return sex-aggregated comps or not (default FALSE)}
 }
 \description{
 Generate an age composition vector based on

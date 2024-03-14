@@ -51,10 +51,11 @@ mort <- generate_param_matrix(M, dimension_names = dimension_names)
 prop_males <- 0.5
 sexrat <- generate_param_matrix(prop_males, dimension_names = dimension_names)
 
-retention <- 1.0
-ret <- generate_param_matrix(retention, dimension_names = dimension_names, include_fleet_dim = TRUE)
+retention <- c(rep(0,3), rep(1, 27))
+length(retention)
+ret <- generate_param_matrix(retention, dimension_names = dimension_names, include_fleet_dim = TRUE, by = 'age')
 
-discard <- 0.0
+discard <- 0.2
 dmr <- generate_param_matrix(discard, dimension_names = dimension_names, include_fleet_dim = TRUE)
 
 maturity <- assessment$growthmat[, "mage.block1"]
@@ -149,7 +150,12 @@ TACs <- (assessment$t.series[,"Catch_HAL"]+assessment$t.series[,"Catch_TWL"])
 
 
 f_timeseries <- assessment$t.series[,c("F_HAL", "F_TWL")] %>% as.matrix
-f_timeseries <- array(f_timeseries, dim=c(nyears, 1, 1, 1, 2), dimnames = list("time"=1:nyears, age="all",  sex="all", "region"="alaska", "fleet"=c("Fixed", "Trawl")))
+f_timeseries <- array(f_timeseries, dim=c(nyears, 1, 1, 1, 2), 
+                dimnames = list("time"=1:nyears, 
+                                age="all",  
+                                sex="all", 
+                                "region"="alaska", 
+                                "fleet"=c("Fixed", "Trawl")))
 
 model_options <- list(
     removals_input = "F"
@@ -283,7 +289,7 @@ ssb_comp <- data.frame(
 library(ggplot2)
 
 p1 <- ggplot(ssb_comp, aes(x=year))+
-    geom_line(aes(y=assess_ssb, color="Assessment"), size=0.7)+
+    geom_line(aes(y=assess_ssb, color="Assessment"))+
     geom_line(aes(y=om_ssb, color="OM"), size=0.7)+
     scale_y_continuous(limits=c(0, 300), breaks=seq(0, 300, 50))+
     scale_x_continuous(breaks=seq(1960, 2020, 10))+
@@ -293,7 +299,7 @@ p1 <- ggplot(ssb_comp, aes(x=year))+
     theme_bw()
 
 p2 <- ggplot(ssb_comp, aes(x=year))+
-    geom_line(aes(y=assess_catch, color="Assessment"), size=0.7)+
+    geom_line(aes(y=assess_catch, color="Assessment"))+
     geom_line(aes(y=om_catch, color="OM"), size=0.7)+
     scale_y_continuous(limits=c(0, 60), breaks=seq(0, 60, 10))+
     scale_x_continuous(breaks=seq(1960, 2020, 10))+
@@ -303,7 +309,7 @@ p2 <- ggplot(ssb_comp, aes(x=year))+
     theme_bw()
 
 p3 <- ggplot(ssb_comp, aes(x=year))+
-    geom_line(aes(y=assess_bio, color="Assessment"), size=0.7)+
+    geom_line(aes(y=assess_bio, color="Assessment"))+
     geom_line(aes(y=om_bio, color="OM"), size=0.7)+
     scale_y_continuous(limits=c(0, 750), breaks=seq(0, 750, 100))+
     scale_x_continuous(breaks=seq(1960, 2020, 10))+
@@ -313,7 +319,7 @@ p3 <- ggplot(ssb_comp, aes(x=year))+
     theme_bw()
 
 p4 <- ggplot(ssb_comp, aes(x=year))+
-    geom_line(aes(y=assess_f, color="Assessment"), size=0.7)+
+    geom_line(aes(y=assess_f, color="Assessment"))+
     geom_line(aes(y=om_f, color="OM"), size=0.7)+
     scale_y_continuous(limits=c(0, 0.2), breaks=seq(0, 0.2, 0.05))+
     scale_x_continuous(breaks=seq(1960, 2020, 10))+

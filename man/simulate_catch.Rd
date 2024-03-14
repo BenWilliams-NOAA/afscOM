@@ -4,10 +4,10 @@
 \alias{simulate_catch}
 \title{Simulate catches in one region during on year}
 \usage{
-simulate_catch(TAC, fleet.props, dem_params, naa, options)
+simulate_catch(removals, fleet.props, dem_params, naa, options)
 }
 \arguments{
-\item{TAC}{the total catch to be removed across all fleets}
+\item{removals}{desired removals either in catch or F units}
 
 \item{fleet.props}{the proportion of the TAC that should be taken by each fleet}
 

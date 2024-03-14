@@ -4,10 +4,10 @@
 \alias{project}
 \title{Project population forward by 1 year}
 \usage{
-project(TAC, fleet.props, dem_params, prev_naa, recruitment, options = NA)
+project(removals, fleet.props, dem_params, prev_naa, recruitment, options = NA)
 }
 \arguments{
-\item{TAC}{the total catch to be removed from the population}
+\item{removals}{population removals (either in catch or F units)}
 
 \item{fleet.props}{the proportion of the TAC allocated to each fleet}
 

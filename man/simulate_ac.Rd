@@ -4,14 +4,14 @@
 \alias{simulate_ac}
 \title{Simulate survey age composition data}
 \usage{
-simulate_ac(naa, sel, age_err = NA)
+simulate_ac(naa, sel, aggregate_sex = FALSE)
 }
 \arguments{
 \item{naa}{numbers-at-age vector}
 
 \item{sel}{selectivity-at-age vector}
 
-\item{age_err}{aging-error matrix}
+\item{aggregate_sex}{whether to return sex-aggregated comps or not (default FALSE}
 }
 \description{
 Generate an age composition vector based on
