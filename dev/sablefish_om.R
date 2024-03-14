@@ -34,15 +34,15 @@ dimension_names <- list(
 
 model_params <- set_model_params(nyears, nages, nsexes, nregions, nfleets)
 
-#' 2. Generate list with appropiate demographic parameters
+#' 2. Generate list with appropriate demographic parameters
 #' Required parameters are:
 #'  - waa: weight-at-age
 #'  - mat: maturity-at-age
-#'  - mort: natural-mortality-at-age
+#'  - mort: natural-mortality-at-age (instantaneous)
 #'  - sexrat: sex ratio
 #'  - sel: selectivity-at-age
 #'  - ret: retention-at-age
-#'  - dmr: discard-mortality-at-age
+#'  - dmr: discard-mortality-at-age (instantaneous)
 #'  - surv_sel: survey selectivity-at-age
 
 M <- 0.113179
@@ -52,11 +52,10 @@ mort[,,2,] <- mort[,,2,]-0.00819813
 prop_males <- 0.5
 sexrat <- generate_param_matrix(prop_males, dimension_names = dimension_names)
 
-retention <- c(rep(0,3), rep(1, 27))
-length(retention)
-ret <- generate_param_matrix(retention, dimension_names = dimension_names, include_fleet_dim = TRUE, by = 'age')
+retention <- 1.0
+ret <- generate_param_matrix(retention, dimension_names = dimension_names, include_fleet_dim = TRUE)
 
-discard <- 0.2
+discard <- 0.0
 dmr <- generate_param_matrix(discard, dimension_names = dimension_names, include_fleet_dim = TRUE)
 
 maturity <- assessment$growthmat[, "mage.block1"]

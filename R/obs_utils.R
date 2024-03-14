@@ -50,6 +50,10 @@ simulate_rpw <- function(q, naa, waa, sel, zaa){
 #'
 simulate_ac <- function(naa, sel, aggregate_sex=FALSE){
     eac <- naa*sel
+    if(all(eac == 0)){
+        return(array(0, dim=dim(naa), dimnames=dimnames(naa)))
+    }
+
     if(aggregate_sex){
         eac <- array(apply(eac, c(1, 2), sum), dim=c(1, dim(naa)[2], 1))
     }
@@ -84,6 +88,12 @@ simulate_ac <- function(naa, sel, aggregate_sex=FALSE){
 simulate_caa <- function(naa, faa, zaa, aggregate_sex=FALSE){
 
     caa <- naa*faa*(1-exp(-zaa))/zaa
+
+    # Short circuit, return 0s is no catch
+    if(all(caa == 0)){
+        return(array(0, dim=dim(caa), dimnames=dimnames(caa)))
+    }
+
     caa_prop <- array(apply(caa, c(3), \(x) x/rowSums(x)), dim=dim(naa), dimnames=dimnames(naa))
     eac <- caa_prop
     if(aggregate_sex){
@@ -142,7 +152,9 @@ simulate_lognormal_obs <- function(pred, cv){
 #' @example simulate_multinomial_obs(c(0.25, 0.50, 0.25), 100)
 #'
 simulate_multinomial_obs <- function(pred, samp_size, age_err=NA){
-    multi <- apply(pred, 3, function(x){
+    multi <- array(0, dim=dim(pred), dimnames=dimnames(pred))
+    if(!all(pred == 0)){
+        multi <- apply(pred, 3, function(x){
                 tmp <- rmultinom(1, samp_size, prob=x)
                 tmp <- (tmp[,1]/sum(tmp[,1]))
                 # Include aging error if available
@@ -151,5 +163,6 @@ simulate_multinomial_obs <- function(pred, samp_size, age_err=NA){
                 }
                 return(tmp)
             })
+    }
     return(multi)
 }
