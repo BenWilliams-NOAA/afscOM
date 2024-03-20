@@ -33,6 +33,7 @@ project <- function(removals, fleet.props, dem_params, prev_naa, recruitment, op
     disc_caa_tmp    = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions, model_params$nfleets))
     caa_tmp         = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions, model_params$nfleets))
     faa_tmp         = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions, model_params$nfleets))
+    F_f_tmp         = array(NA, dim=c(1,  model_params$nregions, model_params$nfleets))
     zaa_tmp         = array(0, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions))
     naa_tmp         = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions))
 
@@ -59,7 +60,7 @@ project <- function(removals, fleet.props, dem_params, prev_naa, recruitment, op
     }
 
     for(r in 1:model_params$nregions){
-        
+
         if(options$removals_input == "catch"){
             # Apportion catch-based removals based on provided
             # regional apportionment scheme.
@@ -68,14 +69,14 @@ project <- function(removals, fleet.props, dem_params, prev_naa, recruitment, op
             # Removals were input as F, subset to correct dimensions
             remove <- subset_matrix(removals, r=r, d=4, drop=FALSE)
         }
-        
+
         dp.r <- subset_dem_params(dem_params=dem_params, r=r, d=4, drop=FALSE)
         prev_naa <- subset_dem_params(prev_naa, r=r, d=4, drop=FALSE)
         catch_vars <- simulate_catch(
-            removals=remove, 
-            dem_params=dp.r, 
-            naa=prev_naa, 
-            fleet.props = fleet.props, 
+            removals=remove,
+            dem_params=dp.r,
+            naa=prev_naa,
+            fleet.props = fleet.props,
             options=options
         )
 
@@ -83,6 +84,7 @@ project <- function(removals, fleet.props, dem_params, prev_naa, recruitment, op
         disc_caa_tmp[,,,r,] <- catch_vars$disc_caa_tmp
         caa_tmp[,,,r,] <- catch_vars$caa_tmp
         faa_tmp[,,,r,] <- catch_vars$faa_tmp
+        F_f_tmp[,r,] <- catch_vars$F_f
 
         tot_faa <- array(apply(faa_tmp, c(2, 3), sum), dim=c(1, model_params$nages, model_params$nsexes, 1))
         zaa_tmp[,,,r] <- tot_faa+dem_params$mort
@@ -96,16 +98,16 @@ project <- function(removals, fleet.props, dem_params, prev_naa, recruitment, op
 
     if(!("simulate_observations" %in% names(options)) || options$simulate_observations){
         obs <- simulate_observations(
-            naa = prev_naa, 
-            waa = dem_params$waa, 
-            selex = dem_params$surv_sel, 
-            faa = faa_tmp, 
-            zaa = zaa_tmp, 
+            naa = prev_naa,
+            waa = dem_params$waa,
+            selex = dem_params$surv_sel,
+            faa = faa_tmp,
+            zaa = zaa_tmp,
             obs_pars = options$obs_pars
         )
         surv_preds <- obs$preds
         surv_obs <- obs$obs
     }
 
-    return(listN(land_caa_tmp, disc_caa_tmp, caa_tmp, faa_tmp, naa_tmp, surv_preds, surv_obs))
+    return(listN(land_caa_tmp, disc_caa_tmp, caa_tmp, F_f_tmp, faa_tmp, naa_tmp, surv_preds, surv_obs))
 }
