@@ -23,7 +23,7 @@ simulate_catch <- function(removals, fleet.props, dem_params, naa, options){
     disc_caa_tmp    <- array(NA, dim=c(1, model_params$nages, model_params$nsexes, 1, model_params$nfleets))
     caa_tmp         <- array(NA, dim=c(1, model_params$nages, model_params$nsexes, 1, model_params$nfleets))
     faa_tmp         <- array(NA, dim=c(1, model_params$nages, model_params$nsexes, 1, model_params$nfleets))
-    F_f_tmp         <- array(NA, dim=c(1, 1, model_params$nfleets))
+    F_f_tmp         <- array(NA, dim=c(1, 1, 1, 1, model_params$nfleets))
 
     for(f in 1:model_params$nfleets){
 
@@ -43,7 +43,7 @@ simulate_catch <- function(removals, fleet.props, dem_params, naa, options){
             remove <- removals*fleet.props[f]
 
             # Solve for F that removes catch
-            F_f_tmp[,,f] <- findF_bisection(
+            F_f <- findF_bisection(
                 f_guess = 0.05,
                 naa     = naa,
                 waa     = dp.f$waa,
@@ -55,18 +55,19 @@ simulate_catch <- function(removals, fleet.props, dem_params, naa, options){
             )
         }else{
             # Removals were input as F
-          F_f_tmp[,,f] <- removals[,,,,f]
+          F_f <- removals[,,,,f]
         }
 
         # ret_faa <- retained_F(F_f, dem_params$sel[,,,,f], dem_params$ret[,,,,f])
         # disc_faa <- discard_F(dem_params$dmr[,,,,f], dem_params$sel[,,,,f], dem_params$ret[,,,,f])
-        ret_faa <- retained_F(F_f_tmp[,,f], dp.f$sel, dp.f$ret)
+        ret_faa <- retained_F(F_f, dp.f$sel, dp.f$ret)
         disc_faa <- discard_F(dp.f$dmr, dp.f$sel, dp.f$ret)
         faa_tmp[,,,,f] <- ret_faa + disc_faa
 
         land_caa_tmp[,,,,f] <- catch_at_age(ret_faa, naa, dp.f$waa, dp.f$mort)
         disc_caa_tmp[,,,,f] <- catch_at_age(disc_faa, naa, dp.f$waa, dp.f$mort)
         caa_tmp[,,,,f] <- land_caa_tmp[,,,,f] + disc_caa_tmp[,,,,f]
+        F_f_tmp[,,,,f] <- F_f
     }
 
     return(listN(land_caa_tmp, disc_caa_tmp, caa_tmp, faa_tmp, F_f_tmp))

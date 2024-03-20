@@ -33,8 +33,8 @@ project <- function(removals, fleet.props, dem_params, prev_naa, recruitment, op
     disc_caa_tmp    = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions, model_params$nfleets))
     caa_tmp         = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions, model_params$nfleets))
     faa_tmp         = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions, model_params$nfleets))
-    F_f_tmp         = array(NA, dim=c(1,  model_params$nregions, model_params$nfleets))
-    zaa_tmp         = array(0, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions))
+    F_f_tmp         = array(NA, dim=c(1, 1, 1,  model_params$nregions, model_params$nfleets))
+    zaa_tmp         = array(0,  dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions))
     naa_tmp         = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions))
 
     # Do recruitment here because there isn't regional recruitment
@@ -84,7 +84,7 @@ project <- function(removals, fleet.props, dem_params, prev_naa, recruitment, op
         disc_caa_tmp[,,,r,] <- catch_vars$disc_caa_tmp
         caa_tmp[,,,r,] <- catch_vars$caa_tmp
         faa_tmp[,,,r,] <- catch_vars$faa_tmp
-        F_f_tmp[,r,] <- catch_vars$F_f
+        F_f_tmp[,,,r,] <- catch_vars$F_f
 
         tot_faa <- array(apply(faa_tmp, c(2, 3), sum), dim=c(1, model_params$nages, model_params$nsexes, 1))
         zaa_tmp[,,,r] <- tot_faa+dem_params$mort
