@@ -151,12 +151,14 @@ simulate_lognormal_obs <- function(pred, cv){
 #'
 #' @example simulate_multinomial_obs(c(0.25, 0.50, 0.25), 100)
 #'
-simulate_multinomial_obs <- function(pred, samp_size, age_err=NA){
+simulate_multinomial_obs <- function(pred, samp_size, as_integers=FALSE, age_err=NA){
     multi <- array(0, dim=dim(pred), dimnames=dimnames(pred))
     if(!all(pred == 0)){
         multi <- apply(pred, 3, function(x){
                 tmp <- rmultinom(1, samp_size, prob=x)
-                tmp <- (tmp[,1]/sum(tmp[,1]))
+                if(!as_integers){
+                    tmp <- (tmp[,1]/sum(tmp[,1]))
+                }
                 # Include aging error if available
                 if(!all(is.na(age_err))){
                     tmp <- tmp %*% age_err

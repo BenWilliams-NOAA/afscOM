@@ -170,12 +170,14 @@ obs_pars <- list(
         q = 6.41338,
         rpn_cv = 0.20,
         rpw_cv = 0.10,
-        ac_samps = 1000
+        ac_samps = 1000,
+        as_integers = TRUE
     ),
     surv_tw = list(
         q = 0.8580,
         rpw_cv = 0.10,
-        ac_samps = 1000
+        ac_samps = 1000,
+        as_integers = TRUE
     ),
     fish_fx = list(
         ac_samps = 1000
@@ -228,7 +230,7 @@ survey_obs <- list(
 #' demographic matrices to ensure input data is of the correct
 #' dimensionality.
 
-set.seed(1007)
+#set.seed(1007)
 for(y in 1:nyears){
 
     # Subset the demographic parameters list to only the current year
@@ -334,6 +336,7 @@ p <- (p1+p2)/(p3+p4)+plot_layout(guides="collect")
 p
 #ggsave("~/Desktop/sablefish_assess_om.png", plot=p, width=8, height=8, units=c("in"))
 
+
 ll_surv_data <- data.frame(assessment$obssrv3) %>% rownames_to_column("Year")
 ll_surv_data$Year <- as.numeric(ll_surv_data$Year)
 ll_surv_data$om_pred <- survey_preds$ll_rpn[31:64,,,]
@@ -341,17 +344,17 @@ ll_surv_data$om <- survey_obs$ll_rpn[31:64,,,]
 ll_surv_data$om.lci <- ll_surv_data$om -1.96*0.20*ll_surv_data$om
 ll_surv_data$om.uci <- ll_surv_data$om +1.96*0.20*ll_surv_data$om
 
-ggplot(ll_surv_data, aes(x=Year, y=obssrv3, group=1))+
-    geom_pointrange(aes(ymin=obssrv3.lci, ymax=obssrv3.uci))+
-    geom_line(aes(y=predsrv3), color="black")+
-    geom_line(aes(y=om_pred), color="blue")+
-    geom_pointrange(aes(y=om, ymin=om.lci, ymax=om.uci), color="blue")+
-    scale_y_continuous(limits=c(0, 3000), breaks=seq(0, 3000, 250))+
+p1 <- ggplot(ll_surv_data, aes(x=Year, y=obssrv3, group=1))+
+    geom_pointrange(aes(ymin=obssrv3.lci, ymax=obssrv3.uci, color="Assessment"))+
+    geom_line(aes(y=predsrv3, color="Assessment"))+
+    geom_line(aes(y=om_pred, color="OM"))+
+    geom_pointrange(aes(y=om, ymin=om.lci, ymax=om.uci, color="OM"))+
+    scale_y_continuous(limits=c(0, 3000), breaks=seq(0, 3000, 500))+
     scale_x_continuous(limits=c(1960, 2025), breaks=seq(1960, 2023, 10))+
+    scale_color_manual(name="Model", values=c("black", "blue"))+
     coord_cartesian(expand=0)+
     labs(y="LL Survey RPN", x="Year", title="LL Survey RPN Comparison")+
     theme_bw()
-
 
 ll_surv_data <- data.frame(assessment$obssrv1) %>% rownames_to_column("Year")
 ll_surv_data$Year <- as.numeric(ll_surv_data$Year)
@@ -360,13 +363,14 @@ ll_surv_data$om <- survey_obs$ll_rpw[31:64,,,]
 ll_surv_data$om.lci <- ll_surv_data$om -1.96*0.10*ll_surv_data$om
 ll_surv_data$om.uci <- ll_surv_data$om +1.96*0.10*ll_surv_data$om
 
-ggplot(ll_surv_data, aes(x=Year, y=obssrv1, group=1))+
-    geom_pointrange(aes(ymin=obssrv1.lci, ymax=obssrv1.uci))+
-    geom_line(aes(y=predsrv1), color="black")+
-    geom_line(aes(y=om_pred), color="blue")+
-    geom_pointrange(aes(y=om, ymin=om.lci, ymax=om.uci), color="blue")+
-    scale_y_continuous(limits=c(0, 5500), breaks=seq(0, 5500, 500))+
+p2 <- ggplot(ll_surv_data, aes(x=Year, y=obssrv1, group=1))+
+    geom_pointrange(aes(ymin=obssrv1.lci, ymax=obssrv1.uci, color="Assessment"))+
+    geom_line(aes(y=predsrv1, color="Assessment"))+
+    geom_line(aes(y=om_pred, color="OM"))+
+    geom_pointrange(aes(y=om, ymin=om.lci, ymax=om.uci, color="OM"))+
+    scale_y_continuous(limits=c(0, 5500), breaks=seq(0, 5500, 1000))+
     scale_x_continuous(limits=c(1960, 2025), breaks=seq(1960, 2023, 10))+
+    scale_color_manual(name="Model", values=c("black", "blue"))+
     coord_cartesian(expand=0)+
     labs(y="LL Survey RPW", x="Year", title="LL Survey RPW Comparison")+
     theme_bw()
@@ -378,13 +382,16 @@ tw_surv_data$om <- survey_obs$tw_rpw[tw_surv_data$Year-1960+1,,,]
 tw_surv_data$om.lci <- tw_surv_data$om -1.96*0.10*tw_surv_data$om
 tw_surv_data$om.uci <- tw_surv_data$om +1.96*0.10*tw_surv_data$om
 
-ggplot(tw_surv_data, aes(x=Year, y=obssrv7, group=1))+
-    geom_pointrange(aes(ymin=obssrv7.lci, ymax=obssrv7.uci))+
-    geom_line(aes(y=predsrv7), color="black")+
-    geom_line(aes(y=om_pred), color="blue")+
-    geom_pointrange(aes(y=om, ymin=om.lci, ymax=om.uci), color="blue")+
+p3 <- ggplot(tw_surv_data, aes(x=Year, y=obssrv7, group=1))+
+    geom_pointrange(aes(ymin=obssrv7.lci, ymax=obssrv7.uci, color="Assessment"))+
+    geom_line(aes(y=predsrv7, color="Assessment"))+
+    geom_line(aes(y=om_pred, color="OM"))+
+    geom_pointrange(aes(y=om, ymin=om.lci, ymax=om.uci, color="OM"))+
     scale_y_continuous(limits=c(0, 500), breaks=seq(0, 500, 100))+
     scale_x_continuous(limits=c(1960, 2025), breaks=seq(1960, 2023, 10))+
+    scale_color_manual(name="Model", values=c("black", "blue"))+
     coord_cartesian(expand=0)+
     labs(y="TW Survey RPW", x="Year", title="TW Survey RPW Comparison")+
     theme_bw()
+
+p1/p2/p3 + plot_layout(guides="collect")

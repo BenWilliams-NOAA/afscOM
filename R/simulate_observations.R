@@ -33,7 +33,7 @@ simulate_observations <- function(naa, waa, selex, faa, zaa, obs_pars, age_error
     # ----------------------------------------------------------
     ll_ac_pred <- simulate_ac(naa, ll_selex, aggregate_sex = FALSE)
     # Perform multinomial draw for each sex
-    ll_ac_obs <- simulate_multinomial_obs(ll_ac_pred, obs_pars$surv_ll$ac_samps)
+    ll_ac_obs <- simulate_multinomial_obs(ll_ac_pred, obs_pars$surv_ll$ac_samps, as_integers = obs_pars$surv_ll$as_integers)
     ll_ac_obs <- array(ll_ac_obs, dim=c(model_params$nyears, model_params$nages, length(ll_ac_obs)/model_params$nages, model_params$nregions), dimnames=dimnames(naa))
 
     # Simulate Trawl Survey Age Compositions (multinomial)
@@ -42,7 +42,7 @@ simulate_observations <- function(naa, waa, selex, faa, zaa, obs_pars, age_error
     # Simulate Domestic LL Fishery Age Compositions (multinomial)
     # -----------------------------------------------------------
     fxfish_caa_pred <- simulate_caa(naa, fxfish_faa, zaa)
-    fxfish_caa_obs  <- simulate_multinomial_obs(fxfish_caa_pred, obs_pars$fish_fx$ac_samps, age_err=NA)
+    fxfish_caa_obs  <- simulate_multinomial_obs(fxfish_caa_pred, obs_pars$fish_fx$ac_samps, as_integers = obs_pars$surv_ll$as_integers, age_err=NA)
     fxfish_caa_obs <- array(fxfish_caa_obs, dim=c(model_params$nyears, model_params$nages, length(fxfish_caa_obs)/model_params$nages, model_params$nregions), dimnames=dimnames(naa))
 
     # Simulate Trawl Fishery Age Compositions (mulitnomial)
