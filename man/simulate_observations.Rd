@@ -7,8 +7,21 @@
 simulate_observations(naa, waa, selex, faa, zaa, obs_pars, age_error = NA)
 }
 \arguments{
-\item{$$}{}
+\item{naa}{numbers-at-age array subset to 1 year (dim [1, nages, nsexes, nregions])}
+
+\item{waa}{weight-at-age array subset to 1 year (dim [1, nages, nsexes, nregions])}
+
+\item{selex}{selectivity-at-age array subset to 1 year (dim [1, nages, nsexes, nregions, nfleets])}
+
+\item{faa}{fishing mortality-at-age array subset to 1 year (dim [1, nages, nsexes, nregions, nfleets])}
+
+\item{zaa}{total mortality-at-age array subset to 1 year (dim [1, nages, nsexes, nregions])}
+
+\item{obs_pars}{list of observation process parameters}
+
+\item{age_error}{an optional ageing error matrix}
 }
 \description{
-Description
+Simulate observations of a population from common Alaska surveys and 
+from landed catch data.
 }
