@@ -14,7 +14,7 @@
 #' @return list of derived quantities included landed catch-at-age,
 #' discarded catch-at-age, total catch-at-age, F-at-age, and numbers-at-age.
 #'
-#' @export
+#' @export project
 #'
 project <- function(removals, fleet.props, dem_params, prev_naa, recruitment, options=NA){
 

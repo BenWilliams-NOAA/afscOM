@@ -1,10 +1,17 @@
 #' Simulate Observations from Fisheries and Surveys
 #'
-#' Description
+#' Simulate observations of a population from common Alaska surveys and 
+#' from landed catch data.
 #'
-#' @param $$
+#' @param naa numbers-at-age array subset to 1 year (dim [1, nages, nsexes, nregions])
+#' @param waa weight-at-age array subset to 1 year (dim [1, nages, nsexes, nregions])
+#' @param selex selectivity-at-age array subset to 1 year (dim [1, nages, nsexes, nregions, nfleets])
+#' @param faa fishing mortality-at-age array subset to 1 year (dim [1, nages, nsexes, nregions, nfleets])
+#' @param zaa total mortality-at-age array subset to 1 year (dim [1, nages, nsexes, nregions])
+#' @param obs_pars list of observation process parameters
+#' @param age_error an optional ageing error matrix
 #'
-#' @export
+#' @export simulate_observations
 #'
 simulate_observations <- function(naa, waa, selex, faa, zaa, obs_pars, age_error=NA){
 

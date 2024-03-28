@@ -59,6 +59,30 @@ find_F <- function(f_guess, naa, waa, mort, selex, ret=NA, dmr=NA, prov_catch){
     return(exp(c_to_f@coef))
 }
 
+#' Find F given a desired level of catch
+#'
+#' Uses the Baranov catch equation to compute the instantenous
+#' fishing mortality rate (F) that would yield a specific level of
+#' catch using bisection
+#'
+#' @param f_guess initial guess for F
+#' @param naa numbers-at-age
+#' @param waa weight-at-age
+#' @param mort natural-mortality-at-age
+#' @param selex selectivity-at-age
+#' @param ret retention-at-age (optional)
+#' @param dmr instantaneous discard mortality rate (optional)
+#' @param prov_catch desired catch level
+#'
+#' @return the fishing mortality rate that yields the desired catch level
+#'
+#' @export findF_bisection
+#'
+#' @examples
+#' \dontrun{
+#' findF_bisection(f_guess=0.1, naa=naa, waa=waa, mort=mort, selex=selex, prov_catch=12)
+#' }
+#'
 findF_bisection <- function(f_guess, naa, waa, mort, selex, ret=NA, dmr=NA, prov_catch){
 
     range <- vector(length=2)
