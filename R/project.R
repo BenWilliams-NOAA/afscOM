@@ -89,7 +89,7 @@ project <- function(removals, fleet.props, dem_params, prev_naa, recruitment, op
         tot_faa <- array(apply(faa_tmp, c(2, 3), sum), dim=c(1, model_params$nages, model_params$nsexes, 1))
         zaa_tmp[,,,r] <- tot_faa+dem_params$mort
 
-        pop_vars <- simulate_population(prev.naa=prev_naa, faa=catch_vars$faa_tmp, recruitment=rec, dem_params=dp.r, options=options)
+        pop_vars <- simulate_population(prev_naa=prev_naa, faa=catch_vars$faa_tmp, recruitment=rec, dem_params=dp.r, options=options)
         naa_tmp[,,,r] <- pop_vars$naa
     }
     # state_vars <- simulate_movement(dem_params, state_vars)
