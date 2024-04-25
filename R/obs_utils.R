@@ -151,10 +151,16 @@ simulate_lognormal_obs <- function(pred, cv){
 #'
 #' @example simulate_multinomial_obs(c(0.25, 0.50, 0.25), 100)
 #'
-simulate_multinomial_obs <- function(pred, samp_size, as_integers=FALSE, age_err=NA){
-    multi <- array(0, dim=dim(pred), dimnames=dimnames(pred))
-    if(!all(pred == 0)){
-        multi <- apply(pred, 3, function(x){
+simulate_multinomial_obs <- function(pred, samp_size, aggregate_sex=FALSE, as_integers=FALSE, age_err=NA){
+
+    p <- pred
+    if(!all(p == 0)){
+
+        if(!aggregate_sex){
+            p <- array(p, dim=c(1, 2*dim(p)[2], 1, dim(p)[4]))
+        }
+
+        multi <- apply(p, 3, function(x){
                 tmp <- rmultinom(1, samp_size, prob=x)
                 if(!as_integers){
                     tmp <- (tmp[,1]/sum(tmp[,1]))
@@ -165,6 +171,11 @@ simulate_multinomial_obs <- function(pred, samp_size, as_integers=FALSE, age_err
                 }
                 return(tmp)
             })
+
+        if(!aggregate_sex){
+            multi <- matrix(multi, ncol=2)
+        }
+
     }
     return(multi)
 }
