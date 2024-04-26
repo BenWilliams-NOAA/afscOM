@@ -152,7 +152,7 @@ simulate_lognormal_obs <- function(pred, cv){
 #' @example simulate_multinomial_obs(c(0.25, 0.50, 0.25), 100)
 #'
 simulate_multinomial_obs <- function(pred, samp_size, aggregate_sex=FALSE, as_integers=FALSE, age_err=NA){
-
+    multi <- array(0, dim=dim(pred), dimnames=dimnames(pred))
     p <- pred
     if(!all(p == 0)){
 

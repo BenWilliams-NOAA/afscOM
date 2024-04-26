@@ -45,16 +45,26 @@ simulate_observations <- function(naa, waa, selex, faa, zaa, obs_pars, age_error
 
     # Simulate Trawl Survey Age Compositions (multinomial)
     # ----------------------------------------------------
+    tw_ac_pred <- simulate_ac(naa, tw_selex, aggregate_sex = FALSE)
+    tw_ac_obs <- simulate_multinomial_obs(tw_ac_pred, obs_pars$surv_tw$ac_samps, as_integers = obs_pars$surv_tw$as_integers)
+    tw_ac_obs <- array(tw_ac_obs, dim=c(model_params$nyears, model_params$nages, length(tw_ac_obs)/model_params$nages, model_params$nregions), dimnames=dimnames(naa))
+
 
     # Simulate Domestic LL Fishery Age Compositions (multinomial)
     # -----------------------------------------------------------
     fxfish_caa_pred <- simulate_caa(naa, fxfish_faa, zaa)
-    fxfish_caa_obs  <- simulate_multinomial_obs(fxfish_caa_pred, obs_pars$fish_fx$ac_samps, as_integers = obs_pars$surv_ll$as_integers, age_err=NA)
-    fxfish_caa_obs <- array(fxfish_caa_obs, dim=c(model_params$nyears, model_params$nages, length(fxfish_caa_obs)/model_params$nages, model_params$nregions), dimnames=dimnames(naa))
+    fxfish_caa_obs  <- simulate_multinomial_obs(fxfish_caa_pred, obs_pars$fish_fx$ac_samps, as_integers = obs_pars$fish_fx$as_integers, age_err=NA)
+    fxfish_caa_obs  <- array(fxfish_caa_obs, dim=c(model_params$nyears, model_params$nages, length(fxfish_caa_obs)/model_params$nages, model_params$nregions), dimnames=dimnames(naa))
+
+    # Simulate Domestic Trawl Fishery Age Compositions (multinomial)
+    # -----------------------------------------------------------
+    twfish_caa_pred <- simulate_caa(naa, twfish_faa, zaa)
+    twfish_caa_obs  <- simulate_multinomial_obs(twfish_caa_pred, obs_pars$fish_tw$ac_samps, as_integers = obs_pars$fish_tw$as_integers, age_err=NA)
+    twfish_caa_obs  <- array(twfish_caa_obs, dim=c(model_params$nyears, model_params$nages, length(twfish_caa_obs)/model_params$nages, model_params$nregions), dimnames=dimnames(naa))
 
     # Simulate Trawl Fishery Age Compositions (mulitnomial)
-    preds <- listN(ll_rpn_pred, ll_rpw_pred, tw_rpw_pred, ll_ac_pred, fxfish_caa_pred)
-    obs   <- listN(ll_rpn_obs, ll_rpw_obs, tw_rpw_obs, ll_ac_obs, fxfish_caa_obs)
+    preds <- listN(ll_rpn_pred, ll_rpw_pred, tw_rpw_pred, ll_ac_pred, tw_ac_pred, fxfish_caa_pred, twfish_caa_pred)
+    obs   <- listN(ll_rpn_obs, ll_rpw_obs, tw_rpw_obs, ll_ac_obs, tw_ac_obs, fxfish_caa_obs, twfish_caa_obs)
 
     return(list(
         preds=preds,

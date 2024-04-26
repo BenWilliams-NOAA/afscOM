@@ -180,7 +180,12 @@ obs_pars <- list(
         as_integers = TRUE
     ),
     fish_fx = list(
-        ac_samps = 1000
+        ac_samps = 1000,
+        as_integers = TRUE
+    ),
+    fish_tw = list(
+        ac_samps = 1000,
+        as_integers = TRUE
     )
 )
 
