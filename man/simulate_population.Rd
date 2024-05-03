@@ -24,3 +24,8 @@ Project an Age Structure Population Forward by 1 year
 #'
 Description
 }
+\examples{
+\dontrun{
+simulate_population(prev_naa, faa, recruitment, dem_params, options)}
+
+}

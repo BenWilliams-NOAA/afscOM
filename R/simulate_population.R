@@ -9,8 +9,9 @@
 #' @param options model options list
 #'
 #' @export simulate_population
-#'
-#' @example
+#' @examples
+#'\dontrun{
+#'simulate_population(prev_naa, faa, recruitment, dem_params, options)}
 #'
 simulate_population <- function(prev_naa, faa, recruitment, dem_params, options){
 

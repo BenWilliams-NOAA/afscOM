@@ -57,14 +57,14 @@ simulate_ac <- function(naa, sel, aggregate_sex=FALSE){
     if(aggregate_sex){
         eac <- array(apply(eac, c(1, 2), sum), dim=c(1, dim(naa)[2], 1))
     }
-    
+
     # if(!all(is.na(age_err))){
     #     eac <- eac %*% age_err
     # }
 
-    if(aggregate_sex){ 
-        out_dims <- c(1, dim(naa)[2], 1) 
-    }else{ 
+    if(aggregate_sex){
+        out_dims <- c(1, dim(naa)[2], 1)
+    }else{
         out_dims <- dim(naa)
     }
     std_comp <- array(apply(eac, c(3), \(x) x/sum(x)), dim=out_dims)
@@ -104,9 +104,9 @@ simulate_caa <- function(naa, faa, zaa, aggregate_sex=FALSE){
     #     eac <- eac %*% age_err
     # }
 
-    if(aggregate_sex){ 
-        out_dims <- c(1, dim(naa)[2], 1) 
-    }else{ 
+    if(aggregate_sex){
+        out_dims <- c(1, dim(naa)[2], 1)
+    }else{
         out_dims <- dim(naa)
     }
     std_comp <- array(apply(eac, c(3), \(x) x/sum(x)), dim=out_dims)
@@ -118,7 +118,7 @@ simulate_caa <- function(naa, faa, zaa, aggregate_sex=FALSE){
 #' #'
 #' A wrapper function around `rlnorm` that generates a
 #' single random observation from a lognormal distribution
-#' centered on a predicted value (`pred`) and given a 
+#' centered on a predicted value (`pred`) and given a
 #' level of error (`cv`).
 #'
 #' @param pred the predicted value of an observation
@@ -127,7 +127,10 @@ simulate_caa <- function(naa, faa, zaa, aggregate_sex=FALSE){
 #'
 #' @export simulate_lognormal_obs
 #'
-#' @example simulate_lognormal_obs(10, 0.20)
+#' @examples
+#' \dontrun{
+#' simulate_lognormal_obs(10, 0.20)
+#' }
 #'
 simulate_lognormal_obs <- function(pred, cv){
     sds <- sqrt(log(cv^2 + 1))
@@ -141,7 +144,7 @@ simulate_lognormal_obs <- function(pred, cv){
 #' where each of the `K` multinomial classes has probability
 #' `pred`. This function will automatically handle generating
 #' multinomial draws across multiple sexes. Aging error can be
-#' optionally applied. 
+#' optionally applied.
 #'
 #' @param pred the probability associated with each class
 #' @param samp_size multinomical sample size
@@ -149,7 +152,10 @@ simulate_lognormal_obs <- function(pred, cv){
 #'
 #' @export simulate_multinomial_obs
 #'
-#' @example simulate_multinomial_obs(c(0.25, 0.50, 0.25), 100)
+#' @examples
+#' \dontrun{
+#' simulate_multinomial_obs(c(0.25, 0.50, 0.25), 100)
+#' }
 #'
 simulate_multinomial_obs <- function(pred, samp_size, aggregate_sex=FALSE, as_integers=FALSE, age_err=NA){
     multi <- array(0, dim=dim(pred), dimnames=dimnames(pred))

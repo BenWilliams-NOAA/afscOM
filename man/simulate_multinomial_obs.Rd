@@ -11,7 +11,13 @@ where each of the `K` multinomial classes has probability
 multinomial draws across multiple sexes. Aging error can be
 optionally applied.}
 \usage{
-simulate_multinomial_obs(pred, samp_size, as_integers = FALSE, age_err = NA)
+simulate_multinomial_obs(
+  pred,
+  samp_size,
+  aggregate_sex = FALSE,
+  as_integers = FALSE,
+  age_err = NA
+)
 }
 \arguments{
 \item{pred}{the probability associated with each class}
@@ -29,4 +35,10 @@ where each of the `K` multinomial classes has probability
 `pred`. This function will automatically handle generating
 multinomial draws across multiple sexes. Aging error can be
 optionally applied.
+}
+\examples{
+\dontrun{
+simulate_multinomial_obs(c(0.25, 0.50, 0.25), 100)
+}
+
 }

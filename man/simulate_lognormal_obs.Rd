@@ -6,7 +6,7 @@
 #'
 A wrapper function around `rlnorm` that generates a
 single random observation from a lognormal distribution
-centered on a predicted value (`pred`) and given a 
+centered on a predicted value (`pred`) and given a
 level of error (`cv`).}
 \usage{
 simulate_lognormal_obs(pred, cv)
@@ -22,6 +22,12 @@ Simulate observations from a lognormal distribution
 #'
 A wrapper function around `rlnorm` that generates a
 single random observation from a lognormal distribution
-centered on a predicted value (`pred`) and given a 
+centered on a predicted value (`pred`) and given a
 level of error (`cv`).
+}
+\examples{
+\dontrun{
+simulate_lognormal_obs(10, 0.20)
+}
+
 }
