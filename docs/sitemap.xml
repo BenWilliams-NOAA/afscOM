@@ -34,6 +34,9 @@
     <loc>/reference/extend_years.html</loc>
   </url>
   <url>
+    <loc>/reference/findF_bisection.html</loc>
+  </url>
+  <url>
     <loc>/reference/find_F.html</loc>
   </url>
   <url>
@@ -61,7 +64,31 @@
     <loc>/reference/retained_F.html</loc>
   </url>
   <url>
+    <loc>/reference/simulate_ac.html</loc>
+  </url>
+  <url>
+    <loc>/reference/simulate_caa.html</loc>
+  </url>
+  <url>
     <loc>/reference/simulate_catch.html</loc>
+  </url>
+  <url>
+    <loc>/reference/simulate_lognormal_obs.html</loc>
+  </url>
+  <url>
+    <loc>/reference/simulate_multinomial_obs.html</loc>
+  </url>
+  <url>
+    <loc>/reference/simulate_observations.html</loc>
+  </url>
+  <url>
+    <loc>/reference/simulate_population.html</loc>
+  </url>
+  <url>
+    <loc>/reference/simulate_rpn.html</loc>
+  </url>
+  <url>
+    <loc>/reference/simulate_rpw.html</loc>
   </url>
   <url>
     <loc>/reference/subset_dem_params.html</loc>
