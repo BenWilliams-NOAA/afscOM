@@ -15,39 +15,69 @@
 #'
 simulate_observations <- function(naa, waa, selex, faa, zaa, obs_pars, age_error=NA){
 
-    ll_selex <- subset_matrix(selex, r=1, d=5, drop=TRUE)
-    tw_selex <- subset_matrix(selex, r=2, d=5, drop=TRUE)
+    # ll_selex <- subset_matrix(selex, r=1, d=5, drop=TRUE)
+    # tw_selex <- subset_matrix(selex, r=2, d=5, drop=TRUE)
 
     fxfish_faa <- subset_matrix(faa, r=1, d=5, drop=TRUE)
     twfish_faa <- subset_matrix(faa, r=2, d=5, drop=TRUE)
 
     model_params <- get_model_dimensions(selex)
 
-    # Simulate Domestic LL Survey RPN (log-normal)
-    # --------------------------------------------
-    ll_rpn_pred <- simulate_rpn(obs_pars$surv_ll$q, naa, ll_selex, zaa)
-    ll_rpn_obs  <- simulate_lognormal_obs(ll_rpn_pred, obs_pars$surv_ll$rpn_cv)
+    rpn_preds <- array(NA, c(2, 1))
+    rpn_obs <- array(NA, c(2, 1))
+    rpw_preds <- array(NA, c(2, 1))
+    rpw_obs <- array(NA, c(2, 1))
+    ac_preds <- array(NA, c(1, model_params$nages, ifelse(any(obs_pars$as_agg_sex), 1, 2), model_params$nfleets))
+    ac_obs <- array(NA, c(1, model_params$nages, ifelse(any(obs_pars$as_agg_sex), 1, 2), model_params$nfleets))
 
-    ll_rpw_pred <- simulate_rpw(obs_pars$surv_ll$q, naa, waa, ll_selex, zaa)
-    ll_rpw_obs  <- simulate_lognormal_obs(ll_rpw_pred, obs_pars$surv_ll$rpw_cv)
+    for(s in 1:model_params$nfleets){
+        surv_sel <- subset_matrix(selex, r=s, d=5, drop=TRUE)
+        if(obs_pars$rpn[s]){
+            rpn_preds[s,1] <- simulate_rpn(obs_pars$q[s], naa, surv_sel, zaa)
+            rpn_obs[s,1] <-  simulate_lognormal_obs(rpn_preds[s,1], obs_pars$rpn_cv[s])
+            
+        }
 
-    # Simulate Trawl Survey RPW (log-normal)
-    # --------------------------------------
-    tw_rpw_pred <- simulate_rpw(obs_pars$surv_tw$q, naa, waa, tw_selex, zaa)
-    tw_rpw_obs  <- simulate_lognormal_obs(tw_rpw_pred, obs_pars$surv_tw$rpw_cv)
+        if(obs_pars$rpw[s]){
+            rpw_preds[s,1] <- simulate_rpw(obs_pars$q[s], naa, waa, surv_sel, zaa)
+            rpw_obs[s,1]  <- simulate_lognormal_obs(rpw_preds[s,1], obs_pars$rpn_cv[s])
+        }
 
-    # Simulate Domestic LL Survey Age Compositions (multinomial)
-    # ----------------------------------------------------------
-    ll_ac_pred <- simulate_ac(naa, ll_selex, aggregate_sex = FALSE)
-    # Perform multinomial draw for each sex
-    ll_ac_obs <- simulate_multinomial_obs(ll_ac_pred, obs_pars$surv_ll$ac_samps, as_integers = obs_pars$surv_ll$as_integers)
-    ll_ac_obs <- array(ll_ac_obs, dim=c(model_params$nyears, model_params$nages, length(ll_ac_obs)/model_params$nages, model_params$nregions), dimnames=dimnames(naa))
+        if(obs_pars$acs[s]){
+            ac_preds[,,,s] <- simulate_ac(naa, surv_sel, aggregate_sex = obs_pars$acs_agg_sex[s])
+            # Perform multinomial draw for each sex
+            ac_obs_tmp <- simulate_multinomial_obs(ac_preds[,,,s, drop=FALSE], obs_pars$ac_samps[s], aggregate_sex = obs_pars$acs_agg_sex[s], as_integers = obs_pars$ac_as_integers[s])
+            ac_obs[,,,s] <- array(ac_obs_tmp, dim=c(model_params$nyears, model_params$nages, length(ac_obs_tmp)/model_params$nages, model_params$nregions), dimnames=dimnames(naa))
+        }
 
-    # Simulate Trawl Survey Age Compositions (multinomial)
-    # ----------------------------------------------------
-    tw_ac_pred <- simulate_ac(naa, tw_selex, aggregate_sex = FALSE)
-    tw_ac_obs <- simulate_multinomial_obs(tw_ac_pred, obs_pars$surv_tw$ac_samps, as_integers = obs_pars$surv_tw$as_integers)
-    tw_ac_obs <- array(tw_ac_obs, dim=c(model_params$nyears, model_params$nages, length(tw_ac_obs)/model_params$nages, model_params$nregions), dimnames=dimnames(naa))
+    }
+
+
+    # # Simulate Domestic LL Survey RPN (log-normal)
+    # # --------------------------------------------
+    # ll_rpn_pred <- simulate_rpn(obs_pars$surv_ll$q, naa, ll_selex, zaa)
+    # ll_rpn_obs  <- simulate_lognormal_obs(ll_rpn_pred, obs_pars$surv_ll$rpn_cv)
+
+    # ll_rpw_pred <- simulate_rpw(obs_pars$surv_ll$q, naa, waa, ll_selex, zaa)
+    # ll_rpw_obs  <- simulate_lognormal_obs(ll_rpw_pred, obs_pars$surv_ll$rpw_cv)
+
+    # # Simulate Trawl Survey RPW (log-normal)
+    # # --------------------------------------
+    # tw_rpw_pred <- simulate_rpw(obs_pars$surv_tw$q, naa, waa, tw_selex, zaa)
+    # tw_rpw_obs  <- simulate_lognormal_obs(tw_rpw_pred, obs_pars$surv_tw$rpw_cv)
+
+    # # Simulate Domestic LL Survey Age Compositions (multinomial)
+    # # ----------------------------------------------------------
+    # ll_ac_pred <- simulate_ac(naa, ll_selex, aggregate_sex = FALSE)
+    # # Perform multinomial draw for each sex
+    # ll_ac_obs <- simulate_multinomial_obs(ll_ac_pred, obs_pars$surv_ll$ac_samps, as_integers = obs_pars$surv_ll$as_integers)
+    # ll_ac_obs <- array(ll_ac_obs, dim=c(model_params$nyears, model_params$nages, length(ll_ac_obs)/model_params$nages, model_params$nregions), dimnames=dimnames(naa))
+
+    # # Simulate Trawl Survey Age Compositions (multinomial)
+    # # ----------------------------------------------------
+    # tw_ac_pred <- simulate_ac(naa, tw_selex, aggregate_sex = FALSE)
+    # tw_ac_obs <- simulate_multinomial_obs(tw_ac_pred, obs_pars$surv_tw$ac_samps, as_integers = obs_pars$surv_tw$as_integers)
+    # tw_ac_obs <- array(tw_ac_obs, dim=c(model_params$nyears, model_params$nages, length(tw_ac_obs)/model_params$nages, model_params$nregions), dimnames=dimnames(naa))
 
 
     # Simulate Domestic LL Fishery Age Compositions (multinomial)
@@ -63,8 +93,8 @@ simulate_observations <- function(naa, waa, selex, faa, zaa, obs_pars, age_error
     twfish_caa_obs  <- array(twfish_caa_obs, dim=c(model_params$nyears, model_params$nages, length(twfish_caa_obs)/model_params$nages, model_params$nregions), dimnames=dimnames(naa))
 
     # Simulate Trawl Fishery Age Compositions (mulitnomial)
-    preds <- listN(ll_rpn_pred, ll_rpw_pred, tw_rpw_pred, ll_ac_pred, tw_ac_pred, fxfish_caa_pred, twfish_caa_pred)
-    obs   <- listN(ll_rpn_obs, ll_rpw_obs, tw_rpw_obs, ll_ac_obs, tw_ac_obs, fxfish_caa_obs, twfish_caa_obs)
+    preds <- listN(rpn_preds, rpw_preds, ac_preds, fxfish_caa_pred, twfish_caa_pred)
+    obs   <- listN(rpn_obs, rpw_obs, ac_obs, fxfish_caa_obs, twfish_caa_obs)
 
     return(list(
         preds=preds,

@@ -166,19 +166,15 @@ model_options <- list(
 #' (q), observation errors, and sample sizes for age/length comps.
 
 obs_pars <- list(
-    surv_ll = list(
-        q = 6.41338,
-        rpn_cv = 0.20,
-        rpw_cv = 0.10,
-        ac_samps = 1000,
-        as_integers = TRUE
-    ),
-    surv_tw = list(
-        q = 0.8580,
-        rpw_cv = 0.10,
-        ac_samps = 1000,
-        as_integers = TRUE
-    ),
+    qs = c(6.41, 0.85),
+    rpn = c(1, 0),
+    rpn_cv = c(0.1, 0.1),
+    rpw = c(0, 1),
+    rpw_cv = c(0.1, 0.1),
+    acs = c(1, 1),
+    ac_samps = c(50, 30),
+    ac_as_integers = c(TRUE, TRUE),
+    acs_agg_sex = c(FALSE, FALSE),
     fish_fx = list(
         ac_samps = 1000,
         as_integers = TRUE
