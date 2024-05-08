@@ -32,7 +32,7 @@ dimension_names <- list(
     "fleet" = c("Fixed", "Trawl")
 )
 
-model_params <- set_model_params(nyears, nages, nsexes, nregions, nfleets)
+model_params <- set_model_params(nyears, nages, nsexes, nregions, nfleets, nsurveys)
 
 #' 2. Generate list with appropriate demographic parameters
 #' Required parameters are:
@@ -166,23 +166,17 @@ model_options <- list(
 #' (q), observation errors, and sample sizes for age/length comps.
 
 obs_pars <- list(
-    qs = c(6.41, 0.85),
-    rpn = c(1, 1),
-    rpn_cv = c(0.1, 0.1),
-    rpw = c(1, 1),
-    rpw_cv = c(0.1, 0.1),
-    acs = c(1, 1),
-    ac_samps = c(50, 30),
-    ac_as_integers = c(TRUE, TRUE),
-    acs_agg_sex = c(FALSE, FALSE),
-    fish_fx = list(
-        ac_samps = 1000,
-        as_integers = TRUE
-    ),
-    fish_tw = list(
-        ac_samps = 1000,
-        as_integers = TRUE
-    )
+    # longline fishery, trawl fishery, longline survey, trawl survey
+    is_survey   = c(0, 0, 1, 1),  # is this a survey (1) or fishery (0)
+    qs          = c(1, 1, 6.41, 0.85), # catchability coefficient (q) for surveys
+    rpn         = c(0, 0, 1, 1), # should RPNs be computed (yes=1, no=0)
+    rpn_cv      = c(0, 0, 0.1, 0.1), # RPN CV
+    rpw         = c(0, 0, 1, 1), # should RPWs be computed (yes=1, no=0)
+    rpw_cv      = c(0, 0, 0.1, 0.1), # RPW CV
+    acs         = c(1, 1, 1, 1), # should age compositions be computed (yes=1, no=0)
+    ac_samps    = c(50, 30, 50, 30), # total sample size for age composition observations
+    ac_as_integers  = c(TRUE, TRUE, TRUE, TRUE), # return age comps as integers (TRUE) or proportions (FALSE)
+    acs_agg_sex     = c(FALSE, FALSE, FALSE, FALSE) # should age comps be aggregated by sex
 )
 
 model_options$obs_pars <- obs_pars
@@ -203,17 +197,13 @@ naa[1,,,] = init_naa
 survey_preds <- list(
     rpns = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
     rpws = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
-    acs  = array(NA, dim=c(nyears, nages, nsexes, nregions, nsurveys)),
-    fxfish_caa = array(NA, dim=c(nyears, nages, nsexes, nregions)),
-    twfish_caa = array(NA, dim=c(nyears, nages, nsexes, nregions))
+    acs  = array(NA, dim=c(nyears, nages, nsexes, nregions, nsurveys+nfleets))
 )
 
 survey_obs <- list(
     rpns = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
     rpws = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
-    acs  = array(NA, dim=c(nyears, nages, nsexes, nregions, nsurveys)),
-    fxfish_acs = array(NA, dim=c(nyears, nages, nsexes, nregions)),
-    twfish_acs = array(NA, dim=c(nyears, nages, nsexes, nregions))
+    acs  = array(NA, dim=c(nyears, nages, nsexes, nregions, nsurveys+nfleets))
 )
 
 #' 7. Run the OM forward in time
@@ -255,25 +245,13 @@ for(y in 1:nyears){
     faa[y,,,,] <- out_vars$faa_tmp
     naa[y+1,,,] <- out_vars$naa_tmp
 
-    # survey_preds$ll_rpn[y,,,] <- out_vars$surv_preds$ll_rpn
-    # survey_preds$ll_rpw[y,,,] <- out_vars$surv_preds$ll_rpw
-    # survey_preds$tw_rpw[y,,,] <- out_vars$surv_preds$tw_rpw
-    # survey_preds$ll_ac[y,,,] <- out_vars$surv_preds$ll_ac
-    survey_preds$rpns[y,,,,] <- out_vars$surv_preds$rpn_preds
-    survey_preds$rpws[y,,,,] <- out_vars$surv_preds$rpw_preds
+    survey_preds$rpns[y,,,,] <- out_vars$surv_preds$rpn_preds[,,,as.logical(model_options$obs_pars$is_survey)]
+    survey_preds$rpws[y,,,,] <- out_vars$surv_preds$rpw_preds[,,,as.logical(model_options$obs_pars$is_survey)]
     survey_preds$acs[y,,,,]  <- out_vars$surv_preds$ac_preds
-    survey_preds$fxfish_caa[y,,,] <- out_vars$surv_preds$fxfish_caa
-    survey_preds$fxfish_caa[y,,,] <- out_vars$surv_preds$twfish_caa
 
-    # survey_obs$ll_rpn[y,,,] <- out_vars$surv_obs$ll_rpn
-    # survey_obs$ll_rpw[y,,,] <- out_vars$surv_obs$ll_rpw
-    # survey_obs$tw_rpw[y,,,] <- out_vars$surv_obs$tw_rpw
-    # survey_obs$ll_acs[y,,,] <- out_vars$surv_obs$ll_ac_obs
-    survey_obs$rpns[y,,,,] <- out_vars$surv_obs$rpn_obs
-    survey_obs$rpws[y,,,,] <- out_vars$surv_obs$rpw_obs
+    survey_obs$rpns[y,,,,] <- out_vars$surv_obs$rpn_obs[,,,as.logical(model_options$obs_pars$is_survey)]
+    survey_obs$rpws[y,,,,] <- out_vars$surv_obs$rpw_obs[,,,as.logical(model_options$obs_pars$is_survey)]
     survey_obs$acs[y,,,,]  <- out_vars$surv_obs$ac_obs
-    survey_obs$fxfish_acs[y,,,] <- out_vars$surv_obs$fxfish_caa_obs
-    survey_obs$fxfish_acs[y,,,] <- out_vars$surv_obs$twfish_caa_obs
 
 }
 
@@ -365,29 +343,10 @@ p1 <- ggplot(ll_surv_data, aes(x=Year, y=obssrv3, group=1))+
     labs(y="LL Survey RPN", x="Year", title="LL Survey RPN Comparison")+
     theme_bw()
 
-ll_surv_data <- data.frame(assessment$obssrv1) %>% rownames_to_column("Year")
-ll_surv_data$Year <- as.numeric(ll_surv_data$Year)
-ll_surv_data$om_pred <- survey_preds$ll_rpw[31:64,,,]
-ll_surv_data$om <- survey_obs$ll_rpw[31:64,,,]
-ll_surv_data$om.lci <- ll_surv_data$om -1.96*0.10*ll_surv_data$om
-ll_surv_data$om.uci <- ll_surv_data$om +1.96*0.10*ll_surv_data$om
-
-p2 <- ggplot(ll_surv_data, aes(x=Year, y=obssrv1, group=1))+
-    geom_pointrange(aes(ymin=obssrv1.lci, ymax=obssrv1.uci, color="Assessment"))+
-    geom_line(aes(y=predsrv1, color="Assessment"))+
-    geom_line(aes(y=om_pred, color="OM"))+
-    geom_pointrange(aes(y=om, ymin=om.lci, ymax=om.uci, color="OM"))+
-    scale_y_continuous(limits=c(0, 5500), breaks=seq(0, 5500, 1000))+
-    scale_x_continuous(limits=c(1960, 2025), breaks=seq(1960, 2023, 10))+
-    scale_color_manual(name="Model", values=c("black", "blue"))+
-    coord_cartesian(expand=0)+
-    labs(y="LL Survey RPW", x="Year", title="LL Survey RPW Comparison")+
-    theme_bw()
-
 tw_surv_data <- data.frame(assessment$obssrv7) %>% rownames_to_column("Year")
 tw_surv_data$Year <- as.numeric(tw_surv_data$Year)
-tw_surv_data$om_pred <- survey_preds$tw_rpw[tw_surv_data$Year-1960+1,,,]
-tw_surv_data$om <- survey_obs$tw_rpw[tw_surv_data$Year-1960+1,,,]
+tw_surv_data$om_pred <- survey_preds$rpws[tw_surv_data$Year-1960+1,,,,2]
+tw_surv_data$om <- survey_obs$rpws[tw_surv_data$Year-1960+1,,,,2]
 tw_surv_data$om.lci <- tw_surv_data$om -1.96*0.10*tw_surv_data$om
 tw_surv_data$om.uci <- tw_surv_data$om +1.96*0.10*tw_surv_data$om
 

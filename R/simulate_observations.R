@@ -18,8 +18,8 @@ simulate_observations <- function(naa, waa, selex, faa, zaa, obs_pars, age_error
     # ll_selex <- subset_matrix(selex, r=1, d=5, drop=TRUE)
     # tw_selex <- subset_matrix(selex, r=2, d=5, drop=TRUE)
 
-    fxfish_faa <- subset_matrix(faa, r=1, d=5, drop=TRUE)
-    twfish_faa <- subset_matrix(faa, r=2, d=5, drop=TRUE)
+    # fxfish_faa <- subset_matrix(faa, r=1, d=5, drop=TRUE)
+    # twfish_faa <- subset_matrix(faa, r=2, d=5, drop=TRUE)
 
     model_params <- get_model_dimensions(selex)
 
@@ -30,8 +30,11 @@ simulate_observations <- function(naa, waa, selex, faa, zaa, obs_pars, age_error
     ac_preds <- array(NA, c(1, model_params$nages, ifelse(any(obs_pars$as_agg_sex), 1, 2), model_params$nfleets))
     ac_obs <- array(NA, c(1, model_params$nages, ifelse(any(obs_pars$as_agg_sex), 1, 2), model_params$nfleets))
 
+    fishery <- 0 # keep track of which fishery we are on for CAA simulation
     for(s in 1:model_params$nfleets){
+        fishery <- fishery + !obs_pars$is_survey[s]
         surv_sel <- subset_matrix(selex, r=s, d=5, drop=TRUE)
+        
         if(obs_pars$rpn[s]){
             rpn_preds[,,,s] <- simulate_rpn(obs_pars$qs[s], naa, surv_sel, zaa)
             rpn_obs[,,,s] <-  simulate_lognormal_obs(rpn_preds[,,,s], obs_pars$rpn_cv[s])
@@ -44,7 +47,13 @@ simulate_observations <- function(naa, waa, selex, faa, zaa, obs_pars, age_error
         }
 
         if(obs_pars$acs[s]){
-            ac_preds[,,,s] <- simulate_ac(naa, surv_sel, aggregate_sex = obs_pars$acs_agg_sex[s])
+            if(obs_pars$is_survey[s]){
+                ac_preds[,,,s] <- simulate_ac(naa, surv_sel, aggregate_sex = obs_pars$acs_agg_sex[s])        
+            }else{
+                faa_small <- subset_matrix(faa, fishery, d=5, drop=TRUE)
+                ac_preds[,,,s] <- simulate_caa(naa, faa_small, zaa)
+            }
+            
             # Perform multinomial draw for each sex
             ac_obs_tmp <- simulate_multinomial_obs(ac_preds[,,,s, drop=FALSE], obs_pars$ac_samps[s], aggregate_sex = obs_pars$acs_agg_sex[s], as_integers = obs_pars$ac_as_integers[s])
             ac_obs[,,,s] <- array(ac_obs_tmp, dim=c(model_params$nyears, model_params$nages, length(ac_obs_tmp)/model_params$nages, model_params$nregions), dimnames=dimnames(naa))
@@ -82,19 +91,19 @@ simulate_observations <- function(naa, waa, selex, faa, zaa, obs_pars, age_error
 
     # Simulate Domestic LL Fishery Age Compositions (multinomial)
     # -----------------------------------------------------------
-    fxfish_caa_pred <- simulate_caa(naa, fxfish_faa, zaa)
-    fxfish_caa_obs  <- simulate_multinomial_obs(fxfish_caa_pred, obs_pars$fish_fx$ac_samps, as_integers = obs_pars$fish_fx$as_integers, age_err=NA)
-    fxfish_caa_obs  <- array(fxfish_caa_obs, dim=c(model_params$nyears, model_params$nages, length(fxfish_caa_obs)/model_params$nages, model_params$nregions), dimnames=dimnames(naa))
+    # fxfish_caa_pred <- simulate_caa(naa, fxfish_faa, zaa)
+    # fxfish_caa_obs  <- simulate_multinomial_obs(fxfish_caa_pred, obs_pars$fish_fx$ac_samps, as_integers = obs_pars$fish_fx$as_integers, age_err=NA)
+    # fxfish_caa_obs  <- array(fxfish_caa_obs, dim=c(model_params$nyears, model_params$nages, length(fxfish_caa_obs)/model_params$nages, model_params$nregions), dimnames=dimnames(naa))
 
     # Simulate Domestic Trawl Fishery Age Compositions (multinomial)
     # -----------------------------------------------------------
-    twfish_caa_pred <- simulate_caa(naa, twfish_faa, zaa)
-    twfish_caa_obs  <- simulate_multinomial_obs(twfish_caa_pred, obs_pars$fish_tw$ac_samps, as_integers = obs_pars$fish_tw$as_integers, age_err=NA)
-    twfish_caa_obs  <- array(twfish_caa_obs, dim=c(model_params$nyears, model_params$nages, length(twfish_caa_obs)/model_params$nages, model_params$nregions), dimnames=dimnames(naa))
+    # twfish_caa_pred <- simulate_caa(naa, twfish_faa, zaa)
+    # twfish_caa_obs  <- simulate_multinomial_obs(twfish_caa_pred, obs_pars$fish_tw$ac_samps, as_integers = obs_pars$fish_tw$as_integers, age_err=NA)
+    # twfish_caa_obs  <- array(twfish_caa_obs, dim=c(model_params$nyears, model_params$nages, length(twfish_caa_obs)/model_params$nages, model_params$nregions), dimnames=dimnames(naa))
 
     # Simulate Trawl Fishery Age Compositions (mulitnomial)
-    preds <- listN(rpn_preds, rpw_preds, ac_preds, fxfish_caa_pred, twfish_caa_pred)
-    obs   <- listN(rpn_obs, rpw_obs, ac_obs, fxfish_caa_obs, twfish_caa_obs)
+    preds <- listN(rpn_preds, rpw_preds, ac_preds)
+    obs   <- listN(rpn_obs, rpw_obs, ac_obs)
 
     return(list(
         preds=preds,
