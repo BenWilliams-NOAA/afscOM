@@ -23,24 +23,24 @@ simulate_observations <- function(naa, waa, selex, faa, zaa, obs_pars, age_error
 
     model_params <- get_model_dimensions(selex)
 
-    rpn_preds <- array(NA, c(2, 1))
-    rpn_obs <- array(NA, c(2, 1))
-    rpw_preds <- array(NA, c(2, 1))
-    rpw_obs <- array(NA, c(2, 1))
+    rpn_preds <- array(NA, c(1, 1, 1, model_params$nfleets))
+    rpn_obs <- array(NA, c(1, 1, 1, model_params$nfleets))
+    rpw_preds <- array(NA, c(1, 1, 1, model_params$nfleets))
+    rpw_obs <- array(NA, c(1, 1, 1, model_params$nfleets))
     ac_preds <- array(NA, c(1, model_params$nages, ifelse(any(obs_pars$as_agg_sex), 1, 2), model_params$nfleets))
     ac_obs <- array(NA, c(1, model_params$nages, ifelse(any(obs_pars$as_agg_sex), 1, 2), model_params$nfleets))
 
     for(s in 1:model_params$nfleets){
         surv_sel <- subset_matrix(selex, r=s, d=5, drop=TRUE)
         if(obs_pars$rpn[s]){
-            rpn_preds[s,1] <- simulate_rpn(obs_pars$q[s], naa, surv_sel, zaa)
-            rpn_obs[s,1] <-  simulate_lognormal_obs(rpn_preds[s,1], obs_pars$rpn_cv[s])
+            rpn_preds[,,,s] <- simulate_rpn(obs_pars$qs[s], naa, surv_sel, zaa)
+            rpn_obs[,,,s] <-  simulate_lognormal_obs(rpn_preds[,,,s], obs_pars$rpn_cv[s])
             
         }
 
         if(obs_pars$rpw[s]){
-            rpw_preds[s,1] <- simulate_rpw(obs_pars$q[s], naa, waa, surv_sel, zaa)
-            rpw_obs[s,1]  <- simulate_lognormal_obs(rpw_preds[s,1], obs_pars$rpn_cv[s])
+            rpw_preds[,,,s] <- simulate_rpw(obs_pars$qs[s], naa, waa, surv_sel, zaa)
+            rpw_obs[,,,s]  <- simulate_lognormal_obs(rpw_preds[,,,s], obs_pars$rpn_cv[s])
         }
 
         if(obs_pars$acs[s]){

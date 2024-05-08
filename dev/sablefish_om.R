@@ -167,9 +167,9 @@ model_options <- list(
 
 obs_pars <- list(
     qs = c(6.41, 0.85),
-    rpn = c(1, 0),
+    rpn = c(1, 1),
     rpn_cv = c(0.1, 0.1),
-    rpw = c(0, 1),
+    rpw = c(1, 1),
     rpw_cv = c(0.1, 0.1),
     acs = c(1, 1),
     ac_samps = c(50, 30),
@@ -201,19 +201,19 @@ naa         = array(NA, dim=c(nyears+1, nages, nsexes, nregions))
 naa[1,,,] = init_naa
 
 survey_preds <- list(
-    ll_rpn = array(NA, dim=c(nyears, 1, 1, nregions)),
-    ll_rpw = array(NA, dim=c(nyears, 1, 1, nregions)),
-    tw_rpw = array(NA, dim=c(nyears, 1, 1, nregions)),
-    ll_ac = array(NA, dim=c(nyears, nages, nsexes, nregions)),
-    fxfish_caa = array(NA, dim=c(nyears, nages, nsexes, nregions))
+    rpns = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
+    rpws = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
+    acs  = array(NA, dim=c(nyears, nages, nsexes, nregions, nsurveys)),
+    fxfish_caa = array(NA, dim=c(nyears, nages, nsexes, nregions)),
+    twfish_caa = array(NA, dim=c(nyears, nages, nsexes, nregions))
 )
 
 survey_obs <- list(
-    ll_rpn = array(NA, dim=c(nyears, 1, 1, nregions)),
-    ll_rpw = array(NA, dim=c(nyears, 1, 1, nregions)),
-    tw_rpw = array(NA, dim=c(nyears, 1, 1, nregions)),
-    ll_acs = array(NA, dim=c(nyears, nages, nsexes, nregions)),
-    fxfish_acs = array(NA, dim=c(nyears, nages, nsexes, nregions))
+    rpns = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
+    rpws = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
+    acs  = array(NA, dim=c(nyears, nages, nsexes, nregions, nsurveys)),
+    fxfish_acs = array(NA, dim=c(nyears, nages, nsexes, nregions)),
+    twfish_acs = array(NA, dim=c(nyears, nages, nsexes, nregions))
 )
 
 #' 7. Run the OM forward in time
@@ -255,17 +255,25 @@ for(y in 1:nyears){
     faa[y,,,,] <- out_vars$faa_tmp
     naa[y+1,,,] <- out_vars$naa_tmp
 
-    survey_preds$ll_rpn[y,,,] <- out_vars$surv_preds$ll_rpn
-    survey_preds$ll_rpw[y,,,] <- out_vars$surv_preds$ll_rpw
-    survey_preds$tw_rpw[y,,,] <- out_vars$surv_preds$tw_rpw
-    survey_preds$ll_ac[y,,,] <- out_vars$surv_preds$ll_ac
+    # survey_preds$ll_rpn[y,,,] <- out_vars$surv_preds$ll_rpn
+    # survey_preds$ll_rpw[y,,,] <- out_vars$surv_preds$ll_rpw
+    # survey_preds$tw_rpw[y,,,] <- out_vars$surv_preds$tw_rpw
+    # survey_preds$ll_ac[y,,,] <- out_vars$surv_preds$ll_ac
+    survey_preds$rpns[y,,,,] <- out_vars$surv_preds$rpn_preds
+    survey_preds$rpws[y,,,,] <- out_vars$surv_preds$rpw_preds
+    survey_preds$acs[y,,,,]  <- out_vars$surv_preds$ac_preds
     survey_preds$fxfish_caa[y,,,] <- out_vars$surv_preds$fxfish_caa
+    survey_preds$fxfish_caa[y,,,] <- out_vars$surv_preds$twfish_caa
 
-    survey_obs$ll_rpn[y,,,] <- out_vars$surv_obs$ll_rpn
-    survey_obs$ll_rpw[y,,,] <- out_vars$surv_obs$ll_rpw
-    survey_obs$tw_rpw[y,,,] <- out_vars$surv_obs$tw_rpw
-    survey_obs$ll_acs[y,,,] <- out_vars$surv_obs$ll_ac_obs
+    # survey_obs$ll_rpn[y,,,] <- out_vars$surv_obs$ll_rpn
+    # survey_obs$ll_rpw[y,,,] <- out_vars$surv_obs$ll_rpw
+    # survey_obs$tw_rpw[y,,,] <- out_vars$surv_obs$tw_rpw
+    # survey_obs$ll_acs[y,,,] <- out_vars$surv_obs$ll_ac_obs
+    survey_obs$rpns[y,,,,] <- out_vars$surv_obs$rpn_obs
+    survey_obs$rpws[y,,,,] <- out_vars$surv_obs$rpw_obs
+    survey_obs$acs[y,,,,]  <- out_vars$surv_obs$ac_obs
     survey_obs$fxfish_acs[y,,,] <- out_vars$surv_obs$fxfish_caa_obs
+    survey_obs$fxfish_acs[y,,,] <- out_vars$surv_obs$twfish_caa_obs
 
 }
 
@@ -340,8 +348,8 @@ p
 
 ll_surv_data <- data.frame(assessment$obssrv3) %>% rownames_to_column("Year")
 ll_surv_data$Year <- as.numeric(ll_surv_data$Year)
-ll_surv_data$om_pred <- survey_preds$ll_rpn[31:64,,,]
-ll_surv_data$om <- survey_obs$ll_rpn[31:64,,,]
+ll_surv_data$om_pred <- survey_preds$rpns[31:64,,,,1]
+ll_surv_data$om <- survey_obs$rpns[31:64,,,,1]
 ll_surv_data$om.lci <- ll_surv_data$om -1.96*0.20*ll_surv_data$om
 ll_surv_data$om.uci <- ll_surv_data$om +1.96*0.20*ll_surv_data$om
 
@@ -396,3 +404,13 @@ p3 <- ggplot(tw_surv_data, aes(x=Year, y=obssrv7, group=1))+
     theme_bw()
 
 p1/p2/p3 + plot_layout(guides="collect")
+
+
+survey_obs$ll_rpn
+survey_preds$ll_rpn
+n = length(survey_obs$ll_rpn)
+
+exp((1/n)*sum(log(survey_obs$ll_rpn/pn[1:64])))
+ssb_comp$om_bio
+
+pn <- apply(naa[1:64,,,]*dem_params$surv_sel[1:64,,,,1], 1, sum)
