@@ -4,7 +4,8 @@ test_that("single year age-structure population", {
   model_params <- get_model_dimensions(dem_params$sel)
   model_options <- list(
     regional_apportionment = c(0.70, 0.30),
-    fleet_apportionment = c(0.70, 0.30)
+    fleet_apportionment = c(0.70, 0.30),
+    removals_input = "catch"
   )
   y <- 1
   r <- 1
@@ -24,7 +25,7 @@ test_that("single year age-structure population", {
   tac <- 3114310
   suppressWarnings({
     catch_vars <- simulate_catch(tac, fleet.props=c(0.70, 0.30), dem_params=dem_params, naa=naa, options=model_options)
-    pop_vars <- simulate_population(prev.naa=naa, faa=catch_vars$faa_tmp, recruitment=rec, dem_params=dem_params, options=options)
+    pop_vars <- simulate_population(prev_naa=naa, faa=catch_vars$faa_tmp, recruitment=rec, dem_params=dem_params, options=options)
   })
 
   total_catch <- apply(catch_vars$caa_tmp, 1, sum)
