@@ -1,6 +1,6 @@
 test_that("single year catch simulation for one fleet", {
 
-  dem_params <- readRDS("data/sablefish_dem_matrices.RDS")
+  dem_params <- readRDS("data/sablefish_dem_params.RDS")
   model_params <- get_model_dimensions(dem_params$sel)
   model_options <- list(
     regional_apportionment = 1,
@@ -33,7 +33,7 @@ test_that("single year catch simulation for one fleet", {
 
 test_that("single year catch simulation for two fleets", {
 
-  dem_params <- readRDS("data/sablefish_dem_matrices.RDS")
+  dem_params <- readRDS("data/sablefish_dem_params.RDS")
   model_params <- get_model_dimensions(dem_params$sel)
   model_options <- list(
     regional_apportionment = c(1, 0),
