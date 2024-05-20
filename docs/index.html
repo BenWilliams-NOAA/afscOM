@@ -68,14 +68,20 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-
 <div class="section level1">
 <div class="page-header"><h1 id="afsc-mse-operating-model">AFSC MSE Operating Model<a class="anchor" aria-label="anchor" href="#afsc-mse-operating-model"></a>
 </h1></div>
+<p><strong>Joshua A. Zahner (<em>UAF</em>)</strong>, Ben Williams (<em>NOAA</em>), Matt Cheng (<em>UAF</em>)</p>
+<p>The AFSC Operating Model is a generalized, age structured, multi-sex, multi-fleet, spatially explicit fisheries simulation model. It is intended to be used by fisheries scientists working in the North Pacific to quickly build fisheries simulation models to test various hypotheses about stock dynamics. While designed with the structure of many data-rich stock assessments used for manangement in Alaska (under the North Pacfic Fisheries Management Council) in mind, it could be adapted for use in other regions.</p>
+<div class="section level3">
+<h3 id="general-design">General design<a class="anchor" aria-label="anchor" href="#general-design"></a>
+</h3>
+<p><code>afscOM</code> is an age structured, multi-sex, multi-fleet, spatially explicit simulation model, that can closely replicate the dynamics of a wide vareity of stocks.</p>
+<p>Users can define the specific demographic parameters (natural mortality, maturity, weight-at-age, selectivity, etc.) that determine stock dynamics, as well as how those parameters vary across time, age, sex, region, and fleet. The package then provides a simple <code><a href="reference/project.html">project()</a></code> function that accepts an initial population state, the demographic parameters, and additional information about future recruitment and catch levels, and simulates the population forward in time.</p>
+<p>Users can, optionally, also request the model to generate observations (with provided levels of observation error) from the population.</p>
+<p><em>The model has not been thoroughly tested with multiple spatial regions as of May 2023.</em></p>
+<hr>
 </div>
-<div class="section level1">
-<h1 id="general-design">General design<a class="anchor" aria-label="anchor" href="#general-design"></a>
-</h1>
 <div class="section level3">
 <h3 id="noaa-license">NOAA License<a class="anchor" aria-label="anchor" href="#noaa-license"></a>
 </h3>
@@ -84,7 +90,6 @@
 <p><a href="https://www.commerce.gov/" class="external-link">U.S. Department of Commerce</a> | <a href="https://www.noaa.gov" class="external-link">National Oceanographic and Atmospheric Administration</a> | <a href="https://www.fisheries.noaa.gov/" class="external-link">NOAA Fisheries</a></p>
 </div>
 </div>
-
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -109,6 +114,7 @@
 <ul class="list-unstyled">
 <li>Benjamin Williams <br><small class="roles"> Author, maintainer </small>  </li>
 <li>Joshua Zahner <br><small class="roles"> Author </small>  </li>
+<li>Matt Cheng <br><small class="roles"> Author </small>  </li>
 <li>Dan Goethel <br><small class="roles"> Author </small>  </li>
 <li>Curry Cunningham <br><small class="roles"> Author </small>  </li>
 <li><a href="authors.html">More about authors...</a></li>
@@ -123,7 +129,7 @@
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by Benjamin Williams, Joshua Zahner, Dan Goethel, Curry Cunningham.</p>
+<p>Developed by Benjamin Williams, Joshua Zahner, Matt Cheng, Dan Goethel, Curry Cunningham.</p>
 </div>
 
 <div class="pkgdown">

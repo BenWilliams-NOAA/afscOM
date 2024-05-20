@@ -78,90 +78,99 @@
 
     
     
-<p>The <code>afscOM</code> package can be downloaded and installed
-using:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"BenWilliams-NOAA/afscOM"</span>)<span class="st">`</span></span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="at">library(afscOM)</span></span></code></pre></div>
+<p>The <code>afscOM</code> package can be downloaded and installed using:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"BenWilliams-NOAA/afscOM"</span>)<span class="st">`</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="at">library(afscOM)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="model-dimensions">Model Dimensions<a class="anchor" aria-label="anchor" href="#model-dimensions"></a>
 </h2>
-<p>The <code>afscOM</code> model is an age-structured, multi-sex,
-multi-fleet, spatially-explicit population dynamics model. The model has
-been designed to handle any number of age-classes, up to 2 sexes, any
-number of fishing fleets, and any number of spatial regions, so long as
-the model parameters are appropriately dimensioned. In order to
-parameterize an OM using this package, the following model dimensions
-should be defined:</p>
+<p>The <code>afscOM</code> model is an age-structured, multi-sex, multi-fleet, spatially-explicit population dynamics model. The model has been designed to handle any number of age-classes, up to 2 sexes, any number of fishing fleets, and any number of spatial regions, so long as the model parameters are appropriately dimensioned. In order to parameterize an OM using this package, the following model dimensions should be defined:</p>
 <ol style="list-style-type: decimal">
 <li>
-<code>nyears</code>: the number of years over which the user intends
-to run the model for</li>
+<code>nyears</code>: the number of years over which the user intends to run the model for</li>
 <li>
 <code>nages</code>: the number of age classes in the population</li>
 <li>
-<code>nsexes</code>: the number of sexes to model (1 = females only,
-2 = females and males)</li>
+<code>nsexes</code>: the number of sexes to model (1 = females only, 2 = females and males)</li>
 <li>
-<code>nregions</code>: the number of spatial regions in the
-model</li>
+<code>nregions</code>: the number of spatial regions in the model</li>
 <li>
 <code>nfleets</code>: the number of fishing fleets to simulate</li>
 </ol>
-<p>The model is not sensitive to what true age corresponds to the
-initial age class, so there is no difference between starting a model at
-age-2 and starting a model at age-0, so long as recruitment is
-appropriately scaled.</p>
-<p>Optionally, users can also specify: 6. <code>nsurveys</code>: the
-number of survey fleets to simulate observations from</p>
+<p>The model is not sensitive to what true age corresponds to the initial age class, so there is no difference between starting a model at age-2 and starting a model at age-0, so long as recruitment is appropriately scaled.</p>
+<p>Optionally, users can also specify: 6. <code>nsurveys</code>: the number of survey fleets to simulate observations from</p>
 </div>
 <div class="section level2">
 <h2 id="population-parameters">Population Parameters<a class="anchor" aria-label="anchor" href="#population-parameters"></a>
 </h2>
-<p>To parameterize a model built with <code>afcsOM</code> to behave like
-a specific population, the user needs to specify a set of population
-demographic parameters. These parameters all take the same computational
-structure: a multi-dimensional array.</p>
-<p>These multidimensional arrays MUST always follow the same dimension
-structure for <code>afscOM</code> to work correctly. Biological
-parameters, such as natural mortality, maturity, and weight-at-age
-should all have array dimensions:
-<code>[nyears, nages, nsexes, nregions]</code>. Fishery and survey fleet
-parameters, such as selectivity, retention, and discard mortality,
-should have array dimensions:
-<code>[nyears, nages, nsexes, nregions, nfleets]</code> (for fishing
-fleets) or <code>[nyears, nages, nsexes, nregions, nsurveys]</code> (for
-survey fleets).</p>
-<p>In this structure the first index along the “sex” dimension
-(dimension 3) will correspond to parameters for females, while the
-second index will correspond to parameters for males.</p>
+<p>To parameterize a model built with <code>afcsOM</code> to behave like a specific population, the user needs to specify a set of population demographic parameters. These parameters all take the same computational structure: a multi-dimensional array.</p>
+<p>These multidimensional arrays MUST always follow the same dimension structure for <code>afscOM</code> to work correctly. Biological parameters, such as natural mortality, maturity, and weight-at-age should all have array dimensions: <code>[nyears, nages, nsexes, nregions]</code>. Fishery and survey fleet parameters, such as selectivity, retention, and discard mortality, should have array dimensions: <code>[nyears, nages, nsexes, nregions, nfleets]</code> (for fishing fleets) or <code>[nyears, nages, nsexes, nregions, nsurveys]</code> (for survey fleets).</p>
+<p>In this structure the first index along the “sex” dimension (dimension 3) will correspond to parameters for females, while the second index will correspond to parameters for males.</p>
 <p>Required population parameters include:</p>
 <ol style="list-style-type: decimal">
 <li>
-<code>mort</code>: Natural mortality</li>
+<code>mort</code>: Natural mortality <code>[nyears, nages, nsexes, nregions]</code>
+</li>
 <li>
-<code>mat</code>: Maturity</li>
+<code>mat</code>: Maturity <code>[nyears, nages, nsexes, nregions]</code>
+</li>
 <li>
-<code>waa</code>: Weight-at-age</li>
+<code>waa</code>: Weight-at-age <code>[nyears, nages, nsexes, nregions]</code>
+</li>
 <li>
-<code>sexrat</code>: Population sex ratio</li>
+<code>sexrat</code>: Population sex ratio <code>[nyears, nages, nsexes, nregions]</code>
+</li>
 <li>
-<code>sel</code>: Fishery selectivity</li>
+<code>sel</code>: Fishery selectivity <code>[nyears, nages, nsexes, nregions, nfleets]</code>
+</li>
 <li>
-<code>ret</code>: Fishery retention</li>
+<code>ret</code>: Fishery retention <code>[nyears, nages, nsexes, nregions, nfleets]</code>
+</li>
 <li>
-<code>dmr</code>: Fishery discard mortality (as an instantenous
-rate)</li>
+<code>dmr</code>: Fishery discard mortality (as an instantenous rate) <code>[nyears, nages, nsexes, nregions, nfleets]</code>
+</li>
 <li>
-<code>surv_sel</code>: Survery selectivity</li>
+<code>surv_sel</code>: Survey selectivity <code>[nyears, nages, nsexes, nregions, nsurveys]</code>
+</li>
 </ol>
 <p>Optionally, user can also specify:</p>
 <ol start="9" style="list-style-type: decimal">
 <li>
-<code>fec</code>: fecundity</li>
+<code>fec</code>: fecundity <code>[nyears, nages, nsexes, nregions]</code>
+</li>
 </ol>
-<p>Once these population parameter matrices have been defined, they need
-to be added to a list that will be passed as a parameter to the OM:</p>
+<div class="section level4">
+<h4 id="building-parameter-matrices">Building Parameter Matrices<a class="anchor" aria-label="anchor" href="#building-parameter-matrices"></a>
+</h4>
+<p>To facilitate easier creation of these multi-dimensional parameter matrices, a helper function <code>generate_param_matrix(...)</code> has been provided. This function accepts as input a single value, a vector of values, or a matrix/array of values, and a list of dimensions over which to fill a fully-formed parameter matrix with that input.</p>
+<p>For example, if natural mortality (M) is assumed to be constant across time, age, sex, and space, the following code will create an <code>[nyears, nages, nsexes, nregions]</code> parameter matrix where every value is the same:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">M</span> <span class="op">&lt;-</span> <span class="fl">0.113179</span></span>
+<span><span class="va">mort</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/generate_param_matrix.html">generate_param_matrix</a></span><span class="op">(</span><span class="va">M</span>, dimension_names <span class="op">=</span> <span class="va">dimension_names</span><span class="op">)</span></span></code></pre></div>
+<p>If maturity is assume to vary by age, but is otherwise constant across time, sex, and space, the following code will create a properly formed parameter matrix where each age has a different maturity level:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">maturity</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.0</span>, <span class="fl">0.1</span>, <span class="fl">0.3</span>, <span class="fl">0.5</span>, <span class="fl">0.7</span>, <span class="fl">0.9</span>, <span class="fl">1.0</span>, <span class="fl">1.0</span>, <span class="fl">1.0</span>, <span class="fl">1.0</span>, <span class="fl">1.0</span><span class="op">)</span></span>
+<span><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/generate_param_matrix.html">generate_param_matrix</a></span><span class="op">(</span><span class="va">maturity</span>, dimension_names <span class="op">=</span> <span class="va">dimension_names</span>, by<span class="op">=</span><span class="st">"age"</span><span class="op">)</span></span></code></pre></div>
+<p>Finally, if weight-at-age (WAA) varies by both age and sex, the following code will create the appropriately formed parameter matrix with different values for WAA by age and sex, but repeated across time and space:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">weight_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="cn">NA</span>, nrow<span class="op">=</span><span class="fl">11</span>, ncol<span class="op">=</span><span class="fl">2</span>, dimnames<span class="op">=</span><span class="va">dimension_names</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age"</span>, <span class="st">"sex"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">weight_mat</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span>, <span class="fl">6</span>, <span class="fl">8</span>, <span class="fl">10</span>, <span class="fl">12</span>, <span class="fl">14</span>, <span class="fl">16</span>, <span class="fl">18</span>, <span class="fl">20</span>, <span class="fl">22</span><span class="op">)</span></span>
+<span><span class="va">weight_mat</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">6</span>, <span class="fl">7</span>, <span class="fl">8</span>, <span class="fl">9</span>, <span class="fl">10</span>, <span class="fl">11</span><span class="op">)</span></span>
+<span><span class="va">waa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/generate_param_matrix.html">generate_param_matrix</a></span><span class="op">(</span><span class="va">weight_mat</span>, dimension_names <span class="op">=</span> <span class="va">dimension_names</span>, by<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age"</span>, <span class="st">"sex"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>The <code>generate_param_matrix</code> requires the user to specify as a parameter input the names of each dimension in the output matrix as a list. The function will work correctly with regardless of the specific dimension names used, however, when filling across 2-or-more dimensions (as in the above example with weight-at-age), the input matrix (that is being used to fill the larger parameter matrix), must also have the same dimension names along the corresponding axes.</p>
+<p>In the weight-at-age example above, the <code>weight_mat</code> matrix, which contained the WAAs for each age and sex, has dimension names equivalent to the dimension names along the “age” and “sex” dimensions that are provided to <code>generate_param_matrix</code>. If these names do not match, an error will be returned to the user indicating as such.</p>
+<p>For fleet parameters, such as selectivity or retention, an extra dimension <code>nfleets</code> is required. <code>generate_param_matrix</code> has an additional, <code>include_fleet_dim</code> parameter that can be specified to indicate that the output array should have a fleet dimension in addition to the other four dimensions. If the parameter is specified to vary across fleets, the <code>include_fleet_dim</code> parameter will be automatically turned on.</p>
+<p>For example:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">selex_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="cn">NA</span>, dim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">11</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>, dimnames<span class="op">=</span><span class="va">dimension_names</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age"</span>, <span class="st">"sex"</span>, <span class="st">"fleet"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">selex_mat</span><span class="op">[</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.0</span>, <span class="fl">0.1</span>, <span class="fl">0.3</span>, <span class="fl">0.5</span>, <span class="fl">0.7</span>, <span class="fl">0.9</span>, <span class="fl">1.0</span>, <span class="fl">1.0</span>, <span class="fl">1.0</span>, <span class="fl">1.0</span>, <span class="fl">1.0</span><span class="op">)</span></span>
+<span><span class="va">selex_mat</span><span class="op">[</span>,<span class="fl">2</span>,<span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.0</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.4</span>, <span class="fl">0.6</span>, <span class="fl">0.7</span>, <span class="fl">0.8</span>, <span class="fl">0.9</span>, <span class="fl">1.0</span>, <span class="fl">1.0</span>, <span class="fl">1.0</span><span class="op">)</span></span>
+<span><span class="va">selex_mat</span><span class="op">[</span>,<span class="fl">1</span>,<span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.3</span>, <span class="fl">0.7</span>, <span class="fl">1.0</span>, <span class="fl">1.0</span>, <span class="fl">0.9</span>, <span class="fl">0.7</span>, <span class="fl">0.6</span>, <span class="fl">0.5</span>, <span class="fl">0.4</span>, <span class="fl">0.4</span>, <span class="fl">0.4</span><span class="op">)</span></span>
+<span><span class="va">selex_mat</span><span class="op">[</span>,<span class="fl">2</span>,<span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">0.6</span>, <span class="fl">1.0</span>, <span class="fl">0.95</span>, <span class="fl">0.8</span>, <span class="fl">0.7</span>, <span class="fl">0.6</span>, <span class="fl">0.5</span>, <span class="fl">0.4</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span><span class="op">)</span></span>
+<span><span class="va">sel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/generate_param_matrix.html">generate_param_matrix</a></span><span class="op">(</span><span class="va">selex_mat</span>, dimension_names <span class="op">=</span> <span class="va">dimension_names</span>, by<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age"</span>, <span class="st">"sex"</span>, <span class="st">"fleet"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>An additional helper function <code>validate_dem_params</code>, takes as input a list of population parameter matrices, and the expected dimensions, and will check if all required parameter matrices are present and of appropriate dimensions. It is recommended that this function be used prior to running the model to verify that the input parameters matrices are correctly specified.</p>
+<p>Once these population parameter matrices have been defined, they need to be added to a list that will be passed as a parameter to the OM:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dem_params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    waa<span class="op">=</span><span class="va">waa</span>,</span>
 <span>    mat<span class="op">=</span><span class="va">mat</span>,</span>
@@ -172,103 +181,24 @@ to be added to a list that will be passed as a parameter to the OM:</p>
 <span>    dmr<span class="op">=</span><span class="va">dmr</span>,</span>
 <span>    surv_sel<span class="op">=</span><span class="va">survey_sel</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<div class="section level4">
-<h4 id="building-parameter-matrices">Building Parameter Matrices<a class="anchor" aria-label="anchor" href="#building-parameter-matrices"></a>
-</h4>
-<p>To facilitate easier creation of these multi-dimensional parameter
-matrices, a helper function <code>generate_param_matrix(...)</code> has
-been provided. This function accepts as input a single value, a vector
-of values, or a matrix/array of values, and a list of dimensions over
-which to fill a fully-formed parameter matrix with that input.</p>
-<p>For example, if natural mortality (M) is assumed to be constant
-across time, age, sex, and space, the following code will create an
-<code>[nyears, nages, nsexes, nregions]</code> parameter matrix where
-every value is the same:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">M</span> <span class="op">&lt;-</span> <span class="fl">0.113179</span></span>
-<span><span class="va">mort</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/generate_param_matrix.html">generate_param_matrix</a></span><span class="op">(</span><span class="va">M</span>, dimension_names <span class="op">=</span> <span class="va">dimension_names</span><span class="op">)</span></span></code></pre></div>
-<p>If maturity is assume to vary by age, but is otherwise constant
-across time, sex, and space, the following code will create a properly
-formed parameter matrix where each age has a different maturity
-level:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">maturity</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.0</span>, <span class="fl">0.1</span>, <span class="fl">0.3</span>, <span class="fl">0.5</span>, <span class="fl">0.7</span>, <span class="fl">0.9</span>, <span class="fl">1.0</span>, <span class="fl">1.0</span>, <span class="fl">1.0</span>, <span class="fl">1.0</span>, <span class="fl">1.0</span><span class="op">)</span></span>
-<span><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/generate_param_matrix.html">generate_param_matrix</a></span><span class="op">(</span><span class="va">maturity</span>, dimension_names <span class="op">=</span> <span class="va">dimension_names</span>, by<span class="op">=</span><span class="st">"age"</span><span class="op">)</span></span></code></pre></div>
-<p>Finally, if weight-at-age (WAA) varies by both age and sex, the
-following code will create the appropriately formed parameter matrix
-with different values for WAA by age and sex, but repeated across time
-and space:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">weight_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="cn">NA</span>, nrow<span class="op">=</span><span class="fl">11</span>, ncol<span class="op">=</span><span class="fl">2</span>, dimnames<span class="op">=</span><span class="va">dimension_names</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age"</span>, <span class="st">"sex"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="va">weight_mat</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span>, <span class="fl">6</span>, <span class="fl">8</span>, <span class="fl">10</span>, <span class="fl">12</span>, <span class="fl">14</span>, <span class="fl">16</span>, <span class="fl">18</span>, <span class="fl">20</span>, <span class="fl">22</span><span class="op">)</span></span>
-<span><span class="va">weight_mat</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">6</span>, <span class="fl">7</span>, <span class="fl">8</span>, <span class="fl">9</span>, <span class="fl">10</span>, <span class="fl">11</span><span class="op">)</span></span>
-<span><span class="va">waa</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/generate_param_matrix.html">generate_param_matrix</a></span><span class="op">(</span><span class="va">weight_mat</span>, dimension_names <span class="op">=</span> <span class="va">dimension_names</span>, by<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age"</span>, <span class="st">"sex"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>The <code>generate_param_matrix</code> requires the user to specify
-as a parameter input the names of each dimension in the output matrix as
-a list. The function will work correctly with regardless of the specific
-dimension names used, however, when filling across 2-or-more dimensions
-(as in the above example with weight-at-age), the input matrix (that is
-being used to fill the larger parameter matrix), must also have the same
-dimension names along the corresponding axes.</p>
-<p>In the weight-at-age example above, the <code>weight_mat</code>
-matrix, which contained the WAAs for each age and sex, has dimension
-names equivalent to the dimension names along the “age” and “sex”
-dimensions that are provided to <code>generate_param_matrix</code>. If
-these names do not match, an error will be returned to the user
-indicating as such.</p>
-<p>For fleet parameters, such as selectivity or retention, an extra
-dimension <code>nfleets</code> is required.
-<code>generate_param_matrix</code> has an additional,
-<code>include_fleet_dim</code> parameter that can be specified to
-indicate that the output array should have a fleet dimension in addition
-to the other four dimensions. If the parameter is specified to vary
-across fleets, the <code>include_fleet_dim</code> parameter will be
-automatically turned on.</p>
-<p>For example:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">selex_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="cn">NA</span>, dim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">11</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>, dimnames<span class="op">=</span><span class="va">dimension_names</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age"</span>, <span class="st">"sex"</span>, <span class="st">"fleet"</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="va">selex_mat</span><span class="op">[</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.0</span>, <span class="fl">0.1</span>, <span class="fl">0.3</span>, <span class="fl">0.5</span>, <span class="fl">0.7</span>, <span class="fl">0.9</span>, <span class="fl">1.0</span>, <span class="fl">1.0</span>, <span class="fl">1.0</span>, <span class="fl">1.0</span>, <span class="fl">1.0</span><span class="op">)</span></span>
-<span><span class="va">selex_mat</span><span class="op">[</span>,<span class="fl">2</span>,<span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.0</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.4</span>, <span class="fl">0.6</span>, <span class="fl">0.7</span>, <span class="fl">0.8</span>, <span class="fl">0.9</span>, <span class="fl">1.0</span>, <span class="fl">1.0</span>, <span class="fl">1.0</span><span class="op">)</span></span>
-<span><span class="va">selex_mat</span><span class="op">[</span>,<span class="fl">1</span>,<span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.3</span>, <span class="fl">0.7</span>, <span class="fl">1.0</span>, <span class="fl">1.0</span>, <span class="fl">0.9</span>, <span class="fl">0.7</span>, <span class="fl">0.6</span>, <span class="fl">0.5</span>, <span class="fl">0.4</span>, <span class="fl">0.4</span>, <span class="fl">0.4</span><span class="op">)</span></span>
-<span><span class="va">selex_mat</span><span class="op">[</span>,<span class="fl">2</span>,<span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">0.6</span>, <span class="fl">1.0</span>, <span class="fl">0.95</span>, <span class="fl">0.8</span>, <span class="fl">0.7</span>, <span class="fl">0.6</span>, <span class="fl">0.5</span>, <span class="fl">0.4</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span><span class="op">)</span></span>
-<span><span class="va">sel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/generate_param_matrix.html">generate_param_matrix</a></span><span class="op">(</span><span class="va">selex_mat</span>, dimension_names <span class="op">=</span> <span class="va">dimension_names</span>, by<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age"</span>, <span class="st">"sex"</span>, <span class="st">"fleet"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>An additional helper function <code>validate_dem_params</code>, takes
-as input a list of population parameter matrices, and the expected
-dimensions, and will check if all required parameter matrices are
-present and of appropriate dimensions. It is recommended that this
-function be used prior to running the model to verify that the input
-parameters matrices are correctly specified.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="model-options">Model Options<a class="anchor" aria-label="anchor" href="#model-options"></a>
 </h2>
-<p>Several model options are also available and can be specified via a
-named list. Current options include:</p>
+<p>Several model options are also available and can be specified via a named list. Current options include:</p>
 <ol style="list-style-type: decimal">
 <li>
-<code>region_apportionment</code>: an unnamed list of vectors (of
-length <code>nyears</code>) specifying what proportion of the TAC should
-be allocated to each spatial region. There should be as many vector as
-there are regions.</li>
+<code>region_apportionment</code>: an unnamed list of vectors (of length <code>nyears</code>) specifying what proportion of the TAC should be allocated to each spatial region. There should be as many vector as there are regions.</li>
 <li>
-<code>fleet_apportionment</code>: an unnamed list of vectors (of
-length <code>nyears</code>) specifying what proportion of the TAC should
-be allocated to each fishing fleet. There should be as many vectors as
-there are fishing fleets.</li>
+<code>fleet_apportionment</code>: an unnamed list of vectors (of length <code>nyears</code>) specifying what proportion of the TAC should be allocated to each fishing fleet. There should be as many vectors as there are fishing fleets.</li>
 <li>
-<code>removals_input</code>: input units of removals (either “catch”
-is inputs are a TAC, or “F” is an instantenous fishing mortality
-rate)</li>
+<code>removals_input</code>: input units of removals (either “catch” is inputs are a TAC, or “F” is an instantenous fishing mortality rate)</li>
 <li>
-<code>simulate_observations</code>: whether to simulate observations
-from the OM (TRUE/FALSE)</li>
+<code>simulate_observations</code>: whether to simulate observations from the OM (TRUE/FALSE)</li>
 </ol>
-<p>Note that if <code>removals_input="F"</code>, the
-<code>region_apportionment</code> and <code>fleet_apportionment</code>
-options will be ignored.</p>
-<p>There is not currently support for fleet apportionments that vary
-both spatially and temporally.</p>
+<p>Note that if <code>removals_input="F"</code>, the <code>region_apportionment</code> and <code>fleet_apportionment</code> options will be ignored.</p>
+<p>There is not currently support for fleet apportionments that vary both spatially and temporally.</p>
 </div>
   </div>
 
@@ -284,7 +214,7 @@ both spatially and temporally.</p>
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by Benjamin Williams, Joshua Zahner, Dan Goethel, Curry Cunningham.</p>
+<p>Developed by Benjamin Williams, Joshua Zahner, Matt Cheng, Dan Goethel, Curry Cunningham.</p>
 </div>
 
 <div class="pkgdown">
