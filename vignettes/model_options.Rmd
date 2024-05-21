@@ -82,3 +82,18 @@ obs_pars <- list(
 
 model_options$obs_pars <- obs_pars
 ```
+
+### Default Options
+A helper function, `setup_model_options()` will return a fully formed `model_options` list object with required parameters set to default values.
+
+The default values are as follows:
+
+* `removals_input`: "catch"
+* `simulate_observations`: TRUE
+* `region_apportionment`: 1/nregions
+* `fleet_apportionment`: 1/nfleets
+* `*$q`: 1
+* `*$rpn_cv`: 0.10
+* `*$rpw_cv`: 0.10
+* `*ac_samps`: 100
+* `*as_integers`: TRUE

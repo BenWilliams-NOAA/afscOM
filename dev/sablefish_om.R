@@ -33,6 +33,7 @@ dimension_names <- list(
 )
 
 model_params <- set_model_params(nyears, nages, nsexes, nregions, nfleets)
+model_options <- setup_model_options(model_params)
 
 #' 2. Generate list with appropriate demographic parameters
 #' Required parameters are:
@@ -97,6 +98,8 @@ dem_params <- list(
     surv_sel=survey_sel
 )
 
+saveRDS(dem_params, file="data/sabelfish_dem_params.RDS")
+
 #dem_params <- validate_dem_params(dem_params, model_params)
 
 #' 3. Define starting population condition (NAA)
@@ -157,9 +160,7 @@ f_timeseries <- array(f_timeseries, dim=c(nyears, 1, 1, 1, 2),
                                 "region"="alaska", 
                                 "fleet"=c("Fixed", "Trawl")))
 
-model_options <- list(
-    removals_input = "F"
-)
+model_options$ removals_input = "F"
 
 #' 6. Define parameters for observation processes
 #' Observation process parameters include catchability coefficients 
@@ -191,36 +192,7 @@ obs_pars <- list(
 
 model_options$obs_pars <- obs_pars
 
-#' 6. Setup empty array to collect derived quantities from the OM
-#' It is left to the user to decide what information to store, and
-#' in what format they would like to store it.
-#'
-#' Here, we are storing all OM outputs as they are returned from the
-#' OM.
-land_caa    = array(NA, dim=c(nyears, nages, nsexes, nregions, nfleets))
-disc_caa    = array(NA, dim=c(nyears, nages, nsexes, nregions, nfleets))
-caa         = array(NA, dim=c(nyears, nages, nsexes, nregions, nfleets))
-faa         = array(NA, dim=c(nyears, nages, nsexes, nregions, nfleets))
-naa         = array(NA, dim=c(nyears+1, nages, nsexes, nregions))
-naa[1,,,] = init_naa
-
-survey_preds <- list(
-    ll_rpn = array(NA, dim=c(nyears, 1, 1, nregions)),
-    ll_rpw = array(NA, dim=c(nyears, 1, 1, nregions)),
-    tw_rpw = array(NA, dim=c(nyears, 1, 1, nregions)),
-    ll_ac = array(NA, dim=c(nyears, nages, nsexes, nregions)),
-    fxfish_caa = array(NA, dim=c(nyears, nages, nsexes, nregions))
-)
-
-survey_obs <- list(
-    ll_rpn = array(NA, dim=c(nyears, 1, 1, nregions)),
-    ll_rpw = array(NA, dim=c(nyears, 1, 1, nregions)),
-    tw_rpw = array(NA, dim=c(nyears, 1, 1, nregions)),
-    ll_acs = array(NA, dim=c(nyears, nages, nsexes, nregions)),
-    fxfish_acs = array(NA, dim=c(nyears, nages, nsexes, nregions))
-)
-
-#' 7. Run the OM forward in time
+#' 6. Run the OM forward in time
 #' The `project` function handles projecting the population
 #' forward in time 1 timestep based on the provded TAC, current
 #' population size, provided recruitment, and other model
@@ -234,52 +206,15 @@ survey_obs <- list(
 #' have been provided to help with correctly subsetting the
 #' demographic matrices to ensure input data is of the correct
 #' dimensionality.
-
-#set.seed(1007)
-for(y in 1:nyears){
-
-    # Subset the demographic parameters list to only the current year
-    # and DO NOT drop lost dimensions.
-    dp.y <- subset_dem_params(dem_params = dem_params, y, d=1, drop=FALSE)
-    removals_input <- subset_matrix(f_timeseries, y, d=1, drop=FALSE)
-    fleet.props <- unlist(lapply(model_options$fleet_apportionment, \(x) x[y]))
-    out_vars <- project(
-        removals = removals_input,
-        dem_params=dp.y,
-        prev_naa=naa[y,,,, drop = FALSE],
-        recruitment=recruitment[y+1],
-        fleet.props = fleet.props,
-        options=model_options
-    )
-
-    # update state
-    land_caa[y,,,,] <- out_vars$land_caa_tmp
-    disc_caa[y,,,,] <- out_vars$disc_caa_tmp
-    caa[y,,,,] <- out_vars$caa_tmp
-    faa[y,,,,] <- out_vars$faa_tmp
-    naa[y+1,,,] <- out_vars$naa_tmp
-
-    survey_preds$ll_rpn[y,,,] <- out_vars$surv_preds$ll_rpn
-    survey_preds$ll_rpw[y,,,] <- out_vars$surv_preds$ll_rpw
-    survey_preds$tw_rpw[y,,,] <- out_vars$surv_preds$tw_rpw
-    survey_preds$ll_ac[y,,,] <- out_vars$surv_preds$ll_ac
-    survey_preds$fxfish_caa[y,,,] <- out_vars$surv_preds$fxfish_caa
-
-    survey_obs$ll_rpn[y,,,] <- out_vars$surv_obs$ll_rpn
-    survey_obs$ll_rpw[y,,,] <- out_vars$surv_obs$ll_rpw
-    survey_obs$tw_rpw[y,,,] <- out_vars$surv_obs$tw_rpw
-    survey_obs$ll_acs[y,,,] <- out_vars$surv_obs$ll_ac_obs
-    survey_obs$fxfish_acs[y,,,] <- out_vars$surv_obs$fxfish_caa_obs
-
-}
+om_sim <- project_multi(init_naa, f_timeseries, recruitment, dem_params, nyears, model_options)
 
 #' 8. Plot OM Results
 #'
 
-ssb <- apply(naa[1:64,,1,]*dem_params$waa[,,1,]*dem_params$mat[,,1,], 1, sum)
-bio <- apply(naa[1:64,,,]*dem_params$waa[,,,], 1, sum)
-catch <- apply(caa, 1, sum)
-f <- apply(apply(faa, c(1, 5), \(x) max(x)), 1, sum)
+ssb <- apply(om_sim$naa[1:64,,1,]*dem_params$waa[,,1,]*dem_params$mat[,,1,], 1, sum)
+bio <- apply(om_sim$naa[1:64,,,]*dem_params$waa[,,,], 1, sum)
+catch <- apply(om_sim$caa, 1, sum)
+f <- apply(apply(om_sim$faa, c(1, 5), \(x) max(x)), 1, sum)
 
 ssb_comp <- data.frame(
     year=1960:2023,
