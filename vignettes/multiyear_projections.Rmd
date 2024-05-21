@@ -1,0 +1,31 @@
+---
+title: "Conducting Multiyear Projections"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Conducting Multiyear Projections}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The basal component of the `afscOM` packages is the `project()` function. 
+```{r, project, eval=FALSE}
+om <- project(removals, fleet.props, dem_params, prev_naa, recruitment, options)
+```
+This function projects a population forward a single year based on the previous year's age structure, and the current year's demographic parameters, removals, and recruitment. 
+
+#### The `project_multi()` Function
+However, it is often desirable to conduct multi-year forward projections. This is as simple as wrapping the `project()` function as shown above in a for loop and doing some careful indexing. 
+The `afscOM` package provides an additional `project_multi()` function that handles such projection simulation.
+```{r, project_multi, eval=FALSE}
+om <- project_multi(init_naa, removals, recruitment, dem_params, nyears, model_options)
+```
+
+The key differences between the `project_multi` and basic `project` function are in how the input parameters are defined. 
+
+For the basic `project` function, the parameters all represent single year inputs. So, the "removals" parameter represents the amount of catch to take in the next projection year, while the "recruitment" parameter represents how many recruits enter the population in the next projection year. Similarly, the "dem_params" input parameter, represents the value of the demographic rates for a single year (so they have dimension `[1, nages, nsexes, nregions, nfleets]`).
+
+The `project_multi` function, however, expects all inputs as vectors of length `nyears`. By providing vectors of catch and recruitment, the `project_multi` function iteratively applies a specific catch level and number of recruits to the population for multiple years.
+
+Rarely are catch levels or recruitment levels known in the future, but `project_multi()` does not currently support generating new catch or recruitment levels based on the current internal state of the population (e.g. recruitment can not be pulled from a stock recruit curve based on annual spawning biomass). 
+
+Future versions of the `afscOM` may implement means to dynamically generate recruitment based on internal population state (such as a stock recruit relationship), as well as means of computing future catch levels from simple harvest control rules.

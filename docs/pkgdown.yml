@@ -2,6 +2,11 @@ pandoc: 2.16.2
 pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
-  intro: intro.html
-last_built: 2024-05-20T21:22Z
+  afscOM: afscOM.html
+  model_dimensions: model_dimensions.html
+  model_options: model_options.html
+  multiyear_projections: multiyear_projections.html
+  observation_processes: observation_processes.html
+  specifying_demographic_parameters: specifying_demographic_parameters.html
+last_built: 2024-05-21T05:56Z
 

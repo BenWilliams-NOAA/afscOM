@@ -1,43 +1,13 @@
 ---
-title: "intro"
+title: "Specifying Demographic Rates"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{intro}
+  %\VignetteIndexEntry{Specifying Demographic Rates}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  eval = FALSE
-)
-```
-
-The `afscOM` package can be downloaded and installed using: 
-
-```{r setup}
-remotes::install_github("BenWilliams-NOAA/afscOM")`
-library(afscOM)
-```
-
-## Model Dimensions
-The `afscOM` model is an age-structured, multi-sex, multi-fleet, spatially-explicit population dynamics model. The model has been designed to handle any number of age-classes, up to 2 sexes, any number of fishing fleets, and any number of spatial regions, so long as the model parameters are appropriately dimensioned. In order to parameterize an OM using this package, the following model dimensions should be defined:
-
-1. `nyears`: the number of years over which the user intends to run the model for
-2. `nages`: the number of age classes in the population
-3. `nsexes`: the number of sexes to model (1 = females only, 2 = females and males)
-4. `nregions`: the number of spatial regions in the model
-5. `nfleets`: the number of fishing fleets to simulate
-
-The model is not sensitive to what true age corresponds to the initial age class, so there is no difference between starting a model at age-2 and starting a model at age-0, so long as recruitment is appropriately scaled.
-
-Optionally, users can also specify:
-6. `nsurveys`: the number of survey fleets to simulate observations from
-
-## Population Parameters
-To parameterize a model built with `afcsOM` to behave like a specific population, the user needs to specify a set of population demographic parameters. These parameters all take the same computational structure: a multi-dimensional array.
+To parameterize a model built with `afscOM` to behave like a specific population, the user needs to specify a set of population demographic parameters. These parameters all take the same computational structure: a multi-dimensional array.
 
 These multidimensional arrays MUST always follow the same dimension structure for `afscOM` to work correctly. Biological parameters, such as natural mortality, maturity, and weight-at-age should all have array dimensions: `[nyears, nages, nsexes, nregions]`. Fishery and survey fleet parameters, such as selectivity, retention, and discard mortality, should have array dimensions: `[nyears, nages, nsexes, nregions, nfleets]` (for fishing fleets) or `[nyears, nages, nsexes, nregions, nsurveys]` (for survey fleets).
 
@@ -54,21 +24,25 @@ Required population parameters include:
 7. `dmr`: Fishery discard mortality (as an instantenous rate) `[nyears, nages, nsexes, nregions, nfleets]`
 8. `surv_sel`: Survey selectivity `[nyears, nages, nsexes, nregions, nsurveys]`
 
-Optionally, user can also specify:
-
-9. `fec`: fecundity `[nyears, nages, nsexes, nregions]`
-
 #### Building Parameter Matrices
 To facilitate easier creation of these multi-dimensional parameter matrices, a helper function `generate_param_matrix(...)` has been provided. This function accepts as input a single value, a vector of values, or a matrix/array of values, and a list of dimensions over which to fill a fully-formed parameter matrix with that input.
 
 For example, if natural mortality (M) is assumed to be constant across time, age, sex, and space, the following code will create an `[nyears, nages, nsexes, nregions]` parameter matrix where every value is the same:
 
 ```{r eval=FALSE}
+dimension_names <- list(
+    "time" = 1:nyears,
+    "age"  = 2:31,
+    "sex"  = c("F", "M"),
+    "region" = "alaska",
+    "fleet" = c("Fixed", "Trawl")
+)
+
 M <- 0.113179
 mort <- generate_param_matrix(M, dimension_names = dimension_names)
 ```
 
-If maturity is assume to vary by age, but is otherwise constant across time, sex, and space, the following code will create a properly formed parameter matrix where each age has a different maturity level:
+If maturity is assumed to vary by age, but is otherwise constant across time, sex, and space, the following code will create a properly formed parameter matrix where each age has a different maturity level:
 
 ```{r eval=FALSE}
 maturity <- c(0.0, 0.1, 0.3, 0.5, 0.7, 0.9, 1.0, 1.0, 1.0, 1.0, 1.0)
@@ -84,7 +58,7 @@ weight_mat[,2] <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
 waa <- generate_param_matrix(weight_mat, dimension_names = dimension_names, by=c("age", "sex"))
 ```
 
-The `generate_param_matrix` requires the user to specify as a parameter input the names of each dimension in the output matrix as a list. The function will work correctly with regardless of the specific dimension names used, however, when filling across 2-or-more dimensions (as in the above example with weight-at-age), the input matrix (that is being used to fill the larger parameter matrix), must also have the same dimension names along the corresponding axes. 
+The `generate_param_matrix` requires the user to specify as a parameter input the names of each dimension in the output matrix as a list. The function will work correctly regardless of the specific dimension names used, however, when filling across 2-or-more dimensions (as in the above example with weight-at-age), the input matrix (that is being used to fill the larger parameter matrix), must also have the same dimension names along the corresponding axes. 
 
 In the weight-at-age example above, the `weight_mat` matrix, which contained the WAAs for each age and sex, has dimension names equivalent to the dimension names along the "age" and "sex" dimensions that are provided to `generate_param_matrix`. If these names do not match, an error will be returned to the user indicating as such.
 
@@ -101,8 +75,6 @@ selex_mat[,2,2] <- c(0.2, 0.6, 1.0, 0.95, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.3)
 sel <- generate_param_matrix(selex_mat, dimension_names = dimension_names, by=c("age", "sex", "fleet"))
 ```
 
-An additional helper function `validate_dem_params`, takes as input a list of population parameter matrices, and the expected dimensions, and will check if all required parameter matrices are present and of appropriate dimensions. It is recommended that this function be used prior to running the model to verify that the input parameters matrices are correctly specified.
-
 Once these population parameter matrices have been defined, they need to be added to a list that will be passed as a parameter to the OM:
 
 ```{r, eval=FALSE}
@@ -118,15 +90,9 @@ dem_params <- list(
 )
 ```
 
-## Model Options
-Several model options are also available and can be specified via a named list. Current options include:
+An additional helper function `validate_dem_params`, takes as input a list of population parameter matrices, and the expected dimensions, and will check if all required parameter matrices are present and of appropriate dimensions. If required parameters are missing, or are of incorrect dimensions, an error will be returned. It is recommended that this function be used prior to running the model to verify that the input parameters matrices are correctly specified.
 
-1. `region_apportionment`: an unnamed list of vectors (of length `nyears`) specifying what proportion of the TAC should be allocated to each spatial region. There should be as many vector as there are regions.
-2. `fleet_apportionment`: an unnamed list of vectors (of length `nyears`) specifying what proportion of the TAC should be allocated to each fishing fleet. There should be as many vectors as there are fishing fleets. 
-3. `removals_input`: input units of removals (either "catch" is inputs are a TAC, or "F" is an instantenous fishing mortality rate)
-4. `simulate_observations`: whether to simulate observations from the OM (TRUE/FALSE)
-
-Note that if `removals_input="F"`, the `region_apportionment` and `fleet_apportionment` options will be ignored. 
-
-There is not currently support for fleet apportionments that vary both spatially and temporally. 
-
+```{r, eval=FALSE}
+model_dimension <- list(nyears=64, nages=30, nsexes=2, nregions=1, nfleets=2, nsurveys=2)
+dem_params <- validate_dem_params(dem_params, model_dimensions)
+```

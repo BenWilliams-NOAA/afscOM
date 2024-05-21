@@ -24,6 +24,9 @@ fishery retenetion and discarding practices."><!-- mathjax --><script src="https
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav"><li>
+  <a href="../articles/afscOM.html">Get started</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -33,7 +36,19 @@ fishery retenetion and discarding practices."><!-- mathjax --><script src="https
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/intro.html">intro</a>
+      <a href="../articles/model_dimensions.html">Model Dimensions</a>
+    </li>
+    <li>
+      <a href="../articles/model_options.html">Model Options</a>
+    </li>
+    <li>
+      <a href="../articles/multiyear_projections.html">Conducting Multiyear Projections</a>
+    </li>
+    <li>
+      <a href="../articles/observation_processes.html">Observation Processes</a>
+    </li>
+    <li>
+      <a href="../articles/specifying_demographic_parameters.html">Specifying Demographic Rates</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
@@ -98,15 +113,16 @@ fishery retenetion and discarding practices.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span><span class="va">naa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">50</span>, <span class="fl">25</span>, <span class="fl">10</span><span class="op">)</span></span>
-<span><span class="va">waa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span></span>
-<span><span class="va">mort</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">0.2</span>, <span class="fl">0.2</span>, <span class="fl">0.2</span><span class="op">)</span></span>
-<span><span class="va">selex</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.0</span>, <span class="fl">0.5</span>, <span class="fl">1.0</span>, <span class="fl">1.0</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># catch should be 14.35</span></span>
-<span><span class="va">catch</span> <span class="op">&lt;-</span> <span class="fu">baranov</span><span class="op">(</span><span class="fl">0.1</span>, <span class="va">naa</span>, <span class="va">waa</span>, <span class="va">mort</span>, <span class="va">selex</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">naa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">50</span>, <span class="fl">25</span>, <span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">waa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mort</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">0.2</span>, <span class="fl">0.2</span>, <span class="fl">0.2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">selex</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.0</span>, <span class="fl">0.5</span>, <span class="fl">1.0</span>, <span class="fl">1.0</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># catch should be 14.35</span></span></span>
+<span class="r-in"><span><span class="va">catch</span> <span class="op">&lt;-</span> <span class="fu">baranov</span><span class="op">(</span><span class="fl">0.1</span>, <span class="va">naa</span>, <span class="va">waa</span>, <span class="va">mort</span>, <span class="va">selex</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+</code></pre></div>
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

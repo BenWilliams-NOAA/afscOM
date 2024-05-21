@@ -1,0 +1,26 @@
+---
+title: "Model Dimensions"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Model Dimensions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The `afscOM` model is an age-structured, multi-sex, multi-fleet, spatially-explicit population dynamics model. The model has been designed to handle any number of age-classes, up to 2 sexes, any number of fishing fleets, and any number of spatial regions, so long as the model parameters are appropriately dimensioned. In order to parameterize an OM using this package, the following model dimensions should be defined:
+
+1. `nyears`: the number of years over which the user intends to run the model for
+2. `nages`: the number of age classes in the population
+3. `nsexes`: the number of sexes to model (1 = females only, 2 = females and males)
+4. `nregions`: the number of spatial regions in the model
+5. `nfleets`: the number of fishing fleets to simulate catch from
+
+The model is not sensitive to what true age corresponds to the initial age class, so there is no difference between starting a model at age-2 and starting a model at age-0, so long as recruitment is appropriately scaled.
+
+If users wish to generate observations from scientific surveys, an additional model dimension must also be defined:
+
+6. `nsurveys`: the number of survey fleets to simulate observations from
+
+Throughout the documentation for this package, model dimensions will be routintely referred to in the following format: `[nyears, nages, nsexes, nregions, nfleets]`.
+
+_NOTE: At present, the model has not been thoroughly tested with more than 1 spatial region._
