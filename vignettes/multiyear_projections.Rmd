@@ -29,3 +29,42 @@ The `project_multi` function, however, expects all inputs as vectors of length `
 Rarely are catch levels or recruitment levels known in the future, but `project_multi()` does not currently support generating new catch or recruitment levels based on the current internal state of the population (e.g. recruitment can not be pulled from a stock recruit curve based on annual spawning biomass). 
 
 Future versions of the `afscOM` may implement means to dynamically generate recruitment based on internal population state (such as a stock recruit relationship), as well as means of computing future catch levels from simple harvest control rules.
+
+#### Custom Multiyear Projection Frameworks
+The builtin `project_multi()` function will work fine for users interested in basic population projections. However, users with more complex needs (e.g. a custom observation generation process), will need to implement thir own multi-year projection framework. This is not difficult, as the `project_multi()` function is, essentially, only a for-loop wrapper around the single-year `project()` function, but some care must be taken to ensure that removals, recruitment, and demographic parameters are being approporiately applied. 
+
+This is the basic skeleton of the `project_multi` function that should be reused for custom multiyear projection functions.
+```{r, project_multi_explain, eval=FALSE}
+project_multi <- function(...){
+    # [...]
+    for(i in 1:nyears){
+        dp.y <- subset_dem_params(dem_params = dem_params, y, d=1, drop=FALSE)        # (1)
+        removals_input <- subset_matrix(removals_timeseries, y, d=1, drop=FALSE)      # (2)
+        fleet.props <- unlist(lapply(model_options$fleet_apportionment, \(x) x[y]))   # (3)
+        out_vars <- project(
+            removals = removals_input,
+            dem_params=dp.y,
+            prev_naa=naa[y,,,, drop = FALSE],                                         # (4)
+            recruitment=recruitment[y+1],                                             # (5)
+            fleet.props = fleet.props,
+            options=model_options
+        )
+        # [...]
+    }
+    # [...]
+    return(...)
+}
+
+```
+
+The key components that users implementing their own framework need to take note of are marked as comments in the above code block.
+
+(1) The basic `project` function only takes input that represent a single-year at a time. The demographic parameters list (`dem_params` in the above block) is almost always going to be a list of matrices representing demographic parameter values across many years. As such, it must be subsetted down to a single year to be provided to the `project` function. The `subset_dem_params` function handles this by iteratively subsetting each element in the `dem_params` list to a single "row" along dimension 1 (time). It is equivalent to `dem_params$*[y,,,,drop=FALSE]` across each element in the list. 
+
+(2) Like with (1), the timeseries of removals must also be reduced to a single year. The `subset_matrix` function works identically to `subset_dem_params` but for single matrices and vectors (where as `subset_dem_params` operates on complex lists). 
+
+(3) The `project` function requires that `fleet.props` be provided as input to ensure catch is correctly removed by each fleet. Fleet apportionment schemes should be stored in `model_options$fleet_apportionment` (see ["Model Options"](model_options.html)), and can be subsetted down to a single year of apportionments with a call to `lapply`. It's important to ensure that a vector of fleet apportionments is passed to `project` and not a list (hence the call to `unlist` in the above code block).
+
+(4) The numbers-at-age-and-sex vector to start the year is also required. Care needs to be taken to ensure that the special case of year-1 of the projection is appropriately handled, but after that, users can simply use `naa=out_vars$naa_tmp`. In the above code blocks, annual numbers-at-age are stored in a larger `naa` matrix for reporting after completion of the simulation. If doing something simiar, users need to be careful to ensure that the object passed to the `prev_naa` argument of the `project` function is a fully formed, 4-dimensional, matrix of dimensions `[1, nages, nsexes, nregions]`. 
+
+(5) A single recruitment value should be passed to the project function. Subset any recruitment vector appropriately.
