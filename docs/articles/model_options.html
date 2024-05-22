@@ -173,6 +173,32 @@
 <span></span>
 <span><span class="va">model_options</span><span class="op">$</span><span class="va">obs_pars</span> <span class="op">&lt;-</span> <span class="va">obs_pars</span></span></code></pre></div>
 </div>
+<div class="section level3">
+<h3 id="default-options">Default Options<a class="anchor" aria-label="anchor" href="#default-options"></a>
+</h3>
+<p>A helper function, <code>setup_model_options()</code> will return a fully formed <code>model_options</code> list object with required parameters set to default values.</p>
+<p>The default values are as follows:</p>
+<ul>
+<li>
+<code>removals_input</code>: “catch”</li>
+<li>
+<code>simulate_observations</code>: TRUE</li>
+<li>
+<code>region_apportionment</code>: 1/nregions</li>
+<li>
+<code>fleet_apportionment</code>: 1/nfleets</li>
+<li>
+<code>*$q</code>: 1</li>
+<li>
+<code>*$rpn_cv</code>: 0.10</li>
+<li>
+<code>*$rpw_cv</code>: 0.10</li>
+<li>
+<code>*ac_samps</code>: 100</li>
+<li>
+<code>*as_integers</code>: TRUE</li>
+</ul>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -185,7 +211,7 @@
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by Benjamin Williams, Joshua Zahner, Matt Cheng, Dan Goethel, Curry Cunningham.</p>
+<p>Developed by Joshua Zahner, Benjamin Williams, Matt Cheng, Dan Goethel, Curry Cunningham.</p>
 </div>
 
 <div class="pkgdown">
