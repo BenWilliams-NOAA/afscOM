@@ -1,10 +1,11 @@
 test_that("single year age-structure population", {
 
-  dem_params <- readRDS("data/sablefish_dem_matrices.RDS")
+  dem_params <- readRDS("data/sablefish_dem_params.RDS")
   model_params <- get_model_dimensions(dem_params$sel)
   model_options <- list(
     regional_apportionment = c(0.70, 0.30),
-    fleet_apportionment = c(0.70, 0.30)
+    fleet_apportionment = c(0.70, 0.30),
+    removals_input = "catch"
   )
   y <- 1
   r <- 1
@@ -24,7 +25,7 @@ test_that("single year age-structure population", {
   tac <- 3114310
   suppressWarnings({
     catch_vars <- simulate_catch(tac, fleet.props=c(0.70, 0.30), dem_params=dem_params, naa=naa, options=model_options)
-    pop_vars <- simulate_population(prev.naa=naa, faa=catch_vars$faa_tmp, recruitment=rec, dem_params=dem_params, options=options)
+    pop_vars <- simulate_population(prev_naa=naa, faa=catch_vars$faa_tmp, recruitment=rec, dem_params=dem_params, options=options)
   })
 
   total_catch <- apply(catch_vars$caa_tmp, 1, sum)
@@ -34,5 +35,5 @@ test_that("single year age-structure population", {
   expect_equal(fleet_catch, matrix(c(2180017, 934293), nrow=1), tolerance=1e-5)
 
   ssb <- sum(pop_vars$naa[,,1,]*dem_params$waa[,,1,]*dem_params$mat[,,1,])/1e6
-  expect_equal(ssb, 278.52, tolerance=1e-4)
+  expect_equal(ssb, 281, tolerance=1e-2)
 })

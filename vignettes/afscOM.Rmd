@@ -1,0 +1,46 @@
+---
+title: "afscOM"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{afscOM}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+The `afscOM` package can be downloaded and installed using: 
+
+```{r setup}
+remotes::install_github("BenWilliams-NOAA/afscOM")`
+library(afscOM)
+```
+
+`afscOM` is an age structured, multi-sex, multi-fleet, spatially explicit simulation model, that can closely replicate the dynamics of a wide vareity of stocks. 
+
+Users can define the specific demographic parameters (natural mortality, maturity, weight-at-age, selectivity, etc.) that determine stock dynamics, as well as how those parameters vary across time, age, sex, region, and fleet. The package then provides a simple `project()` function that accepts an initial population state, the demographic parameters, and additional information about future recruitment and catch levels, and simulates the population forward in time. 
+
+Users can, optionally, also request the model to generate observations (with provided levels of observation error) from the population.
+
+_The model has not been thoroughly tested with multiple spatial regions as of May 2023._
+
+#### Test Cases
+`afscOM` was designed to be used with a management strategy evaluation (MSE) framework for evaluating possible alternative management strategies for Alaska sablefish (_Anoplopoma fimbria_). As such it has been rigorously tested for its ability to reproduce the estimated timeseries of sablefish biomass, fishing mortality, and catches (Goethel et al. 2023), as well as its ability to reproduce survey observations. 
+
+The Alaska sablefish stock assessment model (Goethel et al. 2023) is a single-area model, as have been all test cases of `afscOM` to date (_May 2024_). Multi-region tests will likely be conducted in the coming weeks and months, and results compared to those from the eastern-Pacific, coastwide, Sablefish model (Kapur 2023, Kapur et al. 2024). 
+
+If you would like to test `afscOM` for its ability to recreate the dynamics of your own stock, please contact the project maintainers.
+
+#### References
+
+Goethel, D.R., Cheng, M.L.H., Echave, K.B., Marsh, C., Rodgveller, C.J., Shotwell, K., Siwicke, K., 2023. Stock Assessment of the sablefish stock in Alaska. North Pacific Fisheries Management Council, Anchorage, AK.
+
+Kapur, M.S., Haltuch, M.A., Connors, B.M., Berger, A.M., Holt, K., Marshall, K.N., and Punt, A.E. 2024. Range-wide contrast in management outcomes for transboundary Northeast Pacific sablefish. Can. J. Fish. Aquat. Sci. NRC Research Press. doi:10.1139/cjfas-2024-0008.
+
+Kapur, M.S. 2023. A Management Strategy Evaluation for Transboundary Sablefish in the Northeast Pacific Ocean. Dissertation, University of Washington, Seattle, WA.

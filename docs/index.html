@@ -5,13 +5,13 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>What the Package Does (Title Case) • afscOM</title>
+<title>AFSC MSE Operating Model • afscOM</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="What the Package Does (Title Case)">
+<script src="pkgdown.js"></script><meta property="og:title" content="AFSC MSE Operating Model">
 <meta property="og:description" content="More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -41,6 +41,9 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
+  <a href="articles/afscOM.html">Get started</a>
+</li>
+<li>
   <a href="reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -51,7 +54,19 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="articles/intro.html">intro</a>
+      <a href="articles/model_dimensions.html">Model Dimensions</a>
+    </li>
+    <li>
+      <a href="articles/model_options.html">Model Options</a>
+    </li>
+    <li>
+      <a href="articles/multiyear_projections.html">Conducting Multiyear Projections</a>
+    </li>
+    <li>
+      <a href="articles/observation_processes.html">Observation Processes</a>
+    </li>
+    <li>
+      <a href="articles/specifying_demographic_parameters.html">Specifying Demographic Rates</a>
     </li>
   </ul>
 </li>
@@ -68,14 +83,20 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-
 <div class="section level1">
 <div class="page-header"><h1 id="afsc-mse-operating-model">AFSC MSE Operating Model<a class="anchor" aria-label="anchor" href="#afsc-mse-operating-model"></a>
 </h1></div>
+<p><strong>Joshua A. Zahner (<em>UAF</em>)</strong>, Ben Williams (<em>NOAA</em>), Matt Cheng (<em>UAF</em>)</p>
+<p>The AFSC Operating Model is a generalized, age structured, multi-sex, multi-fleet, spatially explicit fisheries simulation model. It is intended to be used by fisheries scientists working in the North Pacific to quickly build fisheries simulation models to test various hypotheses about stock dynamics. While designed with the structure of many data-rich stock assessments used for manangement in Alaska (under the North Pacfic Fisheries Management Council) in mind, it could be adapted for use in other regions.</p>
+<div class="section level3">
+<h3 id="general-design">General design<a class="anchor" aria-label="anchor" href="#general-design"></a>
+</h3>
+<p><code>afscOM</code> is an age structured, multi-sex, multi-fleet, spatially explicit simulation model, that can closely replicate the dynamics of a wide vareity of stocks.</p>
+<p>Users can define the specific demographic parameters (natural mortality, maturity, weight-at-age, selectivity, etc.) that determine stock dynamics, as well as how those parameters vary across time, age, sex, region, and fleet. The package then provides a simple <code><a href="reference/project.html">project()</a></code> function that accepts an initial population state, the demographic parameters, and additional information about future recruitment and catch levels, and simulates the population forward in time.</p>
+<p>Users can, optionally, also request the model to generate observations (with provided levels of observation error) from the population.</p>
+<p><em>The model has not been thoroughly tested with multiple spatial regions as of May 2023.</em></p>
+<hr>
 </div>
-<div class="section level1">
-<h1 id="general-design">General design<a class="anchor" aria-label="anchor" href="#general-design"></a>
-</h1>
 <div class="section level3">
 <h3 id="noaa-license">NOAA License<a class="anchor" aria-label="anchor" href="#noaa-license"></a>
 </h3>
@@ -84,7 +105,6 @@
 <p><a href="https://www.commerce.gov/" class="external-link">U.S. Department of Commerce</a> | <a href="https://www.noaa.gov" class="external-link">National Oceanographic and Atmospheric Administration</a> | <a href="https://www.fisheries.noaa.gov/" class="external-link">NOAA Fisheries</a></p>
 </div>
 </div>
-
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -107,8 +127,9 @@
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Benjamin Williams <br><small class="roles"> Author, maintainer </small>  </li>
 <li>Joshua Zahner <br><small class="roles"> Author </small>  </li>
+<li>Benjamin Williams <br><small class="roles"> Author, maintainer </small>  </li>
+<li>Matt Cheng <br><small class="roles"> Author </small>  </li>
 <li>Dan Goethel <br><small class="roles"> Author </small>  </li>
 <li>Curry Cunningham <br><small class="roles"> Author </small>  </li>
 <li><a href="authors.html">More about authors...</a></li>
@@ -123,7 +144,7 @@
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by Benjamin Williams, Joshua Zahner, Dan Goethel, Curry Cunningham.</p>
+<p>Developed by Joshua Zahner, Benjamin Williams, Matt Cheng, Dan Goethel, Curry Cunningham.</p>
 </div>
 
 <div class="pkgdown">

@@ -1,4 +1,4 @@
-    #' Simulate catches in one region during on year
+#' Simulate catches in one region during on year
 #'
 #' Description
 #'
@@ -8,7 +8,7 @@
 #' @param naa the current numbers-at-age in the population
 #' @param option list of model options
 #'
-#' @export
+#' @export simulate_catch
 #'
 simulate_catch <- function(removals, fleet.props, dem_params, naa, options){
 
@@ -43,7 +43,7 @@ simulate_catch <- function(removals, fleet.props, dem_params, naa, options){
             remove <- removals*fleet.props[f]
 
             # Solve for F that removes catch
-            F_f <- findF_bisection(
+            F_f <- find_F(
                 f_guess = 0.05,
                 naa     = naa,
                 waa     = dp.f$waa,
