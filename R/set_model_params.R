@@ -6,7 +6,6 @@
 #' @param nregions number of regions
 #' @param nfleets number of fishing fleets
 #'
-#' @return
 #' @export
 #'
 #' @examples
