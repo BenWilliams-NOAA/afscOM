@@ -17,6 +17,7 @@ use_package('bbmle')
 use_r('data')
 # create the package
 devtools::document()
+devtools::test()
 devtools::build()
 
 use_mit_license()

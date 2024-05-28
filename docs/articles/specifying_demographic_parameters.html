@@ -175,7 +175,7 @@
 <p>An additional helper function <code>validate_dem_params</code>, takes as input a list of population parameter matrices, and the expected dimensions, and will check if all required parameter matrices are present and of appropriate dimensions. If required parameters are missing, or are of incorrect dimensions, an error will be returned. It is recommended that this function be used prior to running the model to verify that the input parameters matrices are correctly specified.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model_dimension</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>nyears<span class="op">=</span><span class="fl">64</span>, nages<span class="op">=</span><span class="fl">30</span>, nsexes<span class="op">=</span><span class="fl">2</span>, nregions<span class="op">=</span><span class="fl">1</span>, nfleets<span class="op">=</span><span class="fl">2</span>, nsurveys<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
-<span><span class="va">dem_params</span> <span class="op">&lt;-</span> <span class="fu">validate_dem_params</span><span class="op">(</span><span class="va">dem_params</span>, <span class="va">model_dimensions</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">dem_params</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/validate_dem_params.html">validate_dem_params</a></span><span class="op">(</span><span class="va">dem_params</span>, <span class="va">model_dimensions</span><span class="op">)</span></span></code></pre></div>
 </div>
   </div>
 
@@ -189,7 +189,7 @@
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by Joshua Zahner, Benjamin Williams, Matt Cheng, Dan Goethel, Curry Cunningham.</p>
+<p>Developed by Benjamin Williams, Joshua Zahner, Matt Cheng, Dan Goethel, Curry Cunningham.</p>
 </div>
 
 <div class="pkgdown">

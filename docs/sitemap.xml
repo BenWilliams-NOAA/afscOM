@@ -52,6 +52,12 @@
     <loc>/reference/catch_at_age.html</loc>
   </url>
   <url>
+    <loc>/reference/compute_ssb.html</loc>
+  </url>
+  <url>
+    <loc>/reference/cyclic.recruitment.html</loc>
+  </url>
+  <url>
     <loc>/reference/discard_F.html</loc>
   </url>
   <url>
@@ -82,10 +88,25 @@
     <loc>/reference/project.html</loc>
   </url>
   <url>
+    <loc>/reference/project_multi.html</loc>
+  </url>
+  <url>
+    <loc>/reference/resample_recruitment.html</loc>
+  </url>
+  <url>
     <loc>/reference/retained_F.html</loc>
   </url>
   <url>
+    <loc>/reference/sablefish_assessment_data.html</loc>
+  </url>
+  <url>
+    <loc>/reference/sablefish_dem_params.html</loc>
+  </url>
+  <url>
     <loc>/reference/set_model_params.html</loc>
+  </url>
+  <url>
+    <loc>/reference/setup_model_options.html</loc>
   </url>
   <url>
     <loc>/reference/simulate_ac.html</loc>
@@ -119,5 +140,8 @@
   </url>
   <url>
     <loc>/reference/subset_matrix.html</loc>
+  </url>
+  <url>
+    <loc>/reference/validate_dem_params.html</loc>
   </url>
 </urlset>

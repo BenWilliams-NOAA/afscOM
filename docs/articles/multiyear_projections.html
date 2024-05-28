@@ -100,19 +100,19 @@
 <div class="section level4">
 <h4 id="the-project_multi-function">The <code>project_multi()</code> Function<a class="anchor" aria-label="anchor" href="#the-project_multi-function"></a>
 </h4>
-<p>However, it is often desirable to conduct multi-year forward projections. This is as simple as wrapping the <code><a href="../reference/project.html">project()</a></code> function as shown above in a for loop and doing some careful indexing. The <code>afscOM</code> package provides an additional <code>project_multi()</code> function that handles such projection simulation.</p>
+<p>However, it is often desirable to conduct multi-year forward projections. This is as simple as wrapping the <code><a href="../reference/project.html">project()</a></code> function as shown above in a for loop and doing some careful indexing. The <code>afscOM</code> package provides an additional <code><a href="../reference/project_multi.html">project_multi()</a></code> function that handles such projection simulation.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">om</span> <span class="op">&lt;-</span> <span class="fu">project_multi</span><span class="op">(</span><span class="va">init_naa</span>, <span class="va">removals</span>, <span class="va">recruitment</span>, <span class="va">dem_params</span>, <span class="va">nyears</span>, <span class="va">model_options</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">om</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/project_multi.html">project_multi</a></span><span class="op">(</span><span class="va">init_naa</span>, <span class="va">removals</span>, <span class="va">recruitment</span>, <span class="va">dem_params</span>, <span class="va">nyears</span>, <span class="va">model_options</span><span class="op">)</span></span></code></pre></div>
 <p>The key differences between the <code>project_multi</code> and basic <code>project</code> function are in how the input parameters are defined.</p>
 <p>For the basic <code>project</code> function, the parameters all represent single year inputs. So, the “removals” parameter represents the amount of catch to take in the next projection year, while the “recruitment” parameter represents how many recruits enter the population in the next projection year. Similarly, the “dem_params” input parameter, represents the value of the demographic rates for a single year (so they have dimension <code>[1, nages, nsexes, nregions, nfleets]</code>).</p>
 <p>The <code>project_multi</code> function, however, expects all inputs as vectors of length <code>nyears</code>. By providing vectors of catch and recruitment, the <code>project_multi</code> function iteratively applies a specific catch level and number of recruits to the population for multiple years.</p>
-<p>Rarely are catch levels or recruitment levels known in the future, but <code>project_multi()</code> does not currently support generating new catch or recruitment levels based on the current internal state of the population (e.g. recruitment can not be pulled from a stock recruit curve based on annual spawning biomass).</p>
+<p>Rarely are catch levels or recruitment levels known in the future, but <code><a href="../reference/project_multi.html">project_multi()</a></code> does not currently support generating new catch or recruitment levels based on the current internal state of the population (e.g. recruitment can not be pulled from a stock recruit curve based on annual spawning biomass).</p>
 <p>Future versions of the <code>afscOM</code> may implement means to dynamically generate recruitment based on internal population state (such as a stock recruit relationship), as well as means of computing future catch levels from simple harvest control rules.</p>
 </div>
 <div class="section level4">
 <h4 id="custom-multiyear-projection-frameworks">Custom Multiyear Projection Frameworks<a class="anchor" aria-label="anchor" href="#custom-multiyear-projection-frameworks"></a>
 </h4>
-<p>The builtin <code>project_multi()</code> function will work fine for users interested in basic population projections. However, users with more complex needs (e.g. a custom observation generation process), will need to implement thir own multi-year projection framework. This is not difficult, as the <code>project_multi()</code> function is, essentially, only a for-loop wrapper around the single-year <code><a href="../reference/project.html">project()</a></code> function, but some care must be taken to ensure that removals, recruitment, and demographic parameters are being approporiately applied.</p>
+<p>The builtin <code><a href="../reference/project_multi.html">project_multi()</a></code> function will work fine for users interested in basic population projections. However, users with more complex needs (e.g. a custom observation generation process), will need to implement thir own multi-year projection framework. This is not difficult, as the <code><a href="../reference/project_multi.html">project_multi()</a></code> function is, essentially, only a for-loop wrapper around the single-year <code><a href="../reference/project.html">project()</a></code> function, but some care must be taken to ensure that removals, recruitment, and demographic parameters are being approporiately applied.</p>
 <p>This is the basic skeleton of the <code>project_multi</code> function that should be reused for custom multiyear projection functions.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">project_multi</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">...</span><span class="op">)</span><span class="op">{</span></span>
@@ -155,7 +155,7 @@
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by Joshua Zahner, Benjamin Williams, Matt Cheng, Dan Goethel, Curry Cunningham.</p>
+<p>Developed by Benjamin Williams, Joshua Zahner, Matt Cheng, Dan Goethel, Curry Cunningham.</p>
 </div>
 
 <div class="pkgdown">
