@@ -5,7 +5,8 @@ rm(list=ls())
 library(devtools)
 devtools::load_all()
 
-assessment <- dget("data/test.rdat")
+load(file.path(here::here(), "data/sablefish_assessment_data.rda"))
+assessment <- sablefish_assessment_data
 
 #' 1. Define model dimensions and dimension names
 #'  - nyears: number of years over which to simulate

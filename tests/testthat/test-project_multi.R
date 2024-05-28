@@ -1,7 +1,10 @@
 test_that("pojrect_multi reproduces sablefish timeseries", {
-    assessment <- dget("data/test.rdat")
+    
+    load(file.path(here::here(), "data/sablefish_assessment_data.rda"))
+    assessment <- sablefish_assessment_data
 
-    dem_params <- readRDS("data/sablefish_dem_params.RDS")
+    load(file.path(here::here(), "data/sablefish_dem_params.rda"))
+    dem_params <- sablefish_dem_params
 
     dims <- get_model_dimensions(dem_params$sel)
 

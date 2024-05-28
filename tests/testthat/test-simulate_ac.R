@@ -1,6 +1,7 @@
 test_that("domestic LL survey age composition calculation", {
   
-  assessment <- dget("data/test.rdat")
+  load(file.path(here::here(), "data/sablefish_assessment_data.rda"))
+  assessment <- sablefish_assessment_data
 
   ll_rpn_years <- as.numeric(rownames(assessment$eac.srv1))
   ll_rpn_years <- ll_rpn_years-1960+1
@@ -32,7 +33,8 @@ test_that("domestic LL survey age composition calculation", {
 
 test_that("Domestic LL Fishery Age composition calculation", {
   
-  assessment <- dget("data/test.rdat")
+  load(file.path(here::here(), "data/sablefish_assessment_data.rda"))
+  assessment <- sablefish_assessment_data
 
   ll_ac_years <- as.numeric(rownames(assessment$eac.fish1))
   ll_ac_years <- ll_ac_years-1960+1
