@@ -123,7 +123,7 @@ init_naa[,,2,] <- assessment$natage.male["1960",]
 recruitment <- assessment$natage.female[,1]*2
 recruitment <- c(recruitment, recruitment[64])
 
-
+assessment$natage.male
 #' 5. Define catch history
 #' Catch histories are defined by three variables:
 #'  - TAC: the total allowable catch each year across the entire model
@@ -132,13 +132,13 @@ recruitment <- c(recruitment, recruitment[64])
 #'  - fleet apportionment: the proportion of the TAC allocation to each
 #'                         fishing fleet in each region in the model
 #' The apportionment timeseries are placed in a `model_options` list.
-#' 
+#'
 #' Alternatively, a timeseries of fishing mortality rates, F, can be
 #' provided in lieu of TACs. In this case, the timeseries of F for each
 #' fleet, in each area, must be provided in an array of dimensions
-#' [nyears, 1, 1, nregions, nfleets]. 
-#' 
-#' Always specify the `removals_input` in the `model_options` list. 
+#' [nyears, 1, 1, nregions, nfleets].
+#'
+#' Always specify the `removals_input` in the `model_options` list.
 #' `removals_input` can be either "catch" or "F", depending on what
 #' data you are providing as removals input.
 
@@ -154,17 +154,17 @@ TACs <- (assessment$t.series[,"Catch_HAL"]+assessment$t.series[,"Catch_TWL"])
 
 
 f_timeseries <- assessment$t.series[,c("F_HAL", "F_TWL")] %>% as.matrix
-f_timeseries <- array(f_timeseries, dim=c(nyears, 1, 1, 1, 2), 
-                dimnames = list("time"=1:nyears, 
-                                age="all",  
-                                sex="all", 
-                                "region"="alaska", 
+f_timeseries <- array(f_timeseries, dim=c(nyears, 1, 1, 1, 2),
+                dimnames = list("time"=1:nyears,
+                                age="all",
+                                sex="all",
+                                "region"="alaska",
                                 "fleet"=c("Fixed", "Trawl")))
 
 model_options$ removals_input = "F"
 
 #' 6. Define parameters for observation processes
-#' Observation process parameters include catchability coefficients 
+#' Observation process parameters include catchability coefficients
 #' (q), observation errors, and sample sizes for age/length comps.
 
 obs_pars <- list(
