@@ -12,7 +12,7 @@
 #' time, age, sex, region, and fleet as appropriate.
 #'
 #' @param dem_params list of demographic parameter matrices
-#' @param params vector of names of parameters to plot
+#' @param params vector of names of parameters to plot (not implemented)
 #' @param out_dir optional directory to save plots to
 #' @param ... additional parameters to be passed to `ggsave`
 #'
@@ -20,22 +20,25 @@
 #'
 #' @example
 #'
-plot_demographic_parameters <- function(dem_params, params=NA, out_dir=NA, ...){
-    waa_plot <- plot_waa(dem_params$waa)
-    mat_plot <- plot_mat(dem_params$mat)
-    mort_plot <- plot_mort(dem_params$mort)
-    dmr_plot <- plot_mort(dem_params$dmr)
-    sel_plot <- plot_selret(dem_params$sel)
-    ret_plot <- plot_selret(dem_params$ret)
-    survsel_plot <- plot_selret(dem_params$surv_sel)
+plot_demographic_parameters <- function(dem_params, params=NA, show_plots=TRUE, out_dir=NA, ...){
+    
+    waa_plot  <- plot_waa(dem_params$waa)
+    mat_plot  <- plot_mat(dem_params$mat)
+    mort_plot <- plot_mort(dem_params$mort, is_dmr=FALSE)
+    dmr_plot  <- plot_mort(dem_params$dmr,  is_dmr=FALSE)
+    sel_plot  <- plot_selret(dem_params$sel, is_selectivity = TRUE)
+    ret_plot  <- plot_selret(dem_params$ret, is_selectivity = FALSE)
+    survsel_plot <- plot_selret(dem_params$surv_sel, is_selectivity = TRUE)
 
-    show(waa_plot)
-    show(mat_plot)
-    show(mort_plot)
-    show(dmr_plot)
-    show(sel_plot)
-    show(ret_plot)
-    show(survsel_plot)
+    if(show_plots){
+        show(waa_plot)
+        show(mat_plot)
+        show(mort_plot)
+        show(dmr_plot)
+        show(sel_plot)
+        show(ret_plot)
+        show(survsel_plot)
+    }
 
     if(!is.na(out_dir)){
         ggsave(filename=file.path(out_dir, "waa_plot.png"), plot=waa_plot, ...)
@@ -46,6 +49,8 @@ plot_demographic_parameters <- function(dem_params, params=NA, out_dir=NA, ...){
         ggsave(filename=file.path(out_dir, "ret_plot.png"), plot=ret_plot, ...)
         ggsave(filename=file.path(out_dir, "survsel_plot.png"), plot=survsel_plot, ...)
     }
+
+    return(listN(waa_plot, mat_plot, mort_plot, dmr_plot, sel_plot, ret_plot, survsel_plot))
 
 }
 
@@ -75,7 +80,7 @@ plot_waa <- function(waa){
         geom_line(linewidth=1)+
         scale_y_continuous(limits=c(0, ymax))+
         coord_cartesian(expand=0)+
-        labs(x="Age", y="Weight", color="Sex", linetype="Time Block")+
+        labs(x="Age", y="Weight", color="Sex", linetype="Time Block", title="Weight-at-Age")+
         theme_bw()
     
     if(dimensions$nregions > 1){
@@ -114,7 +119,7 @@ plot_mat <- function(mat){
         geom_line(linewidth=1)+
         scale_y_continuous(limits=c(0, ymax))+
         coord_cartesian(expand=0)+
-        labs(x="Age", y="Maturity", color="Sex", linetype="Time Block")+
+        labs(x="Age", y="Maturity", color="Sex", linetype="Time Block", title="Female Maturity-at-Age")+
         theme_bw()
 
     if(dimensions$nregions > 1){
@@ -137,7 +142,7 @@ plot_mat <- function(mat){
 #'
 #' @example
 #'
-plot_mort <- function(mort){
+plot_mort <- function(mort, is_dmr=FALSE){
 
     dimensions <- get_model_dimensions(mort)
 
@@ -153,7 +158,7 @@ plot_mort <- function(mort){
         scale_y_continuous(limits=c(0, ymax), expand=c(0.01, 0.01))+
         scale_x_continuous(expand=c(0, 0))+
         # coord_cartesian(expand=0)+
-        labs(x="Age", y="Instanteous Mortality", color="Sex", linetype="Time Block")+
+        labs(x="Age", y="Instanteous Mortality", color="Sex", linetype="Time Block", title=ifelse(is_dmr, "Discard Mortality-at-Age", "Natural Mortality-at-Age"))+
         theme_bw()
 
     if(dimensions$nregions > 1){
@@ -175,7 +180,7 @@ plot_mort <- function(mort){
 #'
 #' @example
 #'
-plot_selret <- function(selret){
+plot_selret <- function(selret, is_selectivity=TRUE){
 
     dimensions <- get_model_dimensions(selret)
 
@@ -190,7 +195,7 @@ plot_selret <- function(selret){
         geom_line(linewidth=0.8)+
         scale_y_continuous(limits=c(0, ymax), expand=c(0.01, 0.01))+
         scale_x_continuous(expand=c(0, 0))+
-        labs(x="Age", y="Selectivity", color="Sex", linetype="Time Block")+
+        labs(x="Age", y=ifelse(is_selectivity, "Selectivity", "Retention"), color="Sex", linetype="Time Block", title=ifelse(is_selectivity, "Selectivity", "Retention"))+
         theme_bw()
 
     if(dimensions$nregions > 1 & dimensions$nfleets <= 1){
