@@ -8,7 +8,7 @@
 #' - selectivity
 #' - retention
 #' - discard mortality
-#' Plots will show valyes of demographic quantities across
+#' Plots will show values of demographic quantities across
 #' time, age, sex, region, and fleet as appropriate.
 #'
 #' @param dem_params list of demographic parameter matrices
@@ -54,25 +54,33 @@ plot_demographic_parameters <- function(dem_params, params=NA, out_dir=NA, ...){
 #' Generates plot of weight-at-age across time, age, sex,
 #' and region as appropriate.
 #'
-#' @param waa four-dimenrionsal weight-at-age matrix
+#' @param waa four-dimensional weight-at-age matrix
 #'
 #' @export plot_waa
 #'
 #' @example
 #'
 plot_waa <- function(waa){
+
+    dimensions <- get_model_dimensions(waa)
+
     waa_df <- reshape2::melt(waa) %>%
         group_by(age, sex, region) %>%
         distinct(value, .keep_all=TRUE) %>%
-        mutate(time_block = as.factor(time))
+        mutate(time_block = factor(time, labels=c(1:length(unique(time)))))
+
+    ymax <- round(1.2*waa_df %>% pull(value) %>% max, 2)
 
     plot <- ggplot(waa_df, aes(x=age, y=value, color=sex, linetype=time_block))+
         geom_line(linewidth=1)+
-        scale_y_continuous(limits=c(0, 7))+
+        scale_y_continuous(limits=c(0, ymax))+
         coord_cartesian(expand=0)+
         labs(x="Age", y="Weight", color="Sex", linetype="Time Block")+
-        theme_bw()+
-        facet_wrap(~region, scales="free_y")
+        theme_bw()
+    
+    if(dimensions$nregions > 1){
+        plot <- plot + facet_wrap(~region, scales="free_y")
+    }
 
     return(plot)
 
@@ -84,26 +92,34 @@ plot_waa <- function(waa){
 #' and region as appropriate. Only the female maturity ogive
 #' is plotted.
 #'
-#' @param mat four-dimenrionsal maturity-at-age matrix
+#' @param mat four-dimensional maturity-at-age matrix
 #'
 #' @export plot_mat
 #'
 #' @example
 #'
 plot_mat <- function(mat){
+
+    dimensions <- get_model_dimensions(mat)
+
     mat_df <- reshape2::melt(mat) %>%
         group_by(age, sex, region) %>%
         distinct(value, .keep_all=TRUE) %>%
-        mutate(time_block = as.factor(time)) %>%
+        mutate(time_block = factor(time, labels=c(1:length(unique(time))))) %>%
         filter(sex == "F")
+
+    ymax <- 1.0
 
     plot <- ggplot(mat_df, aes(x=age, y=value, color=sex, linetype=time_block))+
         geom_line(linewidth=1)+
-        scale_y_continuous(limits=c(0, 1.0))+
+        scale_y_continuous(limits=c(0, ymax))+
         coord_cartesian(expand=0)+
         labs(x="Age", y="Maturity", color="Sex", linetype="Time Block")+
-        theme_bw()+
-        facet_wrap(~region, scales="free_y")
+        theme_bw()
+
+    if(dimensions$nregions > 1){
+        plot <- plot + facet_wrap(~region, scales="free_y")
+    }
 
     return(plot)
 
@@ -115,26 +131,34 @@ plot_mat <- function(mat){
 #' and region as appropriate. This function can be used for 
 #' both natural and discard mortality
 #'
-#' @param waa four-dimenionsal mortality-at-age matrix
+#' @param waa four-dimensional mortality-at-age matrix
 #'
 #' @export plot_mort
 #'
 #' @example
 #'
 plot_mort <- function(mort){
+
+    dimensions <- get_model_dimensions(mort)
+
     mort_df <- reshape2::melt(mort) %>%
         group_by(age, sex, region) %>%
         distinct(value, .keep_all=TRUE) %>%
-        mutate(time_block = as.factor(time))
+        mutate(time_block = factor(time, labels=c(1:length(unique(time)))))
+
+    ymax <- round(1.2*mort_df %>% pull(value) %>% max, 2)
 
     plot <- ggplot(mort_df, aes(x=age, y=value, color=sex, linetype=time_block))+
         geom_line(linewidth=1)+
-        scale_y_continuous(limits=c(0, 1.0), expand=c(0.01, 0.01))+
+        scale_y_continuous(limits=c(0, ymax), expand=c(0.01, 0.01))+
         scale_x_continuous(expand=c(0, 0))+
         # coord_cartesian(expand=0)+
         labs(x="Age", y="Instanteous Mortality", color="Sex", linetype="Time Block")+
-        theme_bw()+
-        facet_wrap(~region, scales="free_y")
+        theme_bw()
+
+    if(dimensions$nregions > 1){
+        plot <- plot + facet_wrap(~region, scales="free_y")
+    }
 
     return(plot)
 }
@@ -144,7 +168,7 @@ plot_mort <- function(mort){
 #' Generates plot of selectivity-at-age or retention-at-age
 #' across time, age, sex, region, and fleet as appropriate.
 #'
-#' @param selret five-dimenrionsal selectivity-at-age or
+#' @param selret five-dimensional selectivity-at-age or
 #' retention-at-age matrix
 #'
 #' @export plot_selret
@@ -152,18 +176,30 @@ plot_mort <- function(mort){
 #' @example
 #'
 plot_selret <- function(selret){
+
+    dimensions <- get_model_dimensions(selret)
+
     selex_df <- reshape2::melt(selret) %>%
         group_by(age, sex, region, fleet) %>%
         distinct(value, .keep_all=TRUE) %>%
-        mutate(time_block = as.factor(time))
+        mutate(time_block = factor(time, labels=c(1:length(unique(time)))))
+
+    ymax <- 1
 
     plot <- ggplot(selex_df, aes(x=age, y=value, color=sex, linetype=time_block))+
-        geom_line(linewidth=1)+
-        scale_y_continuous(limits=c(0, 1.0), expand=c(0.01, 0.01))+
+        geom_line(linewidth=0.8)+
+        scale_y_continuous(limits=c(0, ymax), expand=c(0.01, 0.01))+
         scale_x_continuous(expand=c(0, 0))+
         labs(x="Age", y="Selectivity", color="Sex", linetype="Time Block")+
-        theme_bw()+
-        facet_grid(rows=vars(region), cols=vars(fleet))
+        theme_bw()
+
+    if(dimensions$nregions > 1 & dimensions$nfleets <= 1){
+        plot <- plot + facet_wrap(~region, scales="free_y")
+    }else if(dimensions$nfleets > 1 & dimensions$nregions <= 1){
+        plot <- plot + facet_wrap(~fleet, scales="free_y")
+    }else if(dimensions$nfleets > 1 & dimensions$nregions > 1){
+        plot <- plot + facet_grid(rows=vars(region), cols=vars(fleet))
+    }
 
     return(plot)
 }
