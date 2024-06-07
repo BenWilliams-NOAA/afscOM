@@ -99,7 +99,7 @@ dem_params <- list(
     surv_sel=survey_sel
 )
 
-saveRDS(dem_params, file="data/sabelfish_dem_params.RDS")
+# saveRDS(dem_params, file="data/sabelfish_dem_params.RDS")
 
 #dem_params <- validate_dem_params(dem_params, model_params)
 
@@ -123,7 +123,6 @@ init_naa[,,2,] <- assessment$natage.male["1960",]
 recruitment <- assessment$natage.female[,1]*2
 recruitment <- c(recruitment, recruitment[64])
 
-assessment$natage.male
 #' 5. Define catch history
 #' Catch histories are defined by three variables:
 #'  - TAC: the total allowable catch each year across the entire model
@@ -161,7 +160,7 @@ f_timeseries <- array(f_timeseries, dim=c(nyears, 1, 1, 1, 2),
                                 "region"="alaska",
                                 "fleet"=c("Fixed", "Trawl")))
 
-model_options$ removals_input = "F"
+model_options$removals_input = "F"
 
 #' 6. Define parameters for observation processes
 #' Observation process parameters include catchability coefficients
@@ -216,6 +215,16 @@ ssb <- apply(om_sim$naa[1:64,,1,]*dem_params$waa[,,1,]*dem_params$mat[,,1,], 1, 
 bio <- apply(om_sim$naa[1:64,,,]*dem_params$waa[,,,], 1, sum)
 catch <- apply(om_sim$caa, 1, sum)
 f <- apply(apply(om_sim$faa, c(1, 5), \(x) max(x)), 1, sum)
+# ssb <- compute_ssb(om_sim$naa, dem_params)
+# bio <- compute_bio(om_sim$naa, dem_params)
+# catch <- compute_total_catch(om_sim$caa)
+# fleet_catch <- compute_fleet_catch(om_sim$caa)
+# f <- compute_total_f(om_sim$faa)
+
+
+
+
+
 
 ssb_comp <- data.frame(
     year=1960:2023,
@@ -280,8 +289,8 @@ p
 
 ll_surv_data <- data.frame(assessment$obssrv3) %>% rownames_to_column("Year")
 ll_surv_data$Year <- as.numeric(ll_surv_data$Year)
-ll_surv_data$om_pred <- survey_preds$ll_rpn[31:64,,,]
-ll_surv_data$om <- survey_obs$ll_rpn[31:64,,,]
+ll_surv_data$om_pred <- om_sim$survey_preds$ll_rpn[31:64,,,]
+ll_surv_data$om <- om_sim$survey_obs$ll_rpn[31:64,,,]
 ll_surv_data$om.lci <- ll_surv_data$om -1.96*0.20*ll_surv_data$om
 ll_surv_data$om.uci <- ll_surv_data$om +1.96*0.20*ll_surv_data$om
 
@@ -299,8 +308,8 @@ p1 <- ggplot(ll_surv_data, aes(x=Year, y=obssrv3, group=1))+
 
 ll_surv_data <- data.frame(assessment$obssrv1) %>% rownames_to_column("Year")
 ll_surv_data$Year <- as.numeric(ll_surv_data$Year)
-ll_surv_data$om_pred <- survey_preds$ll_rpw[31:64,,,]
-ll_surv_data$om <- survey_obs$ll_rpw[31:64,,,]
+ll_surv_data$om_pred <- om_sim$survey_preds$ll_rpw[31:64,,,]
+ll_surv_data$om <- om_sim$survey_obs$ll_rpw[31:64,,,]
 ll_surv_data$om.lci <- ll_surv_data$om -1.96*0.10*ll_surv_data$om
 ll_surv_data$om.uci <- ll_surv_data$om +1.96*0.10*ll_surv_data$om
 
@@ -318,8 +327,8 @@ p2 <- ggplot(ll_surv_data, aes(x=Year, y=obssrv1, group=1))+
 
 tw_surv_data <- data.frame(assessment$obssrv7) %>% rownames_to_column("Year")
 tw_surv_data$Year <- as.numeric(tw_surv_data$Year)
-tw_surv_data$om_pred <- survey_preds$tw_rpw[tw_surv_data$Year-1960+1,,,]
-tw_surv_data$om <- survey_obs$tw_rpw[tw_surv_data$Year-1960+1,,,]
+tw_surv_data$om_pred <- om_sim$survey_preds$tw_rpw[tw_surv_data$Year-1960+1,,,]
+tw_surv_data$om <- om_sim$survey_obs$tw_rpw[tw_surv_data$Year-1960+1,,,]
 tw_surv_data$om.lci <- tw_surv_data$om -1.96*0.10*tw_surv_data$om
 tw_surv_data$om.uci <- tw_surv_data$om +1.96*0.10*tw_surv_data$om
 
