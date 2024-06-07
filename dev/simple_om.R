@@ -27,50 +27,26 @@ om_sim <- project_multi(
     model_options = simple_om$options
 )
 
+dimnames(om_sim$naa) <- list("time"=1:(model_dimensions$nyears+1), "age"=1:10, "sex"=c("F", "M"), "region"="Region 1")
+dimnames(om_sim$caa) <- list("time"=1:(model_dimensions$nyears), "age"=1:10, "sex"=c("F", "M"), "region"="Region 1", "fleet"=("Fleet 1"))
+
+
 # derived quantities and plots
-ssb <- apply(om_sim$naa[1:25,,1,]*simple_om$dem_params$waa[,,1,]*simple_om$dem_params$mat[,,1,], 1, sum)
-bio <- apply(om_sim$naa[1:25,,,]*simple_om$dem_params$waa[,,,], 1, sum)
-catch <- apply(om_sim$caa, 1, sum)
-f <- apply(apply(om_sim$faa, c(1, 5), \(x) max(x)), 1, sum)
+ssb <- compute_ssb(om_sim$naa, simple_om$dem_params)
+bio <- compute_bio(om_sim$naa, simple_om$dem_params)
+catch <- compute_total_catch(om_sim$caa)
+f <- compute_total_f(om_sim$faa)
 
-ssb_comp <- data.frame(
-    year=1:25,
-    om_ssb=ssb,
-    om_catch=catch,
-    om_bio = bio,
-    om_f = f
-)
+ssb_plot <- plot_ssb(ssb)
+bio_plot <- plot_bio(bio)
+catch_plot <- plot_catch(catch)
+f_plot <- plot_f(f)
 
-p1 <- ggplot(ssb_comp, aes(x=year))+
-    geom_line(aes(y=om_ssb, color="OM"), size=0.7)+
-    scale_y_continuous(limits=c(0, 7000), breaks=seq(0, 7000, 1000))+
-    coord_cartesian(expand=0)+
-    scale_color_manual(name="Model", values=c("black", "red"))+
-    labs(y="SSB", x="Year", title="Spawning Biomass Comparison")+
-    theme_bw()
+((ssb_plot + bio_plot) / (catch_plot + f_plot)) + plot_layout(guides="collect")
 
-p2 <- ggplot(ssb_comp, aes(x=year))+
-    geom_line(aes(y=om_catch, color="OM"), size=0.7)+
-    scale_y_continuous(limits=c(0, 100), breaks=seq(0, 100, 25))+
-    coord_cartesian(expand=0)+
-    scale_color_manual(name="Model", values=c("black", "red"))+
-    labs(y="Catch", x="Year", title="Total Catch Comparison")+
-    theme_bw()
+naa_plot <- plot_atage(om_sim$naa)
+caa_plot <- plot_atage(om_sim$caa)
 
-p3 <- ggplot(ssb_comp, aes(x=year))+
-    geom_line(aes(y=om_bio, color="OM"), size=0.7)+
-    scale_y_continuous(limits=c(0, 15000), breaks=seq(0, 15000, 2000))+
-    coord_cartesian(expand=0)+
-    scale_color_manual(name="Model", values=c("black", "red"))+
-    labs(y="Biomass", x="Year", title="Total Biomass Comparison")+
-    theme_bw()
+naa_plot
+caa_plot
 
-p4 <- ggplot(ssb_comp, aes(x=year))+
-    geom_line(aes(y=om_f, color="OM"), size=0.7)+
-    scale_y_continuous(limits=c(0, 0.04), breaks=seq(0, 0.04, 0.01))+
-    coord_cartesian(expand=0)+
-    scale_color_manual(name="Model", values=c("black", "red"))+
-    labs(y="F", x="Year", title="Fishing Mortality Comparison")+
-    theme_bw()
-
-((p1+p3) / (p2+p4)) + plot_layout(guides="collect")

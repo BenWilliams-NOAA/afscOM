@@ -208,3 +208,153 @@ plot_selret <- function(selret, is_selectivity=TRUE){
 
     return(plot)
 }
+
+
+plot_ssb <- function(ssb){
+
+    nregions <- ncol(ssb)
+
+    ssb_df <- ssb %>% as_tibble() %>%
+        rownames_to_column("time") %>%
+        mutate(time=as.numeric(time)) %>%
+        pivot_longer(c(2), names_to="region", values_to="ssb")
+
+    xmax <- round(ssb_df %>% pull(time) %>% max, -1)
+    ymax <- round(1.2*ssb_df %>% pull(ssb) %>% max, -1)
+
+    plot <- ggplot(ssb_df, aes(x=time, y=ssb))+
+        geom_line(linewidth=1)+
+        scale_y_continuous(limits=c(0, ymax))+
+        labs(x="Time", y="Spawning Biomass", title="Spawning Stock Biomass")+
+        coord_cartesian(expand=0)+
+        theme_bw()+
+        theme(
+            panel.grid.minor = element_blank()
+        )
+
+    if(nregions > 1){
+        plot <- plot + facet_wrap(~region)
+    }
+
+    return(plot)
+
+ }
+
+ plot_bio <- function(bio){
+
+    nregions <- ncol(bio)
+
+    bio_df <- bio %>% as_tibble() %>%
+        rownames_to_column("time") %>%
+        mutate(time=as.numeric(time)) %>%
+        pivot_longer(c(2), names_to="region", values_to="bio")
+
+    xmax <- round(bio_df %>% pull(time) %>% max, -1)
+    ymax <- round(1.2*bio_df %>% pull(bio) %>% max, -1)
+
+    plot <- ggplot(bio_df, aes(x=time, y=bio))+
+        geom_line(linewidth=1)+
+        # scale_x_continuous(breaks=seq(0, xmax, length.out=6))+
+        scale_y_continuous(limits=c(0, ymax))+
+        labs(x="Time", y="Total Biomass", title="Total Biomass")+
+        coord_cartesian(expand=0)+
+        theme_bw()+
+        theme(
+            panel.grid.minor = element_blank()
+        )
+
+    if(nregions > 1){
+        plot <- plot + facet_wrap(~region)
+    }
+
+    return(plot)
+
+ }
+
+ plot_catch <- function(catch){
+
+    nregions <- ncol(catch)
+
+    catch_df <- catch %>% as_tibble() %>%
+        rownames_to_column("time") %>%
+        mutate(time=as.numeric(time)) %>%
+        pivot_longer(c(2), names_to="region", values_to="catch")
+
+    xmax <- round(catch_df %>% pull(time) %>% max, -1)
+    ymax <- round(1.2*catch_df %>% pull(catch) %>% max, -1)
+
+    plot <- ggplot(catch_df, aes(x=time, y=catch))+
+        geom_line(linewidth=1)+
+        # scale_x_continuous(breaks=seq(0, xmax, length.out=6))+
+        scale_y_continuous(limits=c(0, ymax))+
+        labs(x="Time", y="Catch", title="Total Landed Catch")+
+        coord_cartesian(expand=0)+
+        theme_bw()+
+        theme(
+            panel.grid.minor = element_blank()
+        )
+
+    if(nregions > 1){
+        plot <- plot + facet_wrap(~region)
+    }
+
+    return(plot)
+
+ }
+
+ plot_f <- function(f){
+
+    nregions <- ncol(f)
+
+    f_df <- f %>% as_tibble() %>%
+        rownames_to_column("time") %>%
+        mutate(time=as.numeric(time)) %>%
+        pivot_longer(c(2), names_to="region", values_to="f")
+
+    xmax <- round(f_df %>% pull(time) %>% max, -1)
+    ymax <- 1.2*round(f_df %>% pull(f) %>% max, 2)
+
+    plot <- ggplot(f_df, aes(x=time, y=f))+
+        geom_line(linewidth=1)+
+        # scale_x_continuous(breaks=seq(0, xmax, length.out=6))+
+        scale_y_continuous(limits=c(0, ymax))+
+        labs(x="Time", y="Fishing Mortality Rate", title="Fishing Mortality")+
+        coord_cartesian(expand=0)+
+        theme_bw()+
+        theme(
+            panel.grid.minor = element_blank()
+        )
+
+    if(nregions > 1){
+        plot <- plot + facet_wrap(~region)
+    }
+
+    return(plot)
+
+}
+
+
+plot_atage <- function(atage){
+    atage_df <- reshape2::melt(atage) %>% as_tibble() %>%
+        group_by(time, age) %>%
+        summarise(naa = sum(value)) %>%
+        group_by(time) %>%
+        mutate(total_naa = sum(naa)) %>%
+        mutate(prop = naa/total_naa) %>%
+        mutate(avg_age = weighted.mean(age, prop))
+        
+
+    plot <- ggplot(atage_df, aes(x=time, y=age, size=prop, color=prop))+
+        geom_point()+
+        geom_line(aes(y=avg_age), color='red', show.legend = FALSE)+
+        coord_cartesian(expand=0.01)+
+        theme_bw()
+
+    return(plot)
+}
+
+
+
+
+
+
