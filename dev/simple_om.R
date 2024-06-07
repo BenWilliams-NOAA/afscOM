@@ -1,5 +1,18 @@
+library(tidyverse)
+library(patchwork)
+devtools::load_all()
+
 # Load OM objects for simple OM
 load("data/simple_om.rda")
+
+# initial numbers-at-age
+simple_om$init_naa
+
+# recruitment timeseries
+simple_om$recruitment
+
+# catch timeseries
+simple_om$catch
 
 # get model dimensions
 model_dimensions <- get_model_dimensions(simple_om$dem_params$sel)
@@ -15,8 +28,8 @@ om_sim <- project_multi(
 )
 
 # derived quantities and plots
-ssb <- apply(om_sim$naa[1:25,,1,]*dem_params$waa[,,1,]*dem_params$mat[,,1,], 1, sum)
-bio <- apply(om_sim$naa[1:25,,,]*dem_params$waa[,,,], 1, sum)
+ssb <- apply(om_sim$naa[1:25,,1,]*simple_om$dem_params$waa[,,1,]*simple_om$dem_params$mat[,,1,], 1, sum)
+bio <- apply(om_sim$naa[1:25,,,]*simple_om$dem_params$waa[,,,], 1, sum)
 catch <- apply(om_sim$caa, 1, sum)
 f <- apply(apply(om_sim$faa, c(1, 5), \(x) max(x)), 1, sum)
 
@@ -60,7 +73,4 @@ p4 <- ggplot(ssb_comp, aes(x=year))+
     labs(y="F", x="Year", title="Fishing Mortality Comparison")+
     theme_bw()
 
-p1
-p2
-p3
-p4
+((p1+p3) / (p2+p4)) + plot_layout(guides="collect")
