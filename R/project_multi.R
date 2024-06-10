@@ -31,6 +31,8 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
     naa         = array(NA, dim=c(nyears+1, nages, nsexes, nregions))
     naa[1,,,] = init_naa
 
+    f           = array(NA, dim=c(nyears, 1, 1, nregions, nfleets))
+
     survey_preds <- list(
         ll_rpn = array(NA, dim=c(nyears, 1, 1, nregions)),
         ll_rpw = array(NA, dim=c(nyears, 1, 1, nregions)),
@@ -71,6 +73,8 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
         faa[y,,,,] <- out_vars$faa_tmp
         naa[y+1,,,] <- out_vars$naa_tmp
 
+        f[y,,,,] <- out_vars$F_f_tmp
+
         if(model_options$simulate_observations){
             survey_preds$ll_rpn[y,,,] <- out_vars$surv_preds$ll_rpn
             survey_preds$ll_rpw[y,,,] <- out_vars$surv_preds$ll_rpw
@@ -87,6 +91,6 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
 
     }
 
-    return(listN(land_caa, disc_caa, caa, faa, naa, survey_preds, survey_obs))
+    return(listN(land_caa, disc_caa, caa, faa, f, naa, survey_preds, survey_obs))
 
 }
