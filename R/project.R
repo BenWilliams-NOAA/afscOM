@@ -100,6 +100,18 @@ project <- function(removals, fleet_props, dem_params, prev_naa, recruitment, re
                     )
         naa_tmp[,,,r] <- pop_vars$naa
     }
+
+     # Handle movement matrix
+    if(model_dimensions$nregions > 1 & "movement" %in% names(dem_params)){
+        v <- vapply(
+            1:model_dimensions$nages, 
+            function(a) naa_tmp[1,a,,] %*% dem_params$move, 
+            FUN.VALUE = array(0, dim=c(model_dimensions$nsexes, model_dimensions$nregions))
+        )
+        moved_naa <- array(aperm(v, perm=c(3, 1, 2)), dim=c(1, nages, nsexes, nregions))
+        naa_tmp <- moved_naa
+    }
+
     # state_vars <- simulate_movement(dem_params, state_vars)
     surv_preds <- list()
     surv_obs <- list()
