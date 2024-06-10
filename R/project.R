@@ -16,17 +16,17 @@
 #'
 #' @export project
 #'
-project <- function(removals, fleet.props, dem_params, prev_naa, recruitment, options=NA){
+project <- function(removals, fleet_props, dem_params, prev_naa, recruitment, region_props, options=NA){
 
     model_params <- get_model_dimensions(dem_params$sel)
 
-    if(!("region_apportionment" %in% names(options))){
-        options$region_apportionment <- rep(1/model_params$nregions, model_params$nregions)
-    }
+    # if(!("region_apportionment" %in% names(options))){
+    #     options$region_apportionment <- rep(1/model_params$nregions, model_params$nregions)
+    # }
 
-    if(model_params$nregions < 2){
-        options$region_apportionment <- 1
-    }
+    # if(model_params$nregions < 2){
+    #     options$region_apportionment <- 1
+    # }
 
     # TODO: make this into a list and add function to update the whole list at once
     land_caa_tmp    = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions, model_params$nfleets))
@@ -64,7 +64,7 @@ project <- function(removals, fleet.props, dem_params, prev_naa, recruitment, op
         if(options$removals_input == "catch"){
             # Apportion catch-based removals based on provided
             # regional apportionment scheme.
-            remove <- removals*options$region_apportionment[[r]]
+            remove <- removals*region_props[1,r]
         }else{
             # Removals were input as F, subset to correct dimensions
             remove <- subset_matrix(removals, r=r, d=4, drop=FALSE)
@@ -76,7 +76,7 @@ project <- function(removals, fleet.props, dem_params, prev_naa, recruitment, op
             removals=remove,
             dem_params=dp.r,
             naa=prev_naa.r,
-            fleet.props = fleet.props,
+            fleet_props = fleet_props,
             options=options
         )
 
