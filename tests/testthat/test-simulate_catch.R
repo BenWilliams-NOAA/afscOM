@@ -23,7 +23,7 @@ test_that("single year catch simulation for one fleet", {
 
   tac <- 7000
   suppressWarnings({
-    catch_vars <- simulate_catch(tac, fleet.props=c(1.00, 0.00), dem_params=dem_params, naa=naa, options=model_options)
+    catch_vars <- simulate_catch(tac, fleet_props=matrix(c(1.00, 0.00), ncol=model_params$nfleets), dem_params=dem_params, naa=naa, options=model_options)
   })
   
   total_catch <- apply(catch_vars$caa_tmp, 1, sum)
@@ -58,7 +58,7 @@ test_that("single year catch simulation for two fleets", {
 
   tac <- 7000
   suppressWarnings({
-    catch_vars <- simulate_catch(tac, fleet.props=c(0.7, 0.3), dem_params=dem_params, naa=naa, options=model_options)
+    catch_vars <- simulate_catch(tac, fleet_props=matrix(c(0.70, 0.30), ncol=model_params$nfleets), dem_params=dem_params, naa=naa, options=model_options)
   })
   
   total_catch <- apply(catch_vars$caa_tmp, 1, sum)
