@@ -67,3 +67,41 @@ test_that("single year catch simulation for two fleets", {
   expect_equal(total_catch, 7000, tolerance=1e-4)
   expect_equal(fleet_catch, matrix(c(4900, 2100), nrow=1), tolerance=1e-4)
 })
+
+
+test_that("single year catch simulation with two regions and one fleet", {
+  
+  load(file.path(here::here(), "data", "simple_om_spatial.rda"))
+  dem_params <- simple_om_spatial$dem_params
+  model_params <- get_model_dimensions(dem_params$sel)
+
+  y <- 1
+  dem_params <- subset_dem_params(dem_params, y, d=1, drop=FALSE)
+  region_props <- model_options$region_apportionment[y,,drop=FALSE]
+  fleet_props <- model_options$fleet_apportionment[y,,drop=FALSE]
+
+  caa_tmp         = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions, model_params$nfleets))
+
+  tac <- 100
+  suppressWarnings({
+    for(r in 1:model_params$nregions){
+      remove <- tac*region_props[1,r]
+      dp.r <- subset_dem_params(dem_params, r, d=4, drop=FALSE)
+      naa.r <- subset_matrix(simple_om_spatial$init_naa, r=r, d=4, drop=FALSE)
+      catch_vars <- simulate_catch(
+        removals=remove, 
+        fleet_props=fleet_props, 
+        dem_params=dp.r, 
+        naa=naa.r, 
+        options=model_options
+      )
+      caa_tmp[,,,r,] <- catch_vars$caa_tmp
+    }
+
+    expect_equal(sum(caa_tmp), tac, tolerance=1e-4)
+    expect_equal(apply(caa_tmp, c(1, 4), sum), matrix(c(50, 50), ncol=2), tolerance=1e-4)
+  })
+
+
+
+})
