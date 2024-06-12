@@ -16,7 +16,7 @@
 #'
 #' @export project
 #'
-project <- function(removals, fleet_props, dem_params, prev_naa, recruitment, region_props, options=NA){
+project <- function(removals, dem_params, prev_naa, recruitment, region_props, fleet_props, rec_props, options=NA){
 
     model_params <- get_model_dimensions(dem_params$sel)
 
@@ -47,7 +47,11 @@ project <- function(removals, fleet_props, dem_params, prev_naa, recruitment, re
     # timestep.
     recruit_apportionment <- NA
     if(model_params$nregions > 1){
-        recruit_apportionment <- 1/model_params$nregions
+        if(!(is.null(rec_props) | is.nan(rec_props) | is.na(rec_props))){
+            recruit_apportionment <- rec_props
+        }else{
+            recruit_apportionment <- 1/model_params$nregions
+        }
         # if(!all(is.na(recruit_apportionment))){
         #     rec.props <- prev_naa[1,1,1,]/sum(prev_naa[1,1,1,])
         #     multi <- rmultinom(50, model_params$nregions, prob=rec.props)
