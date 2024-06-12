@@ -102,13 +102,20 @@ project <- function(removals, fleet_props, dem_params, prev_naa, recruitment, re
     }
 
      # Handle movement matrix
-    if(model_dimensions$nregions > 1 & "movement" %in% names(dem_params)){
-        v <- vapply(
-            1:model_dimensions$nages, 
-            function(a) naa_tmp[1,a,,] %*% dem_params$move[,,a], 
-            FUN.VALUE = array(0, dim=c(model_dimensions$nsexes, model_dimensions$nregions))
+    if(model_params$nregions > 1 & "movement" %in% names(dem_params)){
+       v <- vapply(
+            1:nages, 
+            # Apply movement to the ages individualy
+            function(a) {
+                sapply(
+                    1:model_params$nsexes,
+                    # Apply movement to the sexes individually
+                    function(s) naa_tmp[1,a,s,] %*% dem_params$movement[,,a,s]
+                )
+            } , 
+            FUN.VALUE = array(0, dim=c(model_params$nsexes, model_params$nregions))
         )
-        moved_naa <- array(aperm(v, perm=c(3, 1, 2)), dim=c(1, nages, nsexes, nregions))
+        moved_naa <- array(aperm(v, perm=c(3, 1, 2)), dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions))
         naa_tmp <- moved_naa
     }
 
