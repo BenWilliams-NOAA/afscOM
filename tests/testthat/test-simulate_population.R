@@ -46,6 +46,7 @@ test_that("single year population with two regions", {
   load(file.path(here::here(), "data", "simple_om_spatial.rda"))
   dem_params <- simple_om_spatial$dem_params
   model_params <- get_model_dimensions(dem_params$sel)
+  model_options <- simple_om_spatial$model_options
 
   y <- 1
   dem_params <- subset_dem_params(dem_params, y, d=1, drop=FALSE)
