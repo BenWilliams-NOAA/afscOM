@@ -57,8 +57,10 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
         dp.y <- subset_dem_params(dem_params = dem_params, y, d=1, drop=FALSE)
         removals_input <- subset_matrix(removals_timeseries, y, d=1, drop=FALSE)
         # fleet.props <- unlist(lapply(model_options$fleet_apportionment, \(x) x[y]))
-        region_props <- model_options$region_apportionment[y,,drop=FALSE]
-        fleet_props <- model_options$fleet_apportionment[y,,drop=FALSE]
+        # region_props <- model_options$region_apportionment[y,,drop=FALSE]
+        # fleet_props <- model_options$fleet_apportionment[y,,drop=FALSE]
+        region_props <- subset_matrix(model_options$region_apportionment, y, d=1, drop=FALSE)
+        fleet_props <- subset_matrix(model_options$fleet_apportionment, y, d=1, drop=FALSE)
 
         out_vars <- project(
             removals = removals_input,

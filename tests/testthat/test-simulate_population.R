@@ -50,8 +50,9 @@ test_that("single year population with two regions", {
 
   y <- 1
   dem_params <- subset_dem_params(dem_params, y, d=1, drop=FALSE)
-  region_props <- model_options$region_apportionment[y,,drop=FALSE]
-  fleet_props <- model_options$fleet_apportionment[y,,drop=FALSE]
+  region_props <- subset_matrix(model_options$region_apportionment, y, d=1, drop=FALSE)
+  fleet_props <- subset_matrix(model_options$fleet_apportionment, y, d=1, drop=FALSE)
+
 
   caa_tmp         = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions, model_params$nfleets))
   naa_tmp         = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions))

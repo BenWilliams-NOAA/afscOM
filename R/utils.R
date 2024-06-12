@@ -85,6 +85,7 @@ subset_dem_params <- function(dem_params, r, d=1, drop=TRUE){
 #'
 #'
 subset_matrix <- function(mat, r, d=1, drop=TRUE){
+    if(is.null(mat)) return(NULL)
     tmp <- rlang::duplicate(mat)
     ndims <- length(dim(mat))
     idxs <- c(as.list(rep(TRUE, d-1)), list(r), as.list(rep(TRUE, ndims-d)))
