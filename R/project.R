@@ -47,7 +47,7 @@ project <- function(removals, dem_params, prev_naa, recruitment, region_props, f
     # timestep.
     recruit_apportionment <- NA
     if(model_params$nregions > 1){
-        if(!(is.null(rec_props) | is.nan(rec_props) | is.na(rec_props))){
+        if(!(is.null(rec_props) | any(is.nan(rec_props)) | any(is.na(rec_props)))){
             recruit_apportionment <- rec_props
         }else{
             recruit_apportionment <- 1/model_params$nregions
