@@ -80,13 +80,13 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
         f[y,,,,] <- out_vars$F_f_tmp
 
         if(model_options$simulate_observations){
-            survey_preds$rpns[y,,,,] <- out_vars$surv_preds$rpn_preds[,,,as.logical(model_options$obs_pars$is_survey)]
-            survey_preds$rpws[y,,,,] <- out_vars$surv_preds$rpw_preds[,,,as.logical(model_options$obs_pars$is_survey)]
-            survey_preds$acs[y,,,,]  <- out_vars$surv_preds$ac_preds
+            survey_preds$rpns[y,,,,] <- out_vars$survey_preds$rpns
+            survey_preds$rpws[y,,,,] <- out_vars$survey_preds$rpws
+            survey_preds$acs[y,,,,]  <- out_vars$survey_preds$acs
 
-            survey_obs$rpns[y,,,,] <- out_vars$surv_obs$rpn_obs[,,,as.logical(model_options$obs_pars$is_survey)]
-            survey_obs$rpws[y,,,,] <- out_vars$surv_obs$rpw_obs[,,,as.logical(model_options$obs_pars$is_survey)]
-            survey_obs$acs[y,,,,]  <- out_vars$surv_obs$ac_obs
+            survey_obs$rpns[y,,,,] <- out_vars$survey_obs$rpns
+            survey_obs$rpws[y,,,,] <- out_vars$survey_obs$rpws
+            survey_obs$acs[y,,,,]  <- out_vars$survey_obs$acs
         }
 
     }

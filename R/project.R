@@ -37,6 +37,18 @@ project <- function(removals, dem_params, prev_naa, recruitment, region_props, f
     zaa_tmp         = array(0,  dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions))
     naa_tmp         = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions))
 
+    survey_preds <- list(
+        rpns = array(NA, dim=c(1, 1, 1, nregions, nsurveys)),
+        rpws = array(NA, dim=c(1, 1, 1, nregions, nsurveys)),
+        acs  = array(NA, dim=c(1, nages, nsexes, nregions, nsurveys+nfleets))
+    )
+
+    survey_obs <- list(
+        rpns = array(NA, dim=c(1, 1, 1, nregions, nsurveys)),
+        rpws = array(NA, dim=c(1, 1, 1, nregions, nsurveys)),
+        acs  = array(NA, dim=c(1, nages, nsexes, nregions, nsurveys+nfleets))
+    )
+
     # Do recruitment here because there isn't regional recruitment
     # NOTE: need to think real carefully about how to do this in a modular way
     rec <- array(NA, dim=c(1, 1, model_params$nsexes, model_params$nregions))
@@ -110,6 +122,28 @@ project <- function(removals, dem_params, prev_naa, recruitment, region_props, f
                         options=options
                     )
         naa_tmp[,,,r] <- pop_vars$naa
+
+        if(!("simulate_observations" %in% names(options)) || options$simulate_observations){
+            # concatenate fishery and survey selectivity matrices for convenience later
+            big_selex <- abind::abind(dp.r$sel, dp.r$surv_sel, along=5) 
+            names(dim(big_selex)) <- names(dim(dp.r$sel))
+            obs <- simulate_observations(
+                naa = prev_naa.r,
+                waa = dp.r$waa,
+                selex = big_selex,
+                faa = faa_tmp[,,,r,,drop=FALSE],
+                zaa = zaa_tmp[,,,r,drop=FALSE],
+                obs_pars = options$obs_pars
+            )
+            survey_preds$rpns[,,,r,] <- obs$preds$rpn_preds[,,,as.logical(model_options$obs_pars$is_survey)]
+            survey_preds$rpws[,,,r,] <- obs$preds$rpw_preds[,,,as.logical(model_options$obs_pars$is_survey)]
+            survey_preds$acs[,,,r,]  <- obs$preds$ac_preds
+
+            survey_obs$rpns[,,,r,] <- obs$obs$rpn_obs[,,,as.logical(model_options$obs_pars$is_survey)]
+            survey_obs$rpws[,,,r,] <- obs$obs$rpw_obs[,,,as.logical(model_options$obs_pars$is_survey)]
+            survey_obs$acs[,,,r,]  <- obs$obs$ac_obs
+        }
+
     }
 
      # Handle movement matrix
@@ -131,24 +165,22 @@ project <- function(removals, dem_params, prev_naa, recruitment, region_props, f
     }
 
     # state_vars <- simulate_movement(dem_params, state_vars)
-    surv_preds <- list()
-    surv_obs <- list()
 
-    if(!("simulate_observations" %in% names(options)) || options$simulate_observations){
-        # concatenate fishery and survey selectivity matrices for convenience later
-        big_selex <- abind::abind(dem_params$sel, dem_params$surv_sel, along=5) 
-        names(dim(big_selex)) <- names(dim(dem_params$sel))
-        obs <- simulate_observations(
-            naa = prev_naa,
-            waa = dem_params$waa,
-            selex = big_selex,
-            faa = faa_tmp,
-            zaa = zaa_tmp,
-            obs_pars = options$obs_pars
-        )
-        surv_preds <- obs$preds
-        surv_obs <- obs$obs
-    }
+    # if(!("simulate_observations" %in% names(options)) || options$simulate_observations){
+    #     # concatenate fishery and survey selectivity matrices for convenience later
+    #     big_selex <- abind::abind(dem_params$sel, dem_params$surv_sel, along=5) 
+    #     names(dim(big_selex)) <- names(dim(dem_params$sel))
+    #     obs <- simulate_observations(
+    #         naa = prev_naa,
+    #         waa = dem_params$waa,
+    #         selex = big_selex,
+    #         faa = faa_tmp,
+    #         zaa = zaa_tmp,
+    #         obs_pars = options$obs_pars
+    #     )
+    #     surv_preds <- obs$preds
+    #     surv_obs <- obs$obs
+    # }
 
-    return(listN(land_caa_tmp, disc_caa_tmp, caa_tmp, F_f_tmp, faa_tmp, naa_tmp, surv_preds, surv_obs))
+    return(listN(land_caa_tmp, disc_caa_tmp, caa_tmp, F_f_tmp, faa_tmp, naa_tmp, survey_preds, survey_obs))
 }
