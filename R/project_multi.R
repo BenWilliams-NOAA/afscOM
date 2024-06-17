@@ -34,19 +34,15 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
     f           = array(NA, dim=c(nyears, 1, 1, nregions, nfleets))
 
     survey_preds <- list(
-        ll_rpn = array(NA, dim=c(nyears, 1, 1, nregions)),
-        ll_rpw = array(NA, dim=c(nyears, 1, 1, nregions)),
-        tw_rpw = array(NA, dim=c(nyears, 1, 1, nregions)),
-        ll_ac = array(NA, dim=c(nyears, nages, nsexes, nregions)),
-        fxfish_caa = array(NA, dim=c(nyears, nages, nsexes, nregions))
+        rpns = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
+        rpws = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
+        acs  = array(NA, dim=c(nyears, nages, nsexes, nregions, nsurveys+nfleets))
     )
 
     survey_obs <- list(
-        ll_rpn = array(NA, dim=c(nyears, 1, 1, nregions)),
-        ll_rpw = array(NA, dim=c(nyears, 1, 1, nregions)),
-        tw_rpw = array(NA, dim=c(nyears, 1, 1, nregions)),
-        ll_acs = array(NA, dim=c(nyears, nages, nsexes, nregions)),
-        fxfish_acs = array(NA, dim=c(nyears, nages, nsexes, nregions))
+        rpns = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
+        rpws = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
+        acs  = array(NA, dim=c(nyears, nages, nsexes, nregions, nsurveys+nfleets))
     )
 
 
@@ -84,17 +80,13 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
         f[y,,,,] <- out_vars$F_f_tmp
 
         if(model_options$simulate_observations){
-            survey_preds$ll_rpn[y,,,] <- out_vars$surv_preds$ll_rpn
-            survey_preds$ll_rpw[y,,,] <- out_vars$surv_preds$ll_rpw
-            survey_preds$tw_rpw[y,,,] <- out_vars$surv_preds$tw_rpw
-            survey_preds$ll_ac[y,,,] <- out_vars$surv_preds$ll_ac
-            survey_preds$fxfish_caa[y,,,] <- out_vars$surv_preds$fxfish_caa
+            survey_preds$rpns[y,,,,] <- out_vars$surv_preds$rpn_preds[,,,as.logical(model_options$obs_pars$is_survey)]
+            survey_preds$rpws[y,,,,] <- out_vars$surv_preds$rpw_preds[,,,as.logical(model_options$obs_pars$is_survey)]
+            survey_preds$acs[y,,,,]  <- out_vars$surv_preds$ac_preds
 
-            survey_obs$ll_rpn[y,,,] <- out_vars$surv_obs$ll_rpn
-            survey_obs$ll_rpw[y,,,] <- out_vars$surv_obs$ll_rpw
-            survey_obs$tw_rpw[y,,,] <- out_vars$surv_obs$tw_rpw
-            survey_obs$ll_acs[y,,,] <- out_vars$surv_obs$ll_ac_obs
-            survey_obs$fxfish_acs[y,,,] <- out_vars$surv_obs$fxfish_caa_obs
+            survey_obs$rpns[y,,,,] <- out_vars$surv_obs$rpn_obs[,,,as.logical(model_options$obs_pars$is_survey)]
+            survey_obs$rpws[y,,,,] <- out_vars$surv_obs$rpw_obs[,,,as.logical(model_options$obs_pars$is_survey)]
+            survey_obs$acs[y,,,,]  <- out_vars$surv_obs$ac_obs
         }
 
     }

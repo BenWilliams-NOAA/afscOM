@@ -168,27 +168,17 @@ model_options$removals_input = "F"
 #' (q), observation errors, and sample sizes for age/length comps.
 
 obs_pars <- list(
-    surv_ll = list(
-        q = 6.41338,
-        rpn_cv = 0.20,
-        rpw_cv = 0.10,
-        ac_samps = 1000,
-        as_integers = TRUE
-    ),
-    surv_tw = list(
-        q = 0.8580,
-        rpw_cv = 0.10,
-        ac_samps = 1000,
-        as_integers = TRUE
-    ),
-    fish_fx = list(
-        ac_samps = 1000,
-        as_integers = TRUE
-    ),
-    fish_tw = list(
-        ac_samps = 1000,
-        as_integers = TRUE
-    )
+    # longline fishery, trawl fishery, longline survey, trawl survey
+    is_survey   = c(0, 0, 1, 1),  # is this a survey (1) or fishery (0)
+    qs          = c(1, 1, 6.41, 0.85), # catchability coefficient (q) for surveys
+    rpn         = c(0, 0, 1, 1), # should RPNs be computed (yes=1, no=0)
+    rpn_cv      = c(0, 0, 0.1, 0.1), # RPN CV
+    rpw         = c(0, 0, 1, 1), # should RPWs be computed (yes=1, no=0)
+    rpw_cv      = c(0, 0, 0.1, 0.1), # RPW CV
+    acs         = c(1, 1, 1, 1), # should age compositions be computed (yes=1, no=0)
+    ac_samps    = c(50, 30, 50, 30), # total sample size for age composition observations
+    ac_as_integers  = c(TRUE, TRUE, TRUE, TRUE), # return age comps as integers (TRUE) or proportions (FALSE)
+    acs_agg_sex     = c(FALSE, FALSE, FALSE, FALSE) # should age comps be aggregated by sex
 )
 model_options$simulate_observations <- TRUE
 model_options$obs_pars <- obs_pars
@@ -207,7 +197,14 @@ model_options$obs_pars <- obs_pars
 #' have been provided to help with correctly subsetting the
 #' demographic matrices to ensure input data is of the correct
 #' dimensionality.
-om_sim <- project_multi(init_naa, f_timeseries, recruitment, dem_params, nyears, model_options)
+om_sim <- project_multi(
+            init_naa = init_naa, 
+            removals_timeseries = f_timeseries, 
+            recruitment = recruitment, 
+            dem_params = dem_params, 
+            nyears = nyears, 
+            model_options = model_options
+          )
 
 #' 8. Plot OM Results
 #'
@@ -354,3 +351,13 @@ p3 <- ggplot(tw_surv_data, aes(x=Year, y=obssrv7, group=1))+
     theme_bw()
 
 p1/p2/p3 + plot_layout(guides="collect")
+
+
+survey_obs$ll_rpn
+survey_preds$ll_rpn
+n = length(survey_obs$ll_rpn)
+
+exp((1/n)*sum(log(survey_obs$ll_rpn/pn[1:64])))
+ssb_comp$om_bio
+
+pn <- apply(naa[1:64,,,]*dem_params$surv_sel[1:64,,,,1], 1, sum)
