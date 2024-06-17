@@ -145,6 +145,7 @@ TACs <- (assessment$t.series[,"Catch_HAL"]+assessment$t.series[,"Catch_TWL"])
 # fixed_fleet_prop <- assessment$t.series[,"Catch_HAL"]/(assessment$t.series[,"Catch_HAL"]+assessment$t.series[,"Catch_TWL"])
 # trawl_fleet_prop <- 1-fixed_fleet_prop
 
+model_options <- list()
 # model_options <- list(
 #     region_apportionment = matrix(1, nrow=nyears, ncol=nregions),
 #     fleet_apportionment = matrix(rep(c(fixed_fleet_prop, trawl_fleet_prop), nyears), ncol=nfleets),
@@ -189,7 +190,7 @@ obs_pars <- list(
         as_integers = TRUE
     )
 )
-
+model_options$simulate_observations <- TRUE
 model_options$obs_pars <- obs_pars
 
 #' 6. Run the OM forward in time
@@ -212,6 +213,8 @@ om_sim <- project_multi(init_naa, f_timeseries, recruitment, dem_params, nyears,
 #'
 
 dimnames(om_sim$naa) <- list("time"=1:(nyears+1), "age"=2:31, "sex"=c("F", "M"), "region"="alaska")
+dimnames(om_sim$caa) <- list("time"=1:(nyears), "age"=2:31, "sex"=c("F", "M"), "region"="alaska", "fleet"=c("Fixed", "Trawl"))
+
 # ssb <- apply(om_sim$naa[1:64,,1,]*dem_params$waa[,,1,]*dem_params$mat[,,1,], 1, sum)
 # bio <- apply(om_sim$naa[1:64,,,]*dem_params$waa[,,,], 1, sum)
 # catch <- apply(om_sim$caa, 1, sum)
