@@ -76,11 +76,18 @@ project <- function(removals, dem_params, prev_naa, recruitment, region_props, f
 
         dp.r <- subset_dem_params(dem_params=dem_params, r=r, d=4, drop=FALSE)
         prev_naa.r <- subset_matrix(prev_naa, r=r, d=4, drop=FALSE)
+
+        if(length(dim(fleet_props)) > 2){
+            fleet_props.r <- subset_matrix(fleet_props, r, d=3, drop=TRUE)
+        }else{
+            fleet_props.r <- fleet_props
+        }
+
         catch_vars <- simulate_catch(
             removals=remove,
             dem_params=dp.r,
             naa=prev_naa.r,
-            fleet_props = fleet_props,
+            fleet_props = fleet_props.r,
             options=options
         )
 
