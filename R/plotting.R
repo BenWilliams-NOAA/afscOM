@@ -344,9 +344,15 @@ plot_atage <- function(atage){
         mutate(avg_age = weighted.mean(age, prop))
         
 
-    plot <- ggplot(atage_df, aes(x=time, y=age, size=prop, color=prop))+
-        geom_point()+
-        geom_line(aes(y=avg_age), color='red', show.legend = FALSE)+
+    plot <- ggplot(atage_df)+
+        geom_point(aes(x=time, y=age, size=prop, color=prop))+
+        geom_line(
+            data=atage_df %>% distinct(time, avg_age), 
+            aes(x=time, y=avg_age),
+            linewidth=2, 
+            color='red', 
+            show.legend = FALSE
+        )+
         coord_cartesian(expand=0.01)+
         theme_bw()
 
