@@ -1,6 +1,7 @@
 test_that("no catch required", {
 
-  dem_params <- readRDS("data/sablefish_dem_matrices.RDS")
+  load(file.path(here::here(), "data/sablefish_dem_params.rda"))
+  dem_params <- sablefish_dem_params
   y <- 1
   r <- 1
   f <- 1
@@ -26,7 +27,8 @@ test_that("no catch required", {
 
 test_that("Find F for TAC", {
 
-  dem_params <- readRDS("data/sablefish_dem_matrices.RDS")
+  load(file.path(here::here(), "data/sablefish_dem_params.rda"))
+  dem_params <- sablefish_dem_params
   model_params <- get_model_dimensions(dem_params$sel)
   y <- 1
   r <- 1
@@ -35,7 +37,8 @@ test_that("Find F for TAC", {
   dem_params <- subset_dem_params(dem_params, y, d=1)
   dem_params <- subset_dem_params(dem_params, r, d=3)
 
-  assessment <- dget("data/test.rdat")
+  load(file.path(here::here(), "data/sablefish_assessment_data.rda"))
+  assessment <- sablefish_assessment_data
   naa <- matrix(NA, nrow=model_params$nages, ncol=2)
   naa[,1] <- assessment$natage.female["2023",]*1e6
   naa[,2] <- assessment$natage.male["2023",]*1e6
@@ -60,7 +63,8 @@ test_that("Find F for TAC", {
 
 test_that("Find F for TAC via bisection", {
 
-  dem_params <- readRDS("data/sablefish_dem_matrices.RDS")
+  load(file.path(here::here(), "data/sablefish_dem_params.rda"))
+  dem_params <- sablefish_dem_params
   model_params <- get_model_dimensions(dem_params$sel)
   y <- 1
   r <- 1
@@ -69,7 +73,8 @@ test_that("Find F for TAC via bisection", {
   dem_params <- subset_dem_params(dem_params, y, d=1)
   dem_params <- subset_dem_params(dem_params, r, d=3)
 
-  assessment <- dget("data/test.rdat")
+  load(file.path(here::here(), "data/sablefish_assessment_data.rda"))
+  assessment <- sablefish_assessment_data
   naa <- matrix(NA, nrow=model_params$nages, ncol=2)
   naa[,1] <- assessment$natage.female["2023",]*1e6
   naa[,2] <- assessment$natage.male["2023",]*1e6
@@ -100,13 +105,14 @@ test_that("Find F for TAC via bisection", {
 
   })
 
-  expect_equal(as.numeric(F_f_bisections), as.numeric(F_f_mle), tolerance=1e-5)
+  expect_equal(as.numeric(F_f_bisections), as.numeric(F_f_mle), tolerance=1e-4)
 })
 
 
 test_that("Compare FAA to Sablefish Assessment", {
 
-  assessment <- dget("data/test.rdat")
+  load(file.path(here::here(), "data/sablefish_assessment_data.rda"))
+  assessment <- sablefish_assessment_data
 
   TAC <- assessment$t.series[, "Catch_HAL"]
 

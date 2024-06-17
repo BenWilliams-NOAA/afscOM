@@ -47,12 +47,12 @@ project <- function(removals, fleet.props, dem_params, prev_naa, recruitment, op
     # timestep.
     recruit_apportionment <- NA
     if(model_params$nregions > 1){
-        recruit_apportionment <- options$region_apportionment
-        if(!all(is.na(recruit_apportionment))){
-            rec.props <- prev_naa[1,1,1,]/sum(prev_naa[1,1,1,])
-            multi <- rmultinom(50, model_params$nregions, prob=rec.props)
-            recruit_apportionment <- apply(multi, 1, mean)/sum(apply(multi, 1, mean))
-        }
+        recruit_apportionment <- 1/model_params$nregions
+        # if(!all(is.na(recruit_apportionment))){
+        #     rec.props <- prev_naa[1,1,1,]/sum(prev_naa[1,1,1,])
+        #     multi <- rmultinom(50, model_params$nregions, prob=rec.props)
+        #     recruit_apportionment <- apply(multi, 1, mean)/sum(apply(multi, 1, mean))
+        # }
         rec[1,1,,] <- t(apply(global.rec * dem_params$sexrat[1,1,,], 1, \(x) x*recruit_apportionment))
     }else{
         recruit_apportionment <- 1
@@ -64,18 +64,18 @@ project <- function(removals, fleet.props, dem_params, prev_naa, recruitment, op
         if(options$removals_input == "catch"){
             # Apportion catch-based removals based on provided
             # regional apportionment scheme.
-            remove <- removals*options$region_apportionment[r]
+            remove <- removals*options$region_apportionment[[r]]
         }else{
             # Removals were input as F, subset to correct dimensions
             remove <- subset_matrix(removals, r=r, d=4, drop=FALSE)
         }
 
         dp.r <- subset_dem_params(dem_params=dem_params, r=r, d=4, drop=FALSE)
-        prev_naa <- subset_dem_params(prev_naa, r=r, d=4, drop=FALSE)
+        prev_naa.r <- subset_matrix(prev_naa, r=r, d=4, drop=FALSE)
         catch_vars <- simulate_catch(
             removals=remove,
             dem_params=dp.r,
-            naa=prev_naa,
+            naa=prev_naa.r,
             fleet.props = fleet.props,
             options=options
         )
@@ -86,10 +86,18 @@ project <- function(removals, fleet.props, dem_params, prev_naa, recruitment, op
         faa_tmp[,,,r,] <- catch_vars$faa_tmp
         F_f_tmp[,,,r,] <- catch_vars$F_f
 
-        tot_faa <- array(apply(faa_tmp, c(2, 3), sum), dim=c(1, model_params$nages, model_params$nsexes, 1))
-        zaa_tmp[,,,r] <- tot_faa+dem_params$mort
 
-        pop_vars <- simulate_population(prev_naa=prev_naa, faa=catch_vars$faa_tmp, recruitment=rec, dem_params=dp.r, options=options)
+        tot_faa <- array(apply(catch_vars$faa_tmp, c(2, 3), sum), dim=c(1, model_params$nages, model_params$nsexes, 1))
+        zaa_tmp[,,,r] <- tot_faa+dp.r$mort
+
+        rec.r <- subset_matrix(rec, r=r, d=4, drop=FALSE)
+        pop_vars <- simulate_population(
+                        prev_naa=prev_naa.r, 
+                        faa=catch_vars$faa_tmp, 
+                        recruitment=rec.r, 
+                        dem_params=dp.r, 
+                        options=options
+                    )
         naa_tmp[,,,r] <- pop_vars$naa
     }
     # state_vars <- simulate_movement(dem_params, state_vars)

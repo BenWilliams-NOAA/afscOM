@@ -4,10 +4,34 @@
     <loc>/404.html</loc>
   </url>
   <url>
+    <loc>/LICENSE-text.html</loc>
+  </url>
+  <url>
+    <loc>/LICENSE.html</loc>
+  </url>
+  <url>
+    <loc>/articles/afscOM.html</loc>
+  </url>
+  <url>
     <loc>/articles/index.html</loc>
   </url>
   <url>
     <loc>/articles/intro.html</loc>
+  </url>
+  <url>
+    <loc>/articles/model_dimensions.html</loc>
+  </url>
+  <url>
+    <loc>/articles/model_options.html</loc>
+  </url>
+  <url>
+    <loc>/articles/multiyear_projections.html</loc>
+  </url>
+  <url>
+    <loc>/articles/observation_processes.html</loc>
+  </url>
+  <url>
+    <loc>/articles/specifying_demographic_parameters.html</loc>
   </url>
   <url>
     <loc>/authors.html</loc>
@@ -16,16 +40,22 @@
     <loc>/index.html</loc>
   </url>
   <url>
-    <loc>/LICENSE-text.html</loc>
+    <loc>/reference/F_to_mu.html</loc>
   </url>
   <url>
-    <loc>/LICENSE.html</loc>
+    <loc>/reference/assessment.html</loc>
   </url>
   <url>
     <loc>/reference/baranov.html</loc>
   </url>
   <url>
     <loc>/reference/catch_at_age.html</loc>
+  </url>
+  <url>
+    <loc>/reference/compute_ssb.html</loc>
+  </url>
+  <url>
+    <loc>/reference/cyclic.recruitment.html</loc>
   </url>
   <url>
     <loc>/reference/discard_F.html</loc>
@@ -38,9 +68,6 @@
   </url>
   <url>
     <loc>/reference/find_F.html</loc>
-  </url>
-  <url>
-    <loc>/reference/F_to_mu.html</loc>
   </url>
   <url>
     <loc>/reference/generate_param_matrix.html</loc>
@@ -61,7 +88,25 @@
     <loc>/reference/project.html</loc>
   </url>
   <url>
+    <loc>/reference/project_multi.html</loc>
+  </url>
+  <url>
+    <loc>/reference/resample_recruitment.html</loc>
+  </url>
+  <url>
     <loc>/reference/retained_F.html</loc>
+  </url>
+  <url>
+    <loc>/reference/sablefish_assessment_data.html</loc>
+  </url>
+  <url>
+    <loc>/reference/sablefish_dem_params.html</loc>
+  </url>
+  <url>
+    <loc>/reference/set_model_params.html</loc>
+  </url>
+  <url>
+    <loc>/reference/setup_model_options.html</loc>
   </url>
   <url>
     <loc>/reference/simulate_ac.html</loc>
@@ -95,5 +140,8 @@
   </url>
   <url>
     <loc>/reference/subset_matrix.html</loc>
+  </url>
+  <url>
+    <loc>/reference/validate_dem_params.html</loc>
   </url>
 </urlset>

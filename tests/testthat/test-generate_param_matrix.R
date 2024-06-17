@@ -10,9 +10,9 @@ test_that("fill by single value", {
 
   v <- 0.1
   m <- generate_param_matrix(v, dimension_names = dimension.names)
-  good <- readRDS("data/good_dem_matrices.RDS")
+  load(file.path(here::here(), "data/good_dem_matrices.rda"))
 
-  expect_equal(m, good$single)
+  expect_equal(m, good_dem_matrices$single)
 
 })
 
@@ -28,9 +28,9 @@ test_that("fill by age", {
 
   v <- exp(-5.1560+0.7331*2:31)/(1+exp(-5.1560+0.7331*2:31))
   m <- generate_param_matrix(v, dimension_names = dimension.names, by="age")
-  good <- readRDS("data/good_dem_matrices.RDS")
+  load(file.path(here::here(), "data/good_dem_matrices.rda"))
 
-  expect_equal(m, good$age)
+  expect_equal(m, good_dem_matrices$age)
 
 })
 
@@ -54,9 +54,9 @@ test_that("fill by age and sex", {
   rownames(v) <- 2:31
 
   m <- generate_param_matrix(v, dimension_names = dimension.names, by=c("age", "sex")) 
-  good <- readRDS("data/good_dem_matrices.RDS")
+  load(file.path(here::here(), "data/good_dem_matrices.rda"))
 
-  expect_equal(m, good$age.sex)
+  expect_equal(m, good_dem_matrices$age.sex)
 
 })
 
@@ -70,7 +70,9 @@ test_that("fill by age, sex, and fleet", {
     "fleet" = c("fixed", "trawl")
   )
 
-  all_selex <- dget("data/test.rdat")$agesel
+  load(file.path(here::here(), "data/sablefish_assessment_data.rda"))
+
+  all_selex <- sablefish_assessment_data$agesel
   selex.f.ll_fish <- all_selex[,"fish1sel.f"]
   selex.m.ll_fish <- all_selex[,"fish1sel.m"]
   selex.f.tw_fish <- all_selex[,"fish3sel.f"]
@@ -83,8 +85,8 @@ test_that("fill by age, sex, and fleet", {
   v[,2,2] <- selex.m.tw_fish
 
   m <- generate_param_matrix(v, dimension_names = dimension.names, by=c("age", "sex", "fleet"))
-  good <- readRDS("data/good_dem_matrices.RDS")
+  load(file.path(here::here(), "data/good_dem_matrices.rda"))
 
-  expect_equal(m, good$age.sex.fleet, tolerance=1e-2)
+  expect_equal(m, good_dem_matrices$age.sex.fleet, tolerance=1e-2)
 
 })

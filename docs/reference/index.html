@@ -23,6 +23,9 @@
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav"><li>
+  <a href="../articles/afscOM.html">Get started</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -32,7 +35,19 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/intro.html">intro</a>
+      <a href="../articles/model_dimensions.html">Model Dimensions</a>
+    </li>
+    <li>
+      <a href="../articles/model_options.html">Model Options</a>
+    </li>
+    <li>
+      <a href="../articles/multiyear_projections.html">Conducting Multiyear Projections</a>
+    </li>
+    <li>
+      <a href="../articles/observation_processes.html">Observation Processes</a>
+    </li>
+    <li>
+      <a href="../articles/specifying_demographic_parameters.html">Specifying Demographic Rates</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
@@ -52,6 +67,10 @@
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
+          <p><code><a href="F_to_mu.html">F_to_mu()</a></code> </p>
+        </td>
+        <td><p>instantaneous rate to harvest rate</p></td>
+      </tr><tr><td>
           <p><code><a href="baranov.html">baranov()</a></code> </p>
         </td>
         <td><p>Baranov Catch Equation</p></td>
@@ -59,6 +78,17 @@
           <p><code><a href="catch_at_age.html">catch_at_age()</a></code> </p>
         </td>
         <td><p>Catch-at-age</p></td>
+      </tr><tr><td>
+          <p><code><a href="compute_ssb.html">compute_ssb()</a></code> </p>
+        </td>
+        <td><p>Compute Spawning Stock Biomass
+#'
+Compute SSB from a matrix of NAA and a set of demagraphic
+parameters.</p></td>
+      </tr><tr><td>
+          <p><code><a href="cyclic.recruitment.html">cyclic.recruitment()</a></code> </p>
+        </td>
+        <td><p>Generate log-recruitment from two defined regimes of a specified length</p></td>
       </tr><tr><td>
           <p><code><a href="discard_F.html">discard_F()</a></code> </p>
         </td>
@@ -75,10 +105,6 @@
           <p><code><a href="find_F.html">find_F()</a></code> </p>
         </td>
         <td><p>Find F given a desired level of catch</p></td>
-      </tr><tr><td>
-          <p><code><a href="F_to_mu.html">F_to_mu()</a></code> </p>
-        </td>
-        <td><p>instantaneous rate to harvest rate</p></td>
       </tr><tr><td>
           <p><code><a href="generate_param_matrix.html">generate_param_matrix()</a></code> </p>
         </td>
@@ -100,9 +126,33 @@
         </td>
         <td><p>Project population forward by 1 year</p></td>
       </tr><tr><td>
+          <p><code><a href="project_multi.html">project_multi()</a></code> </p>
+        </td>
+        <td><p>Project Population Forward Multiple Years</p></td>
+      </tr><tr><td>
+          <p><code><a href="resample_recruitment.html">resample_recruitment()</a></code> </p>
+        </td>
+        <td><p>Resample from historical recruitment timeseries</p></td>
+      </tr><tr><td>
           <p><code><a href="retained_F.html">retained_F()</a></code> </p>
         </td>
         <td><p>Retained Fishing Mortality Rate</p></td>
+      </tr><tr><td>
+          <p><code><a href="sablefish_assessment_data.html">sablefish_assessment_data</a></code> </p>
+        </td>
+        <td><p>Sablefish assessment</p></td>
+      </tr><tr><td>
+          <p><code><a href="sablefish_dem_params.html">sablefish_dem_params</a></code> </p>
+        </td>
+        <td><p>Demographic parameter matrices for Alaska Sablefish</p></td>
+      </tr><tr><td>
+          <p><code><a href="set_model_params.html">set_model_params()</a></code> </p>
+        </td>
+        <td><p>Setup model parameters</p></td>
+      </tr><tr><td>
+          <p><code><a href="setup_model_options.html">setup_model_options()</a></code> </p>
+        </td>
+        <td><p>Set Default Values for Model Options</p></td>
       </tr><tr><td>
           <p><code><a href="simulate_ac.html">simulate_ac()</a></code> </p>
         </td>
@@ -161,6 +211,10 @@ Description</p></td>
           <p><code><a href="subset_matrix.html">subset_matrix()</a></code> </p>
         </td>
         <td><p>Subset matrix of undetermined dimensions</p></td>
+      </tr><tr><td>
+          <p><code><a href="validate_dem_params.html">validate_dem_params()</a></code> </p>
+        </td>
+        <td><p>Validate Demographic Parameter Matrices</p></td>
       </tr></tbody></table></div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -170,7 +224,7 @@ Description</p></td>
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Benjamin Williams, Joshua Zahner, Dan Goethel, Curry Cunningham.</p>
+  <p></p><p>Developed by Benjamin Williams, Joshua Zahner, Matt Cheng, Dan Goethel, Curry Cunningham.</p>
 </div>
 
 <div class="pkgdown">

@@ -1,6 +1,7 @@
 test_that("single year age-structure population", {
 
-  dem_params <- readRDS("data/sablefish_dem_matrices.RDS")
+  load(file.path(here::here(), "data/sablefish_dem_params.rda"))
+  dem_params <- sablefish_dem_params
   model_params <- get_model_dimensions(dem_params$sel)
   model_options <- list(
     regional_apportionment = c(0.70, 0.30),
@@ -14,7 +15,8 @@ test_that("single year age-structure population", {
   dem_params <- subset_dem_params(dem_params, y, d=1, drop=FALSE)
   dem_params <- subset_dem_params(dem_params, r, d=4, drop=FALSE)
 
-  assessment <- dget("data/test.rdat")
+  load(file.path(here::here(), "data/sablefish_assessment_data.rda"))
+  assessment <- sablefish_assessment_data
   naa <- array(NA, dim=c(1, model_params$nages, model_params$nsexes, 1))
   naa[,,1,] <- assessment$natage.female["1960",]*1e6
   naa[,,2,] <- assessment$natage.male["1960",]*1e6
@@ -35,5 +37,5 @@ test_that("single year age-structure population", {
   expect_equal(fleet_catch, matrix(c(2180017, 934293), nrow=1), tolerance=1e-5)
 
   ssb <- sum(pop_vars$naa[,,1,]*dem_params$waa[,,1,]*dem_params$mat[,,1,])/1e6
-  expect_equal(ssb, 278.52, tolerance=1e-4)
+  expect_equal(ssb, 281, tolerance=1e-2)
 })

@@ -1,0 +1,99 @@
+---
+title: "Model Options"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Model Options}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+A vareity of model options also need to be specified to ensure the projection model works as expected. Required options are:
+
+* `removals_input`: input units of removals (either "catch" is inputs are a TAC, or "F" if an instantenous fishing mortality rate)
+* `simulate_observations`: whethr to simulate observations from the OM (TRUE/FALSE)
+
+```{r, base_model_options}
+model_options <- list(
+  removals_input = "catch",
+  simulate_observations = TRUE
+)
+```
+
+### Catch Apportionment
+If `removals_input="catch"`, then region and fleet-level apportionment must also be specified: 
+
+* `region_apportionment`: an unnamed list of vectors (of length `nyears`) specifying what proportion of the TAC should be allocated to each spatial region. There should be as many vector as there are regions. The sum across all regions in a given year should be 1.0, but the model will not make this check internally.
+
+* `fleet_apportionment`: an unnamed list of vectors (of length `nyears`) specifying what proportion of the TAC should be allocated to each fishing fleet. There should be as many vectors as there are fishing fleets. For multi-region models, the `fleet_apportionment` proportions will be applied across all regions. There is not currently support for specifying unique fleet apportionments per spatial region. 
+
+```{r apportionment_options, eval=FALSE}
+# For a single region model, 100% of the catch is apportioned to the single region
+model_options$regional_apportionment <- list(1)
+
+# Define a 70%-30% apportionment split between fleet 1 and fleet 2
+model_options$fleet_apportionment <- list(rep(0.70, nyears), rep(30, nyears))
+
+```
+
+### Observation Processes
+If `simulate_observations=TRUE`, then a set of parameters that govern how observations are simulated must also be defined. This option, `obs_pars` takes the form of a complex list, where each named element of the list refers to a specific survey or fishery from which observations are being simulated. Currently, there is support for a longline survey (`surv_ll`), a trawl survy (`surv_tw`), a fixed gear fishery (`fish_fx`), and a trawl fishery (`fish_tw`). 
+
+Within each survey/fishery, specific parameter values that define the observation processes must be defined. The parameters supported for survey and fishery fleets differ somewhat.
+
+For surveys, the following observation parameters must all be defined:
+
+* `q`: a catchability coefficient
+* `rpn_cv`: coefficient of variation of RPN observations
+* `rpw_cv`: coefficient of variation of RPW observations
+* `ac_samps`: the number of samples, across all sexes, from which age composition data is simulated
+* `as_integers`: whether to return age composition observations as integer or proportions
+
+For fishery fleets, only the following observation parameters need to be defined:
+
+* `ac_samps`: the number of samples, across all sexes, from which age composition data is simulated
+* `as_integers`: whether to return age composition observations as integer or proportions
+
+For additional information on how all of these parameters are used to generate observations, see ["Observation Processes"](observation_processes.html).
+
+```{r, obs_pars}
+obs_pars <- list(
+    surv_ll = list(
+        q = 6.41338,
+        rpn_cv = 0.20,
+        rpw_cv = 0.10,
+        ac_samps = 1000,
+        as_integers = TRUE
+    ),
+    surv_tw = list(
+        q = 0.8580,
+        rpw_cv = 0.10,
+        ac_samps = 1000,
+        as_integers = TRUE
+    ),
+    fish_fx = list(
+        ac_samps = 1000,
+        as_integers = TRUE
+    ),
+    fish_tw = list(
+        ac_samps = 1000,
+        as_integers = TRUE
+    )
+)
+
+model_options$obs_pars <- obs_pars
+```
+
+### Default Options
+A helper function, `setup_model_options()` will return a fully formed `model_options` list object with required parameters set to default values.
+
+The default values are as follows:
+
+* `removals_input`: "catch"
+* `simulate_observations`: TRUE
+* `region_apportionment`: 1/nregions
+* `fleet_apportionment`: 1/nfleets
+* `*$q`: 1
+* `*$rpn_cv`: 0.10
+* `*$rpw_cv`: 0.10
+* `*ac_samps`: 100
+* `*as_integers`: TRUE
