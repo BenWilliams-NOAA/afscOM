@@ -105,10 +105,13 @@ project <- function(removals, fleet.props, dem_params, prev_naa, recruitment, op
     surv_obs <- list()
 
     if(!("simulate_observations" %in% names(options)) || options$simulate_observations){
+        # concatenate fishery and survey selectivity matrices for convenience later
+        big_selex <- abind::abind(dem_params$sel, dem_params$surv_sel, along=5) 
+        names(dim(big_selex)) <- names(dim(dem_params$sel))
         obs <- simulate_observations(
             naa = prev_naa,
             waa = dem_params$waa,
-            selex = dem_params$surv_sel,
+            selex = big_selex,
             faa = faa_tmp,
             zaa = zaa_tmp,
             obs_pars = options$obs_pars
