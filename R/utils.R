@@ -62,7 +62,7 @@ subset_dem_params <- function(dem_params, r, d=1, drop=TRUE){
     tmp <- rlang::duplicate(dem_params)
     ps <- names(tmp)
     for(n in ps){
-        if(n == "movement") next;
+        if(n == "movement" || any(is.na(dem_params[[n]]))) next;
         tmp[[n]] <- subset_matrix(dem_params[[n]], r, d, drop)
     }
     return(tmp)

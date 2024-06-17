@@ -124,9 +124,9 @@ project <- function(removals, dem_params, prev_naa, recruitment, region_props, f
                     function(s) naa_tmp[1,a,s,] %*% dem_params$movement[,,a,s]
                 )
             } , 
-            FUN.VALUE = array(0, dim=c(model_params$nsexes, model_params$nregions))
+            FUN.VALUE = array(0, dim=c(model_params$nregions, model_params$nsexes))
         )
-        moved_naa <- array(aperm(v, perm=c(3, 1, 2)), dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions))
+        moved_naa <- array(aperm(v, perm=c(3, 2, 1)), dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions))
         naa_tmp <- moved_naa
     }
 
