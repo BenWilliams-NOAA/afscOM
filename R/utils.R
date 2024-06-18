@@ -164,30 +164,7 @@ setup_model_options <- function(model_dimensions){
             removals_input = "catch",
             simulate_observations = TRUE,
             region_apportionment = list(rep(1/model_dimensions$nregions, model_dimensions$nregions)),
-            fleet_apportionment = list(rep(1/model_dimensions$nfleets, model_dimensions$nfleets)),
-            obs_pars = list(
-                surv_ll = list(
-                    q = 1,
-                    rpn_cv = 0.10,
-                    rpw_cv = 0.10,
-                    ac_samps = 100,
-                    as_integers = TRUE
-                ),
-                surv_tw = list(
-                    q = 1,
-                    rpw_cv = 0.10,
-                    ac_samps = 100,
-                    as_integers = TRUE
-                ),
-                fish_fx = list(
-                    ac_samps = 100,
-                    as_integers = TRUE
-                ),
-                fish_tw = list(
-                    ac_samps = 100,
-                    as_integers = TRUE
-                )
-            )
+            fleet_apportionment = list(rep(1/model_dimensions$nfleets, model_dimensions$nfleets))
         )
     )
 }

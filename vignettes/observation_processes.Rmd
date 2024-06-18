@@ -12,7 +12,7 @@ Users can optionally request for `afscOM` to simulate observations from fishery 
 _NOTE: The observation submodel has not been tested when the model contains multiple spatial regions._
 
 #### Scientific Surveys
-The observation submodel generates relative population number (RPN) abundance indices, relative population weight (RPW) abundance indices, and age composition data from two scientific surveys: the Alaska longline survey [_citation_] and the NOAA bottom trawl survey [_citation_]. Data generated from each survey is representative of the entire coastwide population (even though some regions of Alaska are only sampled  by the longline survey occur in alternating years). Surveys are assumed to occur halfay through the projection year, and survey catches are not removed from the population.
+The observation submodel generates relative population number (RPN) abundance indices, relative population weight (RPW) abundance indices, and age composition data from two scientific surveys: the Alaska longline survey [_citation_] and the NOAA bottom trawl survey [_citation_]. Data generated from each survey is representative of the entire coastwide population (even though some regions of Alaska are only sampled by the longline survey in alternating years). Surveys are assumed to occur halfay through the projection year, and survey catches are not removed from the population.
 
 Abundance indices (RPNs and RPWs) are log-normally distributed. For RPNs, the predicted abundance index is: 
 
@@ -63,11 +63,11 @@ simulate_multinomial_obs <- function(pred, samp_size, aggregate_sex=FALSE, as_in
 ```
 
 #### Fisheries Data
-At present, only catch-at-age data is generated from fisheries catch. The age composition data is generated in same way as for surveys, except that data is representative of catch-at-age from the whole system ratherthan population numbers-at-age. An R function for computing predicted catch-at-age observations is available as `simulate_caa()`. Like with survey age compositions, fisheries catch-at-age is multinomially distributed.
+At present, only catch-at-age data is generated from fisheries catch. The age composition data is generated in same way as for surveys, except that data is representative of catch-at-age from the whole system rather than population numbers-at-age. An R function for computing predicted catch-at-age observations is available as `simulate_caa()`. Like with survey age compositions, fisheries catch-at-age is multinomially distributed.
 
 
 #### Custom Observation Processes
-The observation submodels currently built-in to `afcsOM` is designed to emulate common data sources and data types for NOAA stock assessment biologists, but does not cover the full scope of possible observation data types. For example, this is not currently support for generating fishery CPUE indices or egg productions indices. For more complex observation processes, users can author custom observation submodels to generate additional data. 
+The observation submodel currently built-in to `afcsOM` is designed to emulate common data sources and data types for NOAA stock assessment biologists, but does not cover the full scope of possible observation data types. For example, there is not currently support for generating fishery CPUE indices or egg productions indices. For more complex observation processes, users can author custom observation submodels to generate additional data. 
 
 To implement a custom observation submodel, turn off the defalt observation model by setting `model_options$simulate_observations=FALSE` (this ensures that the `project` function wont generate its own observations). From there, you can define any type of function necesarry, and provide, as input, outputs from the `project()` function. For example:
 
