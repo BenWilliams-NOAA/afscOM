@@ -23,6 +23,7 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
     nsexes <- model_dimensions$nsexes
     nregions <- model_dimensions$nregions
     nfleets <- model_dimensions$nfleets
+    nsurveys <- ifelse(model_options$simulate_observations, model_dimensions$nsurveys, 0)
 
     land_caa    = array(NA, dim=c(nyears, nages, nsexes, nregions, nfleets))
     disc_caa    = array(NA, dim=c(nyears, nages, nsexes, nregions, nfleets))
