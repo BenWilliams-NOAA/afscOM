@@ -19,7 +19,7 @@
 project <- function(removals, dem_params, prev_naa, recruitment, region_props, fleet_props, rec_props, options=NA){
 
     model_params <- get_model_dimensions(dem_params$sel)
-
+    model_params$nsurveys <- ifelse(options$simulate_observations, get_model_dimensions(dem_params$surv_sel)$nfleets, 0)
     # if(!("region_apportionment" %in% names(options))){
     #     options$region_apportionment <- rep(1/model_params$nregions, model_params$nregions)
     # }
@@ -38,15 +38,15 @@ project <- function(removals, dem_params, prev_naa, recruitment, region_props, f
     naa_tmp         = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions))
 
     survey_preds <- list(
-        rpns = array(NA, dim=c(1, 1, 1, nregions, nsurveys)),
-        rpws = array(NA, dim=c(1, 1, 1, nregions, nsurveys)),
-        acs  = array(NA, dim=c(1, nages, nsexes, nregions, nsurveys+nfleets))
+        rpns = array(NA, dim=c(1, 1, 1, model_params$nregions, model_params$nsurveys)),
+        rpws = array(NA, dim=c(1, 1, 1, model_params$nregions, model_params$nsurveys)),
+        acs  = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions, model_params$nsurveys+model_params$nfleets))
     )
 
     survey_obs <- list(
-        rpns = array(NA, dim=c(1, 1, 1, nregions, nsurveys)),
-        rpws = array(NA, dim=c(1, 1, 1, nregions, nsurveys)),
-        acs  = array(NA, dim=c(1, nages, nsexes, nregions, nsurveys+nfleets))
+        rpns = array(NA, dim=c(1, 1, 1, model_params$nregions, model_params$nsurveys)),
+        rpws = array(NA, dim=c(1, 1, 1, model_params$nregions, model_params$nsurveys)),
+        acs  = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions, model_params$nsurveys+model_params$nfleets))
     )
 
     # Do recruitment here because there isn't regional recruitment
@@ -135,12 +135,12 @@ project <- function(removals, dem_params, prev_naa, recruitment, region_props, f
                 zaa = zaa_tmp[,,,r,drop=FALSE],
                 obs_pars = options$obs_pars
             )
-            survey_preds$rpns[,,,r,] <- obs$preds$rpn_preds[,,,as.logical(model_options$obs_pars$is_survey)]
-            survey_preds$rpws[,,,r,] <- obs$preds$rpw_preds[,,,as.logical(model_options$obs_pars$is_survey)]
+            survey_preds$rpns[,,,r,] <- obs$preds$rpn_preds[,,,as.logical(options$obs_pars$is_survey)]
+            survey_preds$rpws[,,,r,] <- obs$preds$rpw_preds[,,,as.logical(options$obs_pars$is_survey)]
             survey_preds$acs[,,,r,]  <- obs$preds$ac_preds
 
-            survey_obs$rpns[,,,r,] <- obs$obs$rpn_obs[,,,as.logical(model_options$obs_pars$is_survey)]
-            survey_obs$rpws[,,,r,] <- obs$obs$rpw_obs[,,,as.logical(model_options$obs_pars$is_survey)]
+            survey_obs$rpns[,,,r,] <- obs$obs$rpn_obs[,,,as.logical(options$obs_pars$is_survey)]
+            survey_obs$rpws[,,,r,] <- obs$obs$rpw_obs[,,,as.logical(options$obs_pars$is_survey)]
             survey_obs$acs[,,,r,]  <- obs$obs$ac_obs
         }
 
