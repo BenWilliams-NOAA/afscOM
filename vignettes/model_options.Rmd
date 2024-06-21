@@ -7,7 +7,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-A vareity of model options also need to be specified to ensure the projection model works as expected. Required options are:
+A variety of model options also need to be specified to ensure the projection model works as expected. Required options are:
 
 * `removals_input`: input units of removals (either "catch" is inputs are a TAC, or "F" if an instantenous fishing mortality rate)
 * `simulate_observations`: whethr to simulate observations from the OM (TRUE/FALSE)
@@ -22,18 +22,23 @@ model_options <- list(
 ### Catch Apportionment
 If `removals_input="catch"`, then region and fleet-level apportionment must also be specified: 
 
-* `region_apportionment`: an unnamed list of vectors (of length `nyears`) specifying what proportion of the TAC should be allocated to each spatial region. There should be as many vector as there are regions. The sum across all regions in a given year should be 1.0, but the model will not make this check internally.
+* `region_apportionment`: a matrix dimensions [nyears, nregions] specifying the proportion of the TAC should be allocated to each region. Each row of this matrix should sum to 1.0, but this will not be checked internally.
 
-* `fleet_apportionment`: an unnamed list of vectors (of length `nyears`) specifying what proportion of the TAC should be allocated to each fishing fleet. There should be as many vectors as there are fishing fleets. For multi-region models, the `fleet_apportionment` proportions will be applied across all regions. There is not currently support for specifying unique fleet apportionments per spatial region. 
+* `fleet_apportionment`: a 3D array of dimensions [nyears, nfleets, nregions] specifying the proprtion of the regional TAC that should be allocated to each fishing fleet in that region. Each row of each 2D regional matrix should sum to 1.0, but this will not be checked internally.
 
 ```{r apportionment_options, eval=FALSE}
-# For a single region model, 100% of the catch is apportioned to the single region
-model_options$regional_apportionment <- list(1)
+# Apportion TAC equally between the n spatial regions
+model_options$regional_apportionment <- matrix(1/nregions, nrow=nyears, ncol=nregions)
 
-# Define a 70%-30% apportionment split between fleet 1 and fleet 2
-model_options$fleet_apportionment <- list(rep(0.70, nyears), rep(30, nyears))
+# Apportion TAC equally amongst the n fleets within each region
+model_options$fleet_apportionment <- array(1/nfleets, dim=c(nyears, nfleets, nregions))
 
 ```
+
+
+Like `region_apportionment` and `fleet_apportionment`, users also need to specify:
+
+* `recruit_apportionment`: a matrix of dimensions [nyears, nregions] specifying the proportion of total recruits that should be allocated to each region.
 
 ### Observation Processes
 If `simulate_observations=TRUE`, then a set of parameters that govern how observations are simulated must also be defined. This option, `obs_pars` is a list of vectors, where each vector has length `nfleets+nsurveys`.
@@ -69,7 +74,7 @@ obs_pars <- list(
 ```
 Every item in the list object must have length `nfleets+nsurveys`, even if observations are not being generated for some fleets or surveys. In the above example, even though RPN and RPW indices are not being generated for the two fishing fleets, catchability coefficients (`qs`) and CVs (`rpn_cv` and `rpw_cv`) are stil defined for those two fisheries. The observation submodel ignores these values internally when the `simulate_observations()` function runs.
 
-For items that 
+For items that require a binary "yes"/"no" entry, either 1/0 or TRUE/FALSE can be provided. These include: `is_survey`, `rpn`, `rpw`, `acs`, `acs_as_integers`, and `acs_agg_sex`.
 
 For additional information on how all of these parameters are used to generate observations, see ["Observation Processes"](observation_processes.html).
 
