@@ -81,9 +81,15 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
                 model_options$recruit_apportionment, 
                 c(list(naa=naa[y,,,,drop=FALSE], dem_params=dp.y), model_options$recruitment_pars)
             )
+            rec_props <- array(projected_rec_props, dim=c(1, nregions))
             rec <- array(recruitment[y+1]*projected_rec_props, dim=c(1, nregions))
         }
         
+        if(!is.null(model_options$recruit_apportionment_random)){
+            rand_rec_props <- rmultinom(1, size=30, prob = rec_props[y+1,])
+            rand_rec_props <- rand_rec_props/sum(rand_rec_props)
+            rec <- array(recruitment[y+1]*rand_rec_props, dim=c(1, nregions))
+        }
 
 
         out_vars <- project(
