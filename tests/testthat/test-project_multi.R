@@ -1,4 +1,4 @@
-test_that("pojrect_multi reproduces sablefish timeseries", {
+test_that("project_multi reproduces sablefish timeseries", {
     
     load(file.path(here::here(), "data/sablefish_assessment_data.rda"))
     assessment <- sablefish_assessment_data

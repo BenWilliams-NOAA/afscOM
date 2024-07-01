@@ -22,8 +22,8 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
     nages <- model_dimensions$nages
     nsexes <- model_dimensions$nsexes
     nregions <- model_dimensions$nregions
-    nfleets <- model_dimensions$nfleets
-    nsurveys <- ifelse(model_options$simulate_observations, model_dimensions$nsurveys, 0)
+    # nsurveys <- get_model_dimensions(dem_params$surv_sel)$nsurveys
+    nsurveys <- ifelse(model_options$simulate_observations, get_model_dimensions(dem_params$surv_sel)$nfleets, 0)
 
     land_caa    = array(NA, dim=c(nyears, nages, nsexes, nregions, nfleets))
     disc_caa    = array(NA, dim=c(nyears, nages, nsexes, nregions, nfleets))
@@ -46,6 +46,21 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
         acs  = array(NA, dim=c(nyears, nages, nsexes, nregions, nsurveys+nfleets))
     )
 
+    # full_recruitment <- array(NA, dim=c(nyears, 1, 1, nregions))
+    if(!(is.null(model_options$recruit_apportionment)) & !is.function(model_options$recruit_apportionment)){
+        rec_props <- model_options$recruit_apportionment
+    }else{
+        rec_props <- array(1/nregions, dim=c(nyears+1, nregions))
+    }
+
+    # if recruitment is entered as a vector of global recruitment and
+    # regional recruitment apportionment
+    if(is.vector(recruitment)){
+        full_recruitment <- sweep(rec_props, 1, recruitment, FUN="*")
+    }else if(all(is.array(recruitment) & dim(recruitment) > 1)){
+        full_recruitment <- recruitment
+    }
+
 
     for(y in 1:nyears){
 
@@ -58,16 +73,27 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
         # fleet_props <- model_options$fleet_apportionment[y,,drop=FALSE]
         region_props <- subset_matrix(model_options$region_apportionment, y, d=1, drop=FALSE)
         fleet_props <- subset_matrix(model_options$fleet_apportionment, y, d=1, drop=FALSE)
-        rec_props <- subset_matrix(model_options$recruit_apportionment, y+1, d=1, drop=FALSE)
+
+        if(!is.function(model_options$recruit_apportionment)){
+            rec <- subset_matrix(full_recruitment, y+1, d=1, drop=FALSE)
+        }else {
+            projected_rec_props <- do.call(
+                model_options$recruit_apportionment, 
+                c(list(naa=naa[y,,,,drop=FALSE], dem_params=dp.y), model_options$recruitment_pars)
+            )
+            rec <- array(recruitment[y+1]*projected_rec_props, dim=c(1, nregions))
+        }
+        
+
 
         out_vars <- project(
             removals = removals_input,
             dem_params=dp.y,
             prev_naa=naa[y,,,, drop = FALSE],
-            recruitment=recruitment[y+1],
+            recruitment=rec,
             region_props = region_props,
             fleet_props = fleet_props,
-            rec_props = rec_props,
+            # rec_props = rec_props,
             options=model_options
         )
 
