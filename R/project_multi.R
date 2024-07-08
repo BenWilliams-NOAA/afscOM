@@ -33,6 +33,7 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
     naa[1,,,] = init_naa
 
     f           = array(NA, dim=c(nyears, 1, 1, nregions, nfleets))
+    recruits    = array(NA, dim=c(nyears, 1, 1, nregions))
 
     survey_preds <- list(
         rpns = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
@@ -55,7 +56,7 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
 
     # if recruitment is entered as a vector of global recruitment and
     # regional recruitment apportionment
-    if(is.vector(recruitment)){
+    if(is.vector(recruitment) | is.array(recruitment) & dim(recruitment)[2] == 1){
         full_recruitment <- sweep(rec_props, 1, recruitment, FUN="*")
     }else if(all(is.array(recruitment) & dim(recruitment) > 1)){
         full_recruitment <- recruitment
@@ -85,7 +86,7 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
             rec <- array(recruitment[y+1]*projected_rec_props, dim=c(1, nregions))
         }
         
-        if(!is.null(model_options$recruit_apportionment_random)){
+        if(!is.null(model_options$recruit_apportionment_random) & model_options$recruit_apportionment_random){
             rand_rec_props <- rmultinom(1, size=30, prob = rec_props[y+1,])
             rand_rec_props <- rand_rec_props/sum(rand_rec_props)
             rec <- array(recruitment[y+1]*rand_rec_props, dim=c(1, nregions))
@@ -111,6 +112,7 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
         naa[y+1,,,] <- out_vars$naa_tmp
 
         f[y,,,,] <- out_vars$F_f_tmp
+        recruits[y,,,] <- rec
 
         if(model_options$simulate_observations){
             survey_preds$rpns[y,,,,] <- out_vars$survey_preds$rpns
@@ -124,6 +126,6 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
 
     }
 
-    return(listN(land_caa, disc_caa, caa, faa, f, naa, survey_preds, survey_obs))
+    return(listN(land_caa, disc_caa, caa, faa, f, naa, recruits, survey_preds, survey_obs))
 
 }
