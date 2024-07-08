@@ -53,7 +53,12 @@ project <- function(removals, dem_params, prev_naa, recruitment, region_props, f
     # NOTE: need to think real carefully about how to do this in a modular way
     rec <- array(NA, dim=c(1, 1, model_params$nsexes, model_params$nregions))
     global.rec <- as.vector(recruitment)
-    rec[1,1,,] <- global.rec * dem_params$sexrat[1,1,,]
+    if(model_params$nregions > 1){
+        rec[1,1,,] <- sweep(dem_params$sexrat[1,1,,], 2, global.rec, FUN="*")
+    }else{
+        rec[1,1,,] <- global.rec*dem_params$sexrat[1,1,,]
+    }
+    
 
     # If no user-definied regional apportionment for recruitment than regionally
     # apportion based on the regional prevalence of age-1 individuals in the previous
@@ -149,6 +154,9 @@ project <- function(removals, dem_params, prev_naa, recruitment, region_props, f
 
      # Handle movement matrix
     if(model_params$nregions > 1 & "movement" %in% names(dem_params)){
+        if(!options$do_recruits_move){
+            dem_params$movement[,,1,] <- diag(nregions)
+        }
        v <- vapply(
             1:nages, 
             # Apply movement to the ages individualy
