@@ -22,7 +22,7 @@ model_options <- list(
 ### Catch Apportionment
 If `removals_input="catch"`, then region and fleet-level apportionment must also be specified: 
 
-* `region_apportionment`: a matrix dimensions [nyears, nregions] specifying the proportion of the TAC should be allocated to each region. Each row of this matrix should sum to 1.0, but this will not be checked internally.
+* `region_apportionment`: a matrix of dimension [nyears, nregions] specifying the proportion of the TAC should be allocated to each region. Each row of this matrix should sum to 1.0, but this will not be checked internally.
 
 * `fleet_apportionment`: a 3D array of dimensions [nyears, nfleets, nregions] specifying the proprtion of the regional TAC that should be allocated to each fishing fleet in that region. Each row of each 2D regional matrix should sum to 1.0, but this will not be checked internally.
 
@@ -36,9 +36,27 @@ model_options$fleet_apportionment <- array(1/nfleets, dim=c(nyears, nfleets, nre
 ```
 
 
+### Recruitment Options
 Like `region_apportionment` and `fleet_apportionment`, users also need to specify:
 
-* `recruit_apportionment`: a matrix of dimensions [nyears, nregions] specifying the proportion of total recruits that should be allocated to each region.
+* `recruit_apportionment`: a matrix of dimensions [nyears, nregions] specifying the proportion of total recruits that should be allocated to each region. By default, recruitment is apportioned equally amongst regions.
+* `recruit_apportionment_random`: whether recruitment apportionment should be fixed at the values provided by `recruit_apportionment`, or whether to perform a random multinomial sample using the `recruit_apportionment` input as the probability of recruitment to each region. Sample size for multinomial sample is 30. 
+* `do_recruits_move`: whether annual recruits are subject to movement in the year they recruit.
+
+Alternatively, `recruit_apportionment` can be a function that returns a matrix of dimension [1, nregions] specifying the proportion of total recruitment that should be allocated to each region. This function must take `naa` and `dem_params` as inputs. An example follows:
+
+```{r, eval=FALSE}
+age2_apportionment <- function(naa, dem_params){
+    age2 <- naa[,1,,]
+    age2_by_region <- apply(age2, 2, sum)
+    return(
+        array(age2_by_region/sum(age2_by_region), dim=c(1, ncol(age2)))
+    )
+}
+
+model_options$recruit_apportionment = age2_apportionment
+
+```
 
 ### Observation Processes
 If `simulate_observations=TRUE`, then a set of parameters that govern how observations are simulated must also be defined. This option, `obs_pars` is a list of vectors, where each vector has length `nfleets+nsurveys`.
@@ -87,5 +105,9 @@ The default values are as follows:
 * `simulate_observations`: TRUE
 * `region_apportionment`: 1/nregions
 * `fleet_apportionment`: 1/nfleets
+* `recruit_apportionment`: 1/nregions
+* `recruit_apportionment_random`: FALSE
+* `do_recruits_move`: TRUE
+
 
 No default values are established for the `obs_pars` options at this time.
