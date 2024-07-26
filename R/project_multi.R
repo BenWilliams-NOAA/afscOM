@@ -22,6 +22,7 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
     nages <- model_dimensions$nages
     nsexes <- model_dimensions$nsexes
     nregions <- model_dimensions$nregions
+    nfleets <- model_dimensions$nfleets
     # nsurveys <- get_model_dimensions(dem_params$surv_sel)$nsurveys
     nsurveys <- ifelse(model_options$simulate_observations, get_model_dimensions(dem_params$surv_sel)$nfleets, 0)
 
@@ -33,7 +34,7 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
     naa[1,,,] = init_naa
 
     f           = array(NA, dim=c(nyears, 1, 1, nregions, nfleets))
-    recruits    = array(NA, dim=c(nyears, 1, 1, nregions))
+    recruits    = array(NA, dim=c(nyears+1, 1, 1, nregions))
 
     survey_preds <- list(
         rpns = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
@@ -69,9 +70,6 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
         # and DO NOT drop lost dimensions.
         dp.y <- subset_dem_params(dem_params = dem_params, y, d=1, drop=FALSE)
         removals_input <- subset_matrix(removals_timeseries, y, d=1, drop=FALSE)
-        # fleet.props <- unlist(lapply(model_options$fleet_apportionment, \(x) x[y]))
-        # region_props <- model_options$region_apportionment[y,,drop=FALSE]
-        # fleet_props <- model_options$fleet_apportionment[y,,drop=FALSE]
         region_props <- subset_matrix(model_options$region_apportionment, y, d=1, drop=FALSE)
         fleet_props <- subset_matrix(model_options$fleet_apportionment, y, d=1, drop=FALSE)
 
@@ -82,7 +80,7 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
                 model_options$recruit_apportionment, 
                 c(list(naa=naa[y,,,,drop=FALSE], dem_params=dp.y), model_options$recruitment_pars)
             )
-            rec_props <- array(projected_rec_props, dim=c(1, nregions))
+            rec_props[y+1,] <- array(projected_rec_props, dim=c(1, nregions))
             rec <- array(recruitment[y+1]*projected_rec_props, dim=c(1, nregions))
         }
         
@@ -100,7 +98,6 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
             recruitment=rec,
             region_props = region_props,
             fleet_props = fleet_props,
-            # rec_props = rec_props,
             options=model_options
         )
 
@@ -112,7 +109,7 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
         naa[y+1,,,] <- out_vars$naa_tmp
 
         f[y,,,,] <- out_vars$F_f_tmp
-        recruits[y,,,] <- rec
+        recruits[y+1,,,] <- rec
 
         if(model_options$simulate_observations){
             survey_preds$rpns[y,,,,] <- out_vars$survey_preds$rpns

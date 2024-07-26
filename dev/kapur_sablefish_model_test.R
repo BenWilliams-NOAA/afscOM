@@ -165,6 +165,9 @@ region_apportionment <- t(apply(apply(app_rf, c(1, 2), sum), 1, \(x) x/sum(x)))
 fleet_apportionment <- app_rf_perm
 fleet_apportionment[is.nan(fleet_apportionment)] <- 0
 
+regional_catch_timeseries <- sweep(region_apportionment[1:60,], 1, matrix(catch_timeseries, ncol=1), FUN="*")
+region_fleet_catch_timeseries <- sweep(fleet_apportionment[1:60,,], c(1, 3), regional_catch_timeseries, FUN="*")
+
 # Set all model options
 model_options <- list()
 model_options$removals_input = "catch"

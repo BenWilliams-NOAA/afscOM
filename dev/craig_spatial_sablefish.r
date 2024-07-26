@@ -89,8 +89,6 @@ dem_params <- list(
 init_naa <- array(NA, dim=c(1, nages, nsexes, nregions), dimnames=c("time"=1977, dimension_names[c("age", "sex", "region")]))
 init_naa[,,1,] <- spatial_sablefish_assessment_data$outputs$natage_f[,,1]
 init_naa[,,2,] <- spatial_sablefish_assessment_data$outputs$natage_m[,,1]
-
-mean_rec <- mean(apply(spatial_sablefish_assessment_data$outputs$recruitment_yr, 1, sum))
 recruitment_timeseries <- matrix(c(apply(spatial_sablefish_assessment_data$outputs$recruitment_yr, 1, sum), 0), nrow=nyears+1)
 
 catch_timeseries <- apply(spatial_sablefish_assessment_data$input_data$fixed_fishery_catch+spatial_sablefish_assessment_data$input_data$trwl_fishery_catch, 2, sum)
@@ -137,7 +135,7 @@ ssb_df <- reshape2::melt(om_ssb) %>% mutate(model="afscOM") %>%
     mutate(region = factor(
         region,
         levels = c("EGOA", "CGOA", "WGOA", "AI", "BS"),
-        labels = c("East GOA", "Central GOA", "West GOA", "Aleutian Islandes", "Bering Sea")
+        labels = c("East GOA", "Central GOA", "West GOA", "Aleutian Islands", "Bering Sea")
     ))
 
 ggplot(ssb_df, aes(x=time, y=value, color=region, linetype=model))+
@@ -159,7 +157,7 @@ rec_df <- reshape2::melt(om_recruits) %>% mutate(model="afscOM") %>%
     mutate(region = factor(
         region,
         levels = c("EGOA", "CGOA", "WGOA", "AI", "BS"),
-        labels = c("East GOA", "Central GOA", "West GOA", "Aleutian Islandes", "Bering Sea")
+        labels = c("East GOA", "Central GOA", "West GOA", "Aleutian Islands", "Bering Sea")
     ))
 
 ggplot(rec_df , aes(x=time, y=value, color=region, linetype=model))+
@@ -187,7 +185,7 @@ F_df <- reshape2::melt(om_f) %>% mutate(model="afscOM") %>%
     mutate(region = factor(
         region,
         levels = c("EGOA", "CGOA", "WGOA", "AI", "BS"),
-        labels = c("East GOA", "Central GOA", "West GOA", "Aleutian Islandes", "Bering Sea")
+        labels = c("East GOA", "Central GOA", "West GOA", "Aleutian Islands", "Bering Sea")
     ))
 
 ggplot(F_df, aes(x=time, y=value, color=region, linetype=model))+
@@ -211,7 +209,7 @@ catch_df <- reshape2::melt(om_catches) %>% mutate(model="afscOM") %>%
     mutate(region = factor(
         region,
         levels = c("EGOA", "CGOA", "WGOA", "AI", "BS"),
-        labels = c("East GOA", "Central GOA", "West GOA", "Aleutian Islandes", "Bering Sea")
+        labels = c("East GOA", "Central GOA", "West GOA", "Aleutian Islands", "Bering Sea")
     ))
 
 ggplot(catch_df, aes(x=time, y=value, color=fleet, linetype=model))+
@@ -222,4 +220,21 @@ ggplot(catch_df, aes(x=time, y=value, color=fleet, linetype=model))+
     facet_wrap(~region)
 
 
+# Plot Age Comps
+caas <- apply(om$caa[1:(nyears),,,,,drop=FALSE], c(1, 2, 4), sum)
+dimnames(caas) <- dimension_names[c("time", "age", "region")]
 
+reshape2::melt(caas) %>%
+    as_tibble() %>%
+    mutate(
+        size_group = case_when(
+                    age < 5 ~ "Small",
+                    age < 9 ~ "Medium",
+                    TRUE ~ "Large"
+                )
+    ) %>%
+    group_by(region, size_group) %>%
+    summarise(
+        v = mean(sum(value))
+    ) %>%
+    tidyr::pivot_wider(names_from=size_group, values_from=v)

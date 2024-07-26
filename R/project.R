@@ -58,28 +58,6 @@ project <- function(removals, dem_params, prev_naa, recruitment, region_props, f
     }else{
         rec[1,1,,] <- global.rec*dem_params$sexrat[1,1,,]
     }
-    
-
-    # If no user-definied regional apportionment for recruitment than regionally
-    # apportion based on the regional prevalence of age-1 individuals in the previous
-    # timestep.
-    # recruit_apportionment <- NA
-    # if(model_params$nregions > 1){
-    #     if(!(is.null(rec_props) | any(is.nan(rec_props)) | any(is.na(rec_props)))){
-    #         recruit_apportionment <- rec_props
-    #     }else{
-    #         recruit_apportionment <- 1/model_params$nregions
-    #     }
-    #     # if(!all(is.na(recruit_apportionment))){
-    #     #     rec.props <- prev_naa[1,1,1,]/sum(prev_naa[1,1,1,])
-    #     #     multi <- rmultinom(50, model_params$nregions, prob=rec.props)
-    #     #     recruit_apportionment <- apply(multi, 1, mean)/sum(apply(multi, 1, mean))
-    #     # }
-    #     rec[1,1,,] <- t(apply(global.rec * dem_params$sexrat[1,1,,], 1, \(x) x*recruit_apportionment))
-    # }else{
-    #     recruit_apportionment <- 1
-        
-    # }
 
     for(r in 1:model_params$nregions){
 
