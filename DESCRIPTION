@@ -17,7 +17,7 @@ Authors@R:
              role = c("aut")),
        person(given = "Maia", 
              family = "Kapur",
-             role = c("ctb")),
+             role = c("aut")),
       person(given = "Dan", 
              family = "Goethel",
              role = "ctb"),
