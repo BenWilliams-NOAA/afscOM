@@ -1,3 +1,9 @@
+#'
+#' Reproduce results from Kapur et al. (2024) Range-wide contrast 
+#' in management outcomes for transboundary Northeast Pacific 
+#' sablefish. 
+#' 
+
 rm(list=ls())
 library(devtools)
 library(tidyverse)
