@@ -65,6 +65,9 @@
       <a href="../articles/observation_processes.html">Observation Processes</a>
     </li>
     <li>
+      <a href="../articles/spatial_om_example.html">A Spatial Model Example</a>
+    </li>
+    <li>
       <a href="../articles/specifying_demographic_parameters.html">Specifying Demographic Rates</a>
     </li>
   </ul>
@@ -98,7 +101,7 @@
 <div class="section level4">
 <h4 id="scientific-surveys">Scientific Surveys<a class="anchor" aria-label="anchor" href="#scientific-surveys"></a>
 </h4>
-<p>The observation submodel generates relative population number (RPN) abundance indices, relative population weight (RPW) abundance indices, and age composition data from two scientific surveys: the Alaska longline survey [<em>citation</em>] and the NOAA bottom trawl survey [<em>citation</em>]. Data generated from each survey is representative of the entire coastwide population (even though some regions of Alaska are only sampled by the longline survey occur in alternating years). Surveys are assumed to occur halfay through the projection year, and survey catches are not removed from the population.</p>
+<p>The observation submodel generates relative population number (RPN) abundance indices, relative population weight (RPW) abundance indices, and age composition data from two scientific surveys: the Alaska longline survey [<em>citation</em>] and the NOAA bottom trawl survey [<em>citation</em>]. Data generated from each survey is representative of the entire coastwide population (even though some regions of Alaska are only sampled by the longline survey in alternating years). Surveys are assumed to occur halfay through the projection year, and survey catches are not removed from the population.</p>
 <p>Abundance indices (RPNs and RPWs) are log-normally distributed. For RPNs, the predicted abundance index is:</p>
 <p><span class="math inline">\(I_y = q^{ll}\sum{N_{y,a,s}\exp{(-Z_{y,a,s}/2})v^{ll}_{y,a,s}}\)</span></p>
 <p>And for RPWs is:</p>
@@ -139,12 +142,12 @@
 <div class="section level4">
 <h4 id="fisheries-data">Fisheries Data<a class="anchor" aria-label="anchor" href="#fisheries-data"></a>
 </h4>
-<p>At present, only catch-at-age data is generated from fisheries catch. The age composition data is generated in same way as for surveys, except that data is representative of catch-at-age from the whole system ratherthan population numbers-at-age. An R function for computing predicted catch-at-age observations is available as <code><a href="../reference/simulate_caa.html">simulate_caa()</a></code>. Like with survey age compositions, fisheries catch-at-age is multinomially distributed.</p>
+<p>At present, only catch-at-age data is generated from fisheries catch. The age composition data is generated in same way as for surveys, except that data is representative of catch-at-age from the whole system rather than population numbers-at-age. An R function for computing predicted catch-at-age observations is available as <code><a href="../reference/simulate_caa.html">simulate_caa()</a></code>. Like with survey age compositions, fisheries catch-at-age is multinomially distributed.</p>
 </div>
 <div class="section level4">
 <h4 id="custom-observation-processes">Custom Observation Processes<a class="anchor" aria-label="anchor" href="#custom-observation-processes"></a>
 </h4>
-<p>The observation submodels currently built-in to <code>afcsOM</code> is designed to emulate common data sources and data types for NOAA stock assessment biologists, but does not cover the full scope of possible observation data types. For example, this is not currently support for generating fishery CPUE indices or egg productions indices. For more complex observation processes, users can author custom observation submodels to generate additional data.</p>
+<p>The observation submodel currently built-in to <code>afcsOM</code> is designed to emulate common data sources and data types for NOAA stock assessment biologists, but does not cover the full scope of possible observation data types. For example, there is not currently support for generating fishery CPUE indices or egg productions indices. For more complex observation processes, users can author custom observation submodels to generate additional data.</p>
 <p>To implement a custom observation submodel, turn off the defalt observation model by setting <code>model_options$simulate_observations=FALSE</code> (this ensures that the <code>project</code> function wont generate its own observations). From there, you can define any type of function necesarry, and provide, as input, outputs from the <code><a href="../reference/project.html">project()</a></code> function. For example:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model_options</span><span class="op">$</span><span class="va">obs_pars</span><span class="op">$</span><span class="va">sex_rat</span><span class="op">$</span><span class="va">sd</span> <span class="op">&lt;-</span> <span class="fl">0.05</span></span>
@@ -179,7 +182,7 @@
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by Benjamin Williams, Joshua Zahner, Matt Cheng, Dan Goethel, Curry Cunningham.</p>
+<p>Developed by Benjamin Williams, Joshua Zahner, Matt Cheng, Maia Kapur.</p>
 </div>
 
 <div class="pkgdown">
