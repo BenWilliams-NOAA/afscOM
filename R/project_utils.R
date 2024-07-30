@@ -1,4 +1,4 @@
-calculate_recruitment <- function(rec_timeseries, apportionment, nyears, nregions){
+apportion_recruitment <- function(rec_timeseries, apportionment, nyears, nregions){
     
     rec_props <- NULL
     if(is.null(apportionment)){
@@ -20,7 +20,7 @@ calculate_recruitment <- function(rec_timeseries, apportionment, nyears, nregion
     return(listN(rec_props, full_recruitment))
 }
 
-get_annual_recruitment <- function(y, rec_timeseries, apportionment, apportion_random, apportionment_pars, ...){
+get_annual_recruitment <- function(y, rec_timeseries, apportionment, apportion_random, apportionment_pars, nregions, ...){
     
     rec_props <- array(NA, dim=c(1, nregions))
     if(!is.function(apportionment)){
@@ -43,4 +43,26 @@ get_annual_recruitment <- function(y, rec_timeseries, apportionment, apportion_r
 
     return(rec)
 
+}
+
+apportion_catch <- function(catch_timeseries, apportionment, nyears, nfleets, nregions){
+    
+    region_fleet_props <- NULL
+    if(is.null(apportionment)){
+        region_fleet_props <- array(1/nregions, dim=c(nyears, nfleets, nregions))
+    }else if(is.vector(apportionment)){
+        region_fleet_props <- array(apportionment, dim=c(nyears, nfleets, nregions))
+    }else{
+        region_fleet_props <- apportionment
+    }
+
+    # if recruitment is entered as a vector of global recruitment and
+    # regional recruitment apportionment
+    catch_timeseries <- array(catch_timeseries, dim=c(nyears+1, 1))
+    full_catch <- catch_timeseries
+    if(!is.function(region_fleet_props)){
+        full_catch <- sweep(region_fleet_props, 1, catch_timeseries, FUN="*")
+    }
+
+    return(listN(region_fleet_props, full_catch))
 }

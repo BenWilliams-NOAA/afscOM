@@ -178,8 +178,7 @@ The apportionment matrices are added to the `model_options` list:
 model_options <- list(
         removals_input = "catch",
         simulate_observations = FALSE,
-        region_apportionment = regional_catch_aportionment,
-        fleet_apportionment = region_fleet_catch_apportionment,
+        fleet_apportionment = sweep(region_fleet_catch_apportionment, c(1, 3), region_fleet_catch_apportionment, FUN+"*"),
         recruit_apportionment = NULL,
         recruit_apportionment_random = FALSE,
         do_recruits_move = FALSE

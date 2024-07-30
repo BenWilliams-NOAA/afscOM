@@ -16,7 +16,7 @@
 #'
 #' @export project
 #'
-project <- function(removals, dem_params, prev_naa, recruitment, region_props, fleet_props, options=NA){
+project <- function(removals, dem_params, prev_naa, recruitment, options=NA){
 
     model_params <- get_model_dimensions(dem_params$sel)
     model_params$nsurveys <- ifelse(options$simulate_observations, get_model_dimensions(dem_params$surv_sel)$nfleets, 0)
@@ -64,7 +64,7 @@ project <- function(removals, dem_params, prev_naa, recruitment, region_props, f
         if(options$removals_input == "catch"){
             # Apportion catch-based removals based on provided
             # regional apportionment scheme.
-            remove <- removals*region_props[1,r]
+            remove <- subset_matrix(removals, r=r, d=3, drop=TRUE)
         }else{
             # Removals were input as F, subset to correct dimensions
             remove <- subset_matrix(removals, r=r, d=4, drop=FALSE)
@@ -73,17 +73,16 @@ project <- function(removals, dem_params, prev_naa, recruitment, region_props, f
         dp.r <- subset_dem_params(dem_params=dem_params, r=r, d=4, drop=FALSE)
         prev_naa.r <- subset_matrix(prev_naa, r=r, d=4, drop=FALSE)
 
-        if(length(dim(fleet_props)) > 2){
-            fleet_props.r <- subset_matrix(fleet_props, r, d=3, drop=TRUE)
-        }else{
-            fleet_props.r <- fleet_props
-        }
+        # if(length(dim(fleet_props)) > 2){
+        #     fleet_props.r <- subset_matrix(fleet_props, r, d=3, drop=TRUE)
+        # }else{
+        #     fleet_props.r <- fleet_props
+        # }
 
         catch_vars <- simulate_catch(
             removals=remove,
             dem_params=dp.r,
             naa=prev_naa.r,
-            fleet_props = fleet_props.r,
             options=options
         )
 
@@ -135,7 +134,7 @@ project <- function(removals, dem_params, prev_naa, recruitment, region_props, f
         if(!options$do_recruits_move){
             dem_params$movement[,,1,] <- diag(nregions)
         }
-       v <- vapply(
+        v <- vapply(
             1:nages, 
             # Apply movement to the ages individualy
             function(a) {
@@ -150,24 +149,6 @@ project <- function(removals, dem_params, prev_naa, recruitment, region_props, f
         moved_naa <- array(aperm(v, perm=c(3, 2, 1)), dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions))
         naa_tmp <- moved_naa
     }
-
-    # state_vars <- simulate_movement(dem_params, state_vars)
-
-    # if(!("simulate_observations" %in% names(options)) || options$simulate_observations){
-    #     # concatenate fishery and survey selectivity matrices for convenience later
-    #     big_selex <- abind::abind(dem_params$sel, dem_params$surv_sel, along=5) 
-    #     names(dim(big_selex)) <- names(dim(dem_params$sel))
-    #     obs <- simulate_observations(
-    #         naa = prev_naa,
-    #         waa = dem_params$waa,
-    #         selex = big_selex,
-    #         faa = faa_tmp,
-    #         zaa = zaa_tmp,
-    #         obs_pars = options$obs_pars
-    #     )
-    #     surv_preds <- obs$preds
-    #     surv_obs <- obs$obs
-    # }
 
     return(listN(land_caa_tmp, disc_caa_tmp, caa_tmp, F_f_tmp, faa_tmp, naa_tmp, survey_preds, survey_obs))
 }

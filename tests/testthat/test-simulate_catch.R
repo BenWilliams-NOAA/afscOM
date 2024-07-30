@@ -3,9 +3,15 @@ test_that("single year catch simulation for one fleet", {
   load(file.path(here::here(), "data/sablefish_dem_params.rda"))
   dem_params <- sablefish_dem_params
   model_params <- get_model_dimensions(dem_params$sel)
+
+  fleet_apportionment <- array(
+    matrix(c(1, 0), nrow=model_params$nyears, ncol=model_params$nfleets, byrow=TRUE), 
+    dim=c(model_params$nyears, model_params$nfleets, model_params$nregions)
+  )
+
   model_options <- list(
     regional_apportionment = 1,
-    fleet_apportionment = c(1.00, 0.00),
+    fleet_apportionment = fleet_apportionment,
     removals_input = "catch"
   )
   y <- 1
@@ -22,8 +28,22 @@ test_that("single year catch simulation for one fleet", {
   naa[,,2,] <- assessment$natage.male["2023",]*1e6
 
   tac <- 7000
+  catch <- apportion_catch(
+      catch_timeseries = tac,
+      apportionment = model_options$fleet_apportionment,
+      nyears = model_params$nyears,
+      nfleets = model_params$nfleets,
+      nregions = model_params$nregions
+  )$full_catch
+
+  removals <- subset_matrix(catch, 1, d=1, drop=FALSE)
   suppressWarnings({
-    catch_vars <- simulate_catch(tac, fleet_props=matrix(c(1.00, 0.00), ncol=model_params$nfleets), dem_params=dem_params, naa=naa, options=model_options)
+    catch_vars <- simulate_catch(
+        removals = subset_matrix(removals, r, d=3, drop=TRUE), 
+        dem_params = dem_params, 
+        naa = naa, 
+        options = model_options
+    )
   })
   
   total_catch <- apply(catch_vars$caa_tmp, 1, sum)
@@ -38,9 +58,14 @@ test_that("single year catch simulation for two fleets", {
   load(file.path(here::here(), "data/sablefish_dem_params.rda"))
   dem_params <- sablefish_dem_params
   model_params <- get_model_dimensions(dem_params$sel)
+  fleet_apportionment <- array(
+    matrix(c(0.7, 0.3), nrow=model_params$nyears, ncol=model_params$nfleets, byrow=TRUE), 
+    dim=c(model_params$nyears, model_params$nfleets, model_params$nregions)
+  )
+
   model_options <- list(
-    regional_apportionment = c(1, 0),
-    fleet_apportionment = c(0.70, 0.30),
+    regional_apportionment = 1,
+    fleet_apportionment = fleet_apportionment,
     removals_input = "catch"
   )
   y <- 1
@@ -57,8 +82,22 @@ test_that("single year catch simulation for two fleets", {
   naa[,,2,] <- assessment$natage.male["2023",]*1e6
 
   tac <- 7000
+  catch <- apportion_catch(
+      catch_timeseries = tac,
+      apportionment = model_options$fleet_apportionment,
+      nyears = model_params$nyears,
+      nfleets = model_params$nfleets,
+      nregions = model_params$nregions
+  )$full_catch
+
+  removals <- subset_matrix(catch, 1, d=1, drop=FALSE)
   suppressWarnings({
-    catch_vars <- simulate_catch(tac, fleet_props=matrix(c(0.70, 0.30), ncol=model_params$nfleets), dem_params=dem_params, naa=naa, options=model_options)
+    catch_vars <- simulate_catch(
+        removals = subset_matrix(removals, r, d=3, drop=TRUE), 
+        dem_params = dem_params, 
+        naa = naa, 
+        options = model_options
+    )
   })
   
   total_catch <- apply(catch_vars$caa_tmp, 1, sum)
@@ -78,21 +117,34 @@ test_that("single year catch simulation with two regions and one fleet", {
 
   y <- 1
   dem_params <- subset_dem_params(dem_params, y, d=1, drop=FALSE)
-  region_props <- subset_matrix(model_options$region_apportionment, y, d=1, drop=FALSE)
-  fleet_props <- subset_matrix(model_options$fleet_apportionment, y, d=1, drop=FALSE)
+  fleet_apportionment <- aperm(array(
+    matrix(c(0.5, 0.5), nrow=model_params$nyears, ncol=model_params$nregions, byrow=TRUE), 
+    dim=c(model_params$nyears, model_params$nregions, model_params$nfleets)
+  ), c(1, 3, 2))
 
+  model_options$fleet_apportionment <- fleet_apportionment
 
   caa_tmp         = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions, model_params$nfleets))
 
   tac <- 100
   suppressWarnings({
+
+    catch <- apportion_catch(
+        catch_timeseries = tac,
+        apportionment = model_options$fleet_apportionment,
+        nyears = model_params$nyears,
+        nfleets = model_params$nfleets,
+        nregions = model_params$nregions
+    )$full_catch
+
+    removals <- subset_matrix(catch, 1, d=1, drop=FALSE)
+
     for(r in 1:model_params$nregions){
-      remove <- tac*region_props[1,r]
+      remove <- subset_matrix(removals, r, d=3, drop=TRUE)
       dp.r <- subset_dem_params(dem_params, r, d=4, drop=FALSE)
       naa.r <- subset_matrix(simple_om_spatial$init_naa, r=r, d=4, drop=FALSE)
       catch_vars <- simulate_catch(
-        removals=remove, 
-        fleet_props=fleet_props, 
+        removals=remove,
         dem_params=dp.r, 
         naa=naa.r, 
         options=model_options
@@ -100,10 +152,10 @@ test_that("single year catch simulation with two regions and one fleet", {
       caa_tmp[,,,r,] <- catch_vars$caa_tmp
     }
 
-    expect_equal(sum(caa_tmp), tac, tolerance=1e-4)
-    expect_equal(apply(caa_tmp, c(1, 4), sum), matrix(c(50, 50), ncol=2), tolerance=1e-4)
   })
 
+expect_equal(sum(caa_tmp), tac, tolerance=1e-4)
+expect_equal(apply(caa_tmp, c(1, 4), sum), matrix(c(50, 50), ncol=2), tolerance=1e-4)
 
 
 })

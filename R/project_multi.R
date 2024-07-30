@@ -49,22 +49,34 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
     )
 
     # full_recruitment <- array(NA, dim=c(nyears, 1, 1, nregions))
-    r <- calculate_recruitment(
+    r <- apportion_recruitment(
         rec_timeseries = recruitment, 
         apportionment = model_options$recruit_apportionment,
         nyears = nyears,
         nregions = nregions
     )
 
+    if(model_options$removals_input == "catch"){
+        c <- apportion_catch(
+            catch_timeseries = removals_timeseries,
+            apportionment = model_options$fleet_apportionment,
+            nyears = nyears,
+            nfleets = nfleets,
+            nregions = nregions
+        )$full_catch
+    }else{
+        c <- removals_timeseries
+    }
 
     for(y in 1:nyears){
 
         # Subset the demographic parameters list to only the current year
         # and DO NOT drop lost dimensions.
         dp.y <- subset_dem_params(dem_params = dem_params, y, d=1, drop=FALSE)
-        removals_input <- subset_matrix(removals_timeseries, y, d=1, drop=FALSE)
-        region_props <- subset_matrix(model_options$region_apportionment, y, d=1, drop=FALSE)
-        fleet_props <- subset_matrix(model_options$fleet_apportionment, y, d=1, drop=FALSE)
+        removals_input <- subset_matrix(c, y, d=1, drop=FALSE)
+        # removals_input <- subset_matrix(removals_timeseries, y, d=1, drop=FALSE)
+        # region_props <- subset_matrix(model_options$region_apportionment, y, d=1, drop=FALSE)
+        # fleet_props <- subset_matrix(model_options$fleet_apportionment, y, d=1, drop=FALSE)
 
         rec <- get_annual_recruitment(
             y = y,
@@ -72,6 +84,7 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
             apportionment = r$rec_props,
             apportion_random = model_options$recruit_apportionment_random,
             apportionment_pars = model_options$recruit_apportionment_pars,
+            nregions = nregions,
             list(naa=naa[y,,,,drop=FALSE], dem_params=dp.y)
         )
         
@@ -80,8 +93,8 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
             dem_params=dp.y,
             prev_naa=naa[y,,,, drop = FALSE],
             recruitment=rec,
-            region_props = region_props,
-            fleet_props = fleet_props,
+            # region_props = region_props,
+            # fleet_props = fleet_props,
             options=model_options
         )
 

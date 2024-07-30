@@ -20,24 +20,26 @@ model_options <- list(
 ```
 
 ### Catch Apportionment
-If `removals_input="catch"`, then region and fleet-level apportionment must also be specified: 
-
-* `region_apportionment`: a matrix of dimension [nyears, nregions] specifying the proportion of the TAC should be allocated to each region. Each row of this matrix should sum to 1.0, but this will not be checked internally.
+If `removals_input="catch"`, then fleet-level apportionment by spatial region must also be specified.  
 
 * `fleet_apportionment`: a 3D array of dimensions [nyears, nfleets, nregions] specifying the proprtion of the regional TAC that should be allocated to each fishing fleet in that region. Each row of each 2D regional matrix should sum to 1.0, but this will not be checked internally.
 
 ```{r apportionment_options, eval=FALSE}
-# Apportion TAC equally between the n spatial regions
-model_options$regional_apportionment <- matrix(1/nregions, nrow=nyears, ncol=nregions)
-
 # Apportion TAC equally amongst the n fleets within each region
-model_options$fleet_apportionment <- array(1/nfleets, dim=c(nyears, nfleets, nregions))
+model_options$fleet_apportionment <- array(1/nfleets/nregions, dim=c(nyears, nfleets, nregions))
 
 ```
 
+Note that the regional and within-region fleet level apportionment splits are combined into a single matrix. This matrix can often be computed by finding annual regional catch allocation, and muliplying by a 3D array specifying the fleet-level catch allocations within each region. For example:
+
+```{r, apportionment, eval=FALSE}
+# region_apportionment: [nyears, nregions]
+# fleet_apportionment: [nyears, nfleets, nregions]
+total_appotionmet <- sweep(fleet_apportionment, c(1, 3), region_apportionment, FUN="*")
+```
 
 ### Recruitment Options
-Like `region_apportionment` and `fleet_apportionment`, users also need to specify:
+Like `fleet_apportionment`, users also need to specify:
 
 * `recruit_apportionment`: a matrix of dimensions [nyears, nregions] specifying the proportion of total recruits that should be allocated to each region. By default, recruitment is apportioned equally amongst regions.
 * `recruit_apportionment_random`: whether recruitment apportionment should be fixed at the values provided by `recruit_apportionment`, or whether to perform a random multinomial sample using the `recruit_apportionment` input as the probability of recruitment to each region. Sample size for multinomial sample is 30. 
@@ -103,7 +105,6 @@ The default values are as follows:
 
 * `removals_input`: "catch"
 * `simulate_observations`: TRUE
-* `region_apportionment`: 1/nregions
 * `fleet_apportionment`: 1/nfleets
 * `recruit_apportionment`: 1/nregions
 * `recruit_apportionment_random`: FALSE

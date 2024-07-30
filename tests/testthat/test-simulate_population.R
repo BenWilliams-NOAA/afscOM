@@ -3,11 +3,18 @@ test_that("single year age-structure population", {
   load(file.path(here::here(), "data/sablefish_dem_params.rda"))
   dem_params <- sablefish_dem_params
   model_params <- get_model_dimensions(dem_params$sel)
+  
+  fleet_apportionment <- array(
+    matrix(c(0.7, 0.3), nrow=model_params$nyears, ncol=model_params$nfleets, byrow=TRUE), 
+    dim=c(model_params$nyears, model_params$nfleets, model_params$nregions)
+  )
+
   model_options <- list(
-    regional_apportionment = c(0.70, 0.30),
-    fleet_apportionment = c(0.70, 0.30),
+    regional_apportionment = 1,
+    fleet_apportionment = fleet_apportionment,
     removals_input = "catch"
   )
+
   y <- 1
   r <- 1
   f <- 1
@@ -26,7 +33,18 @@ test_that("single year age-structure population", {
 
   tac <- 3114310
   suppressWarnings({
-    catch_vars <- simulate_catch(tac, fleet_props=matrix(c(0.70, 0.30), ncol=model_params$nfleets), dem_params=dem_params, naa=naa, options=model_options)
+
+    catch <- apportion_catch(
+        catch_timeseries = tac,
+        apportionment = model_options$fleet_apportionment,
+        nyears = model_params$nyears,
+        nfleets = model_params$nfleets,
+        nregions = model_params$nregions
+    )$full_catch
+
+    removals <- subset_matrix(catch, 1, d=1, drop=FALSE)
+
+    catch_vars <- simulate_catch(subset_matrix(removals, r, d=3, drop=TRUE), dem_params=dem_params, naa=naa, options=model_options)
     pop_vars <- simulate_population(prev_naa=naa, faa=catch_vars$faa_tmp, recruitment=rec, dem_params=dem_params, options=options)
   })
 
@@ -50,8 +68,13 @@ test_that("single year population with two regions", {
 
   y <- 1
   dem_params <- subset_dem_params(dem_params, y, d=1, drop=FALSE)
-  region_props <- subset_matrix(model_options$region_apportionment, y, d=1, drop=FALSE)
-  fleet_props <- subset_matrix(model_options$fleet_apportionment, y, d=1, drop=FALSE)
+  
+  fleet_apportionment <- aperm(array(
+    matrix(c(0.5, 0.5), nrow=model_params$nyears, ncol=model_params$nregions, byrow=TRUE), 
+    dim=c(model_params$nyears, model_params$nregions, model_params$nfleets)
+  ), c(1, 3, 2))
+
+  model_options$fleet_apportionment <- fleet_apportionment
 
 
   caa_tmp         = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions, model_params$nfleets))
@@ -59,13 +82,23 @@ test_that("single year population with two regions", {
 
   tac <- 100
   suppressWarnings({
+
+    catch <- apportion_catch(
+        catch_timeseries = tac,
+        apportionment = model_options$fleet_apportionment,
+        nyears = model_params$nyears,
+        nfleets = model_params$nfleets,
+        nregions = model_params$nregions
+    )$full_catch
+
+    removals <- subset_matrix(catch, 1, d=1, drop=FALSE)
+
     for(r in 1:model_params$nregions){
-      remove <- tac*region_props[1,r]
+      remove <- subset_matrix(removals, r, d=3, drop=TRUE)
       dp.r <- subset_dem_params(dem_params, r, d=4, drop=FALSE)
       naa.r <- subset_matrix(simple_om_spatial$init_naa, r=r, d=4, drop=FALSE)
       catch_vars <- simulate_catch(
         removals=remove, 
-        fleet_props=fleet_props, 
         dem_params=dp.r, 
         naa=naa.r, 
         options=model_options

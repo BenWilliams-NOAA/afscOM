@@ -3,12 +3,19 @@ test_that("1yr projection w/o movement", {
   load(file.path(here::here(), "data/sablefish_dem_params.rda"))
   dem_params <- sablefish_dem_params
   model_params <- get_model_dimensions(dem_params$sel)
+
+  fleet_apportionment <- array(
+    matrix(c(1, 0), nrow=model_params$nyears, ncol=model_params$nfleets, byrow=TRUE), 
+    dim=c(model_params$nyears, model_params$nfleets, model_params$nregions)
+  )
+
   model_options <- list(
-    regional_apportionment = matrix(1, nrow = model_params$nyears, ncol=model_params$nregions),
-    fleet_apportionment = matrix(rep(c(1, 0), each=nyears), ncol=model_params$nfleets),
+    # regional_apportionment = matrix(1, nrow = model_params$nyears, ncol=model_params$nregions),
+    fleet_apportionment = fleet_apportionment,
     removals_input = "catch",
     simulate_observations = FALSE
   )
+
   y <- 1
   r <- 1
   f <- 1
@@ -26,14 +33,22 @@ test_that("1yr projection w/o movement", {
   rec[1,1,,1] <- 2*assessment$natage.female["1960",1]
 
   tac <- 3.114310
+  removals <- apportion_catch(
+      catch_timeseries = tac,
+      apportionment = model_options$fleet_apportionment,
+      nyears = model_params$nyears,
+      nfleets = model_params$nfleets,
+      nregions = model_params$nregions
+  )$full_catch
+
+  removals_input <- subset_matrix(removals, 1, d=1, drop=FALSE)
+
   suppressWarnings({
     out_vars <- project(
-        removals=tac, 
+        removals=removals_input, 
         dem_params=dem_params, 
         prev_naa=naa, 
-        recruitment=rec, 
-        fleet_props = model_options$fleet_apportionment[1,,drop=FALSE], 
-        region_props = model_options$regional_apportionment[1,,drop=FALSE], 
+        recruitment=rec,
         options=model_options
     )
   })
@@ -76,7 +91,7 @@ test_that("1yr projection w F input", {
   f_timeseries <- array(c(0.006515313, 0.000000000), dim=c(1, 1, 1, 1, 2))
   f_timeseries <- subset_matrix(f_timeseries, y, d=1, drop=FALSE)
   suppressWarnings({
-    out_vars <- project(removals=f_timeseries, dem_params=dem_params, prev_naa=naa, recruitment=rec, fleet_props = NA, region_props=NA, options=model_options)
+    out_vars <- project(removals=f_timeseries, dem_params=dem_params, prev_naa=naa, recruitment=rec, options=model_options)
   })
 
   total_catch <- apply(out_vars$caa_tmp, 1, sum)

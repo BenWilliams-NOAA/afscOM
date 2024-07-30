@@ -10,7 +10,7 @@
 #'
 #' @export simulate_catch
 #'
-simulate_catch <- function(removals, fleet_props, dem_params, naa, options){
+simulate_catch <- function(removals, dem_params, naa, options){
 
     model_params <- get_model_dimensions(dem_params$sel)
 
@@ -40,7 +40,7 @@ simulate_catch <- function(removals, fleet_props, dem_params, naa, options){
         if(options$removals_input == "catch"){
             # Apportion catch-based removals based on provided
             # fleet apportionment scheme.
-            remove <- removals*fleet_props[1,f]
+            remove <- removals[,f]
 
             # Solve for F that removes catch
             F_f <- find_F(

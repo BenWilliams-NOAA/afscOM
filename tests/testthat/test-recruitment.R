@@ -4,7 +4,7 @@ test_that("Recruitment, single region", {
     recruitment <- rep(20, nyears+1)
     model_options <- list()
 
-    r <- calculate_recruitment(recruitment, model_options$recruit_apportionment, nyears, nregions)
+    r <- apportion_recruitment(recruitment, model_options$recruit_apportionment, nyears, nregions)
 
     expect_equal(r$rec_props, array(1, dim=c(11, 1)))
     expect_equal(r$full_recruitment, array(recruitment, dim=c(nyears+1, 1)))
@@ -16,7 +16,7 @@ test_that("Recruitment vector no apportionment", {
     recruitment <- rep(20, nyears+1)
     model_options <- list()
 
-    r <- calculate_recruitment(recruitment, model_options$recruit_apportionment, nyears, nregions)
+    r <- apportion_recruitment(recruitment, model_options$recruit_apportionment, nyears, nregions)
 
     expect_equal(r$rec_props, array(0.2, dim=c(11, 5)))
     expect_equal(r$full_recruitment, array(4, dim=c(11, 5)))
@@ -29,7 +29,7 @@ test_that("Recruitment array no apportionment", {
     recruitment <- array(20, dim=c(nyears+1, 1))
     model_options <- list()
 
-    r <- calculate_recruitment(recruitment, model_options$recruit_apportionment, nyears, nregions)
+    r <- apportion_recruitment(recruitment, model_options$recruit_apportionment, nyears, nregions)
 
     expect_equal(r$rec_props, array(0.2, dim=c(11, 5)))
     expect_equal(r$full_recruitment, array(4, dim=c(11, 5)))
@@ -44,7 +44,7 @@ test_that("Recruitment array, fixed apportionment", {
         recruit_apportionment = c(0.5, 0.2, 0.1, 0.1, 0.1)
     )
 
-    r <- calculate_recruitment(recruitment, model_options$recruit_apportionment, nyears, nregions)
+    r <- apportion_recruitment(recruitment, model_options$recruit_apportionment, nyears, nregions)
 
     expect_equal(r$rec_props, matrix(c(0.5, 0.2, 0.1, 0.1, 0.1), nrow=nyears+1, ncol=nregions, byrow=TRUE))
     expect_equal(r$full_recruitment, matrix(c(10, 4, 2, 2, 2), nrow=nyears+1, ncol=nregions, byrow=TRUE))
@@ -73,7 +73,7 @@ test_that("Recruitment array, time-varying apportionment", {
         recruit_apportionment = apportionment_matrix
     )
 
-    r <- calculate_recruitment(recruitment, model_options$recruit_apportionment, nyears, nregions)
+    r <- apportion_recruitment(recruitment, model_options$recruit_apportionment, nyears, nregions)
 
     true_recruitment <- sweep(apportionment_matrix, 1, recruitment, FUN="*")
     expect_equal(r$rec_props, apportionment_matrix)
@@ -89,7 +89,7 @@ test_that("Recruitment array, apportionment function", {
         recruit_apportionment = mean
     )
 
-    r <- calculate_recruitment(recruitment, model_options$recruit_apportionment, nyears, nregions)
+    r <- apportion_recruitment(recruitment, model_options$recruit_apportionment, nyears, nregions)
 
     expect_type(r$rec_props, "closure")
     expect_equal(r$full_recruitment, recruitment)
@@ -107,14 +107,15 @@ test_that("Get annual recuits, fixed apportionment", {
         recruit_apportionment_random = FALSE
     )
 
-    r <- calculate_recruitment(recruitment, model_options$recruit_apportionment, nyears, nregions)
+    r <- apportion_recruitment(recruitment, model_options$recruit_apportionment, nyears, nregions)
 
     r_y <- get_annual_recruitment(
         y = 1,
         rec_timeseries = r$full_recruitment,
         apportionment = r$rec_props,
         apportion_random = model_options$recruit_apportionment_random,
-        apportionment_pars = model_options$recruit_apportionment_pars
+        apportionment_pars = model_options$recruit_apportionment_pars,
+        nregions = nregions
     )
 
     expect_equal(r_y, array(20*c(0.5, 0.2, 0.1, 0.1, 0.1), dim=c(1, 5)))
@@ -139,14 +140,15 @@ test_that("Get annual recuits, function apportionment", {
         recruit_apportionment_random = FALSE
     )
 
-    r <- calculate_recruitment(recruitment, model_options$recruit_apportionment, nyears, nregions)
+    r <- apportion_recruitment(recruitment, model_options$recruit_apportionment, nyears, nregions)
 
     r_y <- get_annual_recruitment(
         y = 1,
         rec_timeseries = r$full_recruitment,
         apportionment = r$rec_props,
         apportion_random = model_options$recruit_apportionment_random,
-        apportionment_pars = model_options$recruit_apportionment_pars
+        apportionment_pars = model_options$recruit_apportionment_pars,
+        nregions = nregions
     )
 
     expect_equal(r_y, array(20*c(0.5, 0.2, 0.1, 0.1, 0.1), dim=c(1, 5)))
@@ -171,7 +173,7 @@ test_that("Get annual recuits, fixed apportionment stochastic", {
         recruit_apportionment_random = TRUE
     )
 
-    r <- calculate_recruitment(recruitment, model_options$recruit_apportionment, nyears, nregions)
+    r <- apportion_recruitment(recruitment, model_options$recruit_apportionment, nyears, nregions)
 
     set.seed(1120)
     r_y <- get_annual_recruitment(
@@ -179,7 +181,8 @@ test_that("Get annual recuits, fixed apportionment stochastic", {
         rec_timeseries = r$full_recruitment,
         apportionment = r$rec_props,
         apportion_random = model_options$recruit_apportionment_random,
-        apportionment_pars = model_options$recruit_apportionment_pars
+        apportionment_pars = model_options$recruit_apportionment_pars,
+        nregions = nregions
     )
 
     expect_equal(r_y/sum(r_y), array(c(0.533, 0.133, 0.066, 0.133, 0.133), dim=c(1, 5)), tolerance=1e-2)
