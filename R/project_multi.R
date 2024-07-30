@@ -49,19 +49,12 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
     )
 
     # full_recruitment <- array(NA, dim=c(nyears, 1, 1, nregions))
-    if(!(is.null(model_options$recruit_apportionment)) & !is.function(model_options$recruit_apportionment)){
-        rec_props <- model_options$recruit_apportionment
-    }else{
-        rec_props <- array(1/nregions, dim=c(nyears+1, nregions))
-    }
-
-    # if recruitment is entered as a vector of global recruitment and
-    # regional recruitment apportionment
-    if(is.vector(recruitment) | is.array(recruitment) & dim(recruitment)[2] == 1){
-        full_recruitment <- sweep(rec_props, 1, recruitment, FUN="*")
-    }else if(all(is.array(recruitment) & dim(recruitment) > 1)){
-        full_recruitment <- recruitment
-    }
+    r <- calculate_recruitment(
+        rec_timeseries = recruitment, 
+        apportionment = model_options$recruit_apportionment,
+        nyears = nyears,
+        nregions = nregions
+    )
 
 
     for(y in 1:nyears){
@@ -74,7 +67,7 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
         fleet_props <- subset_matrix(model_options$fleet_apportionment, y, d=1, drop=FALSE)
 
         if(!is.function(model_options$recruit_apportionment)){
-            rec <- subset_matrix(full_recruitment, y+1, d=1, drop=FALSE)
+            rec <- subset_matrix(r$full_recruitment, y+1, d=1, drop=FALSE)
         }else {
             projected_rec_props <- do.call(
                 model_options$recruit_apportionment, 
