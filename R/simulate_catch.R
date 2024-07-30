@@ -10,14 +10,14 @@
 #'
 #' @export simulate_catch
 #'
-simulate_catch <- function(removals, fleet.props, dem_params, naa, options){
+simulate_catch <- function(removals, fleet_props, dem_params, naa, options){
 
     model_params <- get_model_dimensions(dem_params$sel)
 
     # if not provided, assume equal fleet split
-    if(!("fleet_apportionment" %in% names(options))){
-        options$fleet_apportionment <- rep(1/model_params$nfleets, model_params$nfleets)
-    }
+    # if(!("fleet_apportionment" %in% names(options))){
+    #     options$fleet_apportionment <- rep(1/model_params$nfleets, model_params$nfleets)
+    # }
 
     land_caa_tmp    <- array(NA, dim=c(1, model_params$nages, model_params$nsexes, 1, model_params$nfleets))
     disc_caa_tmp    <- array(NA, dim=c(1, model_params$nages, model_params$nsexes, 1, model_params$nfleets))
@@ -40,7 +40,7 @@ simulate_catch <- function(removals, fleet.props, dem_params, naa, options){
         if(options$removals_input == "catch"){
             # Apportion catch-based removals based on provided
             # fleet apportionment scheme.
-            remove <- removals*fleet.props[f]
+            remove <- removals*fleet_props[1,f]
 
             # Solve for F that removes catch
             F_f <- find_F(

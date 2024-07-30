@@ -67,6 +67,12 @@
     <li>
       <a href="../articles/specifying_demographic_parameters.html">Specifying Demographic Rates</a>
     </li>
+    <li>
+      <a href="../articles/nep_transboundary_sablefish.html">Example: Northeast Pacific Transboundary Sablefish Model</a>
+    </li>
+    <li>
+      <a href="../articles/spatial_om_example.html">A Spatial Model Example</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -119,8 +125,17 @@
 <li>
 <code>dmr</code>: Fishery discard mortality (as an instantenous rate) <code>[nyears, nages, nsexes, nregions, nfleets]</code>
 </li>
+</ol>
+<p>If observations are being simulated, survey selectivity must also be specified:</p>
+<ol start="8" style="list-style-type: decimal">
 <li>
 <code>surv_sel</code>: Survey selectivity <code>[nyears, nages, nsexes, nregions, nsurveys]</code>
+</li>
+</ol>
+<p>For spatial models (those where <code>nregions &gt; 1</code>), a “movement” demographic matrix is also required as input. Movement can be specified to vary by age and sex, but can not currently vary through time.</p>
+<ol start="9" style="list-style-type: decimal">
+<li>
+<code>movement</code>: Movement matrix <code>[nregions, nregions, nages, nsexes]</code>
 </li>
 </ol>
 <div class="section level4">
@@ -173,9 +188,6 @@
 <span>    surv_sel<span class="op">=</span><span class="va">survey_sel</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>An additional helper function <code>validate_dem_params</code>, takes as input a list of population parameter matrices, and the expected dimensions, and will check if all required parameter matrices are present and of appropriate dimensions. If required parameters are missing, or are of incorrect dimensions, an error will be returned. It is recommended that this function be used prior to running the model to verify that the input parameters matrices are correctly specified.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">model_dimension</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>nyears<span class="op">=</span><span class="fl">64</span>, nages<span class="op">=</span><span class="fl">30</span>, nsexes<span class="op">=</span><span class="fl">2</span>, nregions<span class="op">=</span><span class="fl">1</span>, nfleets<span class="op">=</span><span class="fl">2</span>, nsurveys<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
-<span><span class="va">dem_params</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/validate_dem_params.html">validate_dem_params</a></span><span class="op">(</span><span class="va">dem_params</span>, <span class="va">model_dimensions</span><span class="op">)</span></span></code></pre></div>
 </div>
   </div>
 
@@ -189,7 +201,7 @@
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by Benjamin Williams, Joshua Zahner, Matt Cheng, Dan Goethel, Curry Cunningham.</p>
+<p>Developed by Benjamin Williams, Joshua Zahner, Matt Cheng, Maia Kapur.</p>
 </div>
 
 <div class="pkgdown">

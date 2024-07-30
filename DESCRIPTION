@@ -1,6 +1,6 @@
 Package: afscOM
 Type: Package
-Title: What the Package Does (Title Case)
+Title: General Fisheries Simulation Model
 Version: 0.1.0
 Authors@R: 
     c(person(given = "Benjamin", 
@@ -15,18 +15,20 @@ Authors@R:
              family = "Cheng",
              email = "lhcheng@alaska.edu", 
              role = c("aut")),
+       person(given = "Maia", 
+             family = "Kapur",
+             role = c("aut")),
       person(given = "Dan", 
              family = "Goethel",
-             role = "aut"),
+             role = "ctb"),
       person(given = "Curry", 
              family = "Cunningham",
-             role = "aut"),
+             role = "ctb"),
       person(given = "Chris", 
              family = "Lunsford",
              role = "ctb"))
-Maintainer: The package maintainer <ben.williams@noaa.gov>  
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Maintainer: Joshua A. Zahner <joshuazahner@gmail.com>  
+Description: A general age-sex structured, spatially explicit fisheries simulation model.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

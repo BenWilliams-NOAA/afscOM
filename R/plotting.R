@@ -217,7 +217,7 @@ plot_ssb <- function(ssb){
     ssb_df <- ssb %>% as_tibble() %>%
         rownames_to_column("time") %>%
         mutate(time=as.numeric(time)) %>%
-        pivot_longer(c(2), names_to="region", values_to="ssb")
+        pivot_longer(c(2:(nregions+1)), names_to="region", values_to="ssb")
 
     xmax <- round(ssb_df %>% pull(time) %>% max, -1)
     ymax <- round(1.2*ssb_df %>% pull(ssb) %>% max, -1)
@@ -247,7 +247,7 @@ plot_ssb <- function(ssb){
     bio_df <- bio %>% as_tibble() %>%
         rownames_to_column("time") %>%
         mutate(time=as.numeric(time)) %>%
-        pivot_longer(c(2), names_to="region", values_to="bio")
+        pivot_longer(c(2:(nregions+1)), names_to="region", values_to="bio")
 
     xmax <- round(bio_df %>% pull(time) %>% max, -1)
     ymax <- round(1.2*bio_df %>% pull(bio) %>% max, -1)
@@ -278,7 +278,7 @@ plot_ssb <- function(ssb){
     catch_df <- catch %>% as_tibble() %>%
         rownames_to_column("time") %>%
         mutate(time=as.numeric(time)) %>%
-        pivot_longer(c(2), names_to="region", values_to="catch")
+        pivot_longer(c(2:(nregions+1)), names_to="region", values_to="catch")
 
     xmax <- round(catch_df %>% pull(time) %>% max, -1)
     ymax <- round(1.2*catch_df %>% pull(catch) %>% max, -1)
@@ -309,7 +309,7 @@ plot_ssb <- function(ssb){
     f_df <- f %>% as_tibble() %>%
         rownames_to_column("time") %>%
         mutate(time=as.numeric(time)) %>%
-        pivot_longer(c(2), names_to="region", values_to="f")
+        pivot_longer(c(2:(nregions+1)), names_to="region", values_to="f")
 
     xmax <- round(f_df %>% pull(time) %>% max, -1)
     ymax <- 1.2*round(f_df %>% pull(f) %>% max, 2)
@@ -344,9 +344,15 @@ plot_atage <- function(atage){
         mutate(avg_age = weighted.mean(age, prop))
         
 
-    plot <- ggplot(atage_df, aes(x=time, y=age, size=prop, color=prop))+
-        geom_point()+
-        geom_line(aes(y=avg_age), color='red', show.legend = FALSE)+
+    plot <- ggplot(atage_df)+
+        geom_point(aes(x=time, y=age, size=prop, color=prop))+
+        geom_line(
+            data=atage_df %>% distinct(time, avg_age), 
+            aes(x=time, y=avg_age),
+            linewidth=2, 
+            color='red', 
+            show.legend = FALSE
+        )+
         coord_cartesian(expand=0.01)+
         theme_bw()
 

@@ -62,6 +62,7 @@ subset_dem_params <- function(dem_params, r, d=1, drop=TRUE){
     tmp <- rlang::duplicate(dem_params)
     ps <- names(tmp)
     for(n in ps){
+        if(n == "movement" || any(is.na(dem_params[[n]]))) next;
         tmp[[n]] <- subset_matrix(dem_params[[n]], r, d, drop)
     }
     return(tmp)
@@ -84,6 +85,7 @@ subset_dem_params <- function(dem_params, r, d=1, drop=TRUE){
 #'
 #'
 subset_matrix <- function(mat, r, d=1, drop=TRUE){
+    if(is.null(mat)) return(NULL)
     tmp <- rlang::duplicate(mat)
     ndims <- length(dim(mat))
     idxs <- c(as.list(rep(TRUE, d-1)), list(r), as.list(rep(TRUE, ndims-d)))
@@ -161,31 +163,11 @@ setup_model_options <- function(model_dimensions){
         list(
             removals_input = "catch",
             simulate_observations = TRUE,
-            region_apportionment = list(rep(1/model_dimensions$nregions, model_dimensions$nregions)),
-            fleet_apportionment = list(rep(1/model_dimensions$nfleets, model_dimensions$nfleets)),
-            obs_pars = list(
-                surv_ll = list(
-                    q = 1,
-                    rpn_cv = 0.10,
-                    rpw_cv = 0.10,
-                    ac_samps = 100,
-                    as_integers = TRUE
-                ),
-                surv_tw = list(
-                    q = 1,
-                    rpw_cv = 0.10,
-                    ac_samps = 100,
-                    as_integers = TRUE
-                ),
-                fish_fx = list(
-                    ac_samps = 100,
-                    as_integers = TRUE
-                ),
-                fish_tw = list(
-                    ac_samps = 100,
-                    as_integers = TRUE
-                )
-            )
+            region_apportionment = matrix(1/model_dimensions$nregions, nrow=model_dimensions$nyears, ncol=model_dimensions$nregions)),
+            fleet_apportionment = array(1/model_dimensions$nfleets, dim=c(model_dimensions$nyears, model_dimensions$nfleets, model_dimensions$nregions)),
+            recruit_apportionment = matrix(1/model_dimensions$nregions, nrow=model_dimensions$nyears, ncol=model_dimensions$nregions)),
+            recruit_apportionment_random = FALSE,
+            do_recruits_move = TRUE
         )
     )
 }

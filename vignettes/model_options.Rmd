@@ -7,7 +7,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-A vareity of model options also need to be specified to ensure the projection model works as expected. Required options are:
+A variety of model options also need to be specified to ensure the projection model works as expected. Required options are:
 
 * `removals_input`: input units of removals (either "catch" is inputs are a TAC, or "F" if an instantenous fishing mortality rate)
 * `simulate_observations`: whethr to simulate observations from the OM (TRUE/FALSE)
@@ -22,66 +22,79 @@ model_options <- list(
 ### Catch Apportionment
 If `removals_input="catch"`, then region and fleet-level apportionment must also be specified: 
 
-* `region_apportionment`: an unnamed list of vectors (of length `nyears`) specifying what proportion of the TAC should be allocated to each spatial region. There should be as many vector as there are regions. The sum across all regions in a given year should be 1.0, but the model will not make this check internally.
+* `region_apportionment`: a matrix of dimension [nyears, nregions] specifying the proportion of the TAC should be allocated to each region. Each row of this matrix should sum to 1.0, but this will not be checked internally.
 
-* `fleet_apportionment`: an unnamed list of vectors (of length `nyears`) specifying what proportion of the TAC should be allocated to each fishing fleet. There should be as many vectors as there are fishing fleets. For multi-region models, the `fleet_apportionment` proportions will be applied across all regions. There is not currently support for specifying unique fleet apportionments per spatial region. 
+* `fleet_apportionment`: a 3D array of dimensions [nyears, nfleets, nregions] specifying the proprtion of the regional TAC that should be allocated to each fishing fleet in that region. Each row of each 2D regional matrix should sum to 1.0, but this will not be checked internally.
 
 ```{r apportionment_options, eval=FALSE}
-# For a single region model, 100% of the catch is apportioned to the single region
-model_options$regional_apportionment <- list(1)
+# Apportion TAC equally between the n spatial regions
+model_options$regional_apportionment <- matrix(1/nregions, nrow=nyears, ncol=nregions)
 
-# Define a 70%-30% apportionment split between fleet 1 and fleet 2
-model_options$fleet_apportionment <- list(rep(0.70, nyears), rep(30, nyears))
+# Apportion TAC equally amongst the n fleets within each region
+model_options$fleet_apportionment <- array(1/nfleets, dim=c(nyears, nfleets, nregions))
+
+```
+
+
+### Recruitment Options
+Like `region_apportionment` and `fleet_apportionment`, users also need to specify:
+
+* `recruit_apportionment`: a matrix of dimensions [nyears, nregions] specifying the proportion of total recruits that should be allocated to each region. By default, recruitment is apportioned equally amongst regions.
+* `recruit_apportionment_random`: whether recruitment apportionment should be fixed at the values provided by `recruit_apportionment`, or whether to perform a random multinomial sample using the `recruit_apportionment` input as the probability of recruitment to each region. Sample size for multinomial sample is 30. 
+* `do_recruits_move`: whether annual recruits are subject to movement in the year they recruit.
+
+Alternatively, `recruit_apportionment` can be a function that returns a matrix of dimension [1, nregions] specifying the proportion of total recruitment that should be allocated to each region. This function must take `naa` and `dem_params` as inputs. An example follows:
+
+```{r, eval=FALSE}
+age2_apportionment <- function(naa, dem_params){
+    age2 <- naa[,1,,]
+    age2_by_region <- apply(age2, 2, sum)
+    return(
+        array(age2_by_region/sum(age2_by_region), dim=c(1, ncol(age2)))
+    )
+}
+
+model_options$recruit_apportionment = age2_apportionment
 
 ```
 
 ### Observation Processes
-If `simulate_observations=TRUE`, then a set of parameters that govern how observations are simulated must also be defined. This option, `obs_pars` takes the form of a complex list, where each named element of the list refers to a specific survey or fishery from which observations are being simulated. Currently, there is support for a longline survey (`surv_ll`), a trawl survy (`surv_tw`), a fixed gear fishery (`fish_fx`), and a trawl fishery (`fish_tw`). 
+If `simulate_observations=TRUE`, then a set of parameters that govern how observations are simulated must also be defined. This option, `obs_pars` is a list of vectors, where each vector has length `nfleets+nsurveys`.
 
-Within each survey/fishery, specific parameter values that define the observation processes must be defined. The parameters supported for survey and fishery fleets differ somewhat.
+Required items in the `obs_pars` list are:
 
-For surveys, the following observation parameters must all be defined:
+* `is_survey`: indicates whether a given fleet is a fishing fleet or survey fleet (`0` indicates a fishing fleet, `1` indicates a scientific survey) 
+* `qs`: catchability coefficients
+* `rpn`: whether to generate a relative population number (RPN) index (`0` = no, `1` = yes)
+* `rpw`: whether to generate a relative population weight (RPW) index (`0` = no, `1` = yes)
+* `rpn_cv`: a coefficient of variation (CV) to use when generating RPN observations
+* `rpw_cv`: a coefficient of variation (CV) to use when generating RPW observations
+* `acs`: whether to generate age composition observations (`0` = no, `1` = yes)
+* `ac_samps`: number of samples to use when generating age composition observations
+* `ac_as_integers`: whether age composition observations should be provided as integers or proportions (`0` = no, `1` = yes)
+* `acs_agg_sex`: whether age composition observations should be aggregated by sex (`0` = no, `1` = yes)
 
-* `q`: a catchability coefficient
-* `rpn_cv`: coefficient of variation of RPN observations
-* `rpw_cv`: coefficient of variation of RPW observations
-* `ac_samps`: the number of samples, across all sexes, from which age composition data is simulated
-* `as_integers`: whether to return age composition observations as integer or proportions
+Below is an example `obs_pars` object that generates RPNs and RPWs for two surveys, and age composition observations for two fisheries and two surveys. Age compositions are not aggregated by sex and are returned as integers. 
+```{r, eval=FALSE}
+obs_pars <- list(
+    # longline fishery, trawl fishery, longline survey, trawl survey
+    is_survey   = c(0, 0, 1, 1),  # is this a survey (1) or fishery (0)
+    qs          = c(1, 1, 6.41, 0.85), # catchability coefficient (q) for surveys
+    rpn         = c(0, 0, 1, 1), # should RPNs be computed (yes=1, no=0)
+    rpn_cv      = c(0, 0, 0.1, 0.1), # RPN CV
+    rpw         = c(0, 0, 1, 1), # should RPWs be computed (yes=1, no=0)
+    rpw_cv      = c(0, 0, 0.1, 0.1), # RPW CV
+    acs         = c(1, 1, 1, 1), # should age compositions be computed (yes=1, no=0)
+    ac_samps    = c(50, 30, 50, 30), # total sample size for age composition observations
+    ac_as_integers  = c(TRUE, TRUE, TRUE, TRUE), # return age comps as integers (TRUE) or proportions (FALSE)
+    acs_agg_sex     = c(FALSE, FALSE, FALSE, FALSE) # should age comps be aggregated by sex
+)
+```
+Every item in the list object must have length `nfleets+nsurveys`, even if observations are not being generated for some fleets or surveys. In the above example, even though RPN and RPW indices are not being generated for the two fishing fleets, catchability coefficients (`qs`) and CVs (`rpn_cv` and `rpw_cv`) are stil defined for those two fisheries. The observation submodel ignores these values internally when the `simulate_observations()` function runs.
 
-For fishery fleets, only the following observation parameters need to be defined:
-
-* `ac_samps`: the number of samples, across all sexes, from which age composition data is simulated
-* `as_integers`: whether to return age composition observations as integer or proportions
+For items that require a binary "yes"/"no" entry, either 1/0 or TRUE/FALSE can be provided. These include: `is_survey`, `rpn`, `rpw`, `acs`, `acs_as_integers`, and `acs_agg_sex`.
 
 For additional information on how all of these parameters are used to generate observations, see ["Observation Processes"](observation_processes.html).
-
-```{r, obs_pars}
-obs_pars <- list(
-    surv_ll = list(
-        q = 6.41338,
-        rpn_cv = 0.20,
-        rpw_cv = 0.10,
-        ac_samps = 1000,
-        as_integers = TRUE
-    ),
-    surv_tw = list(
-        q = 0.8580,
-        rpw_cv = 0.10,
-        ac_samps = 1000,
-        as_integers = TRUE
-    ),
-    fish_fx = list(
-        ac_samps = 1000,
-        as_integers = TRUE
-    ),
-    fish_tw = list(
-        ac_samps = 1000,
-        as_integers = TRUE
-    )
-)
-
-model_options$obs_pars <- obs_pars
-```
 
 ### Default Options
 A helper function, `setup_model_options()` will return a fully formed `model_options` list object with required parameters set to default values.
@@ -92,8 +105,9 @@ The default values are as follows:
 * `simulate_observations`: TRUE
 * `region_apportionment`: 1/nregions
 * `fleet_apportionment`: 1/nfleets
-* `*$q`: 1
-* `*$rpn_cv`: 0.10
-* `*$rpw_cv`: 0.10
-* `*ac_samps`: 100
-* `*as_integers`: TRUE
+* `recruit_apportionment`: 1/nregions
+* `recruit_apportionment_random`: FALSE
+* `do_recruits_move`: TRUE
+
+
+No default values are established for the `obs_pars` options at this time.

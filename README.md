@@ -1,5 +1,5 @@
 # AFSC MSE Operating Model
-**Joshua A. Zahner (_UAF_)**, Ben Williams (_NOAA_), Matt Cheng (_UAF_)
+**Joshua A. Zahner (_UAF_)**, Ben Williams (_NOAA_), Matt Cheng (_UAF_), Maia Kapur (_NOAA_)
 
 The AFSC Operating Model is a generalized, age structured, multi-sex, multi-fleet, spatially explicit fisheries simulation model. It is intended to be used by fisheries scientists working in the North Pacific to quickly build fisheries simulation models to test various hypotheses about stock dynamics. While designed with the structure of many data-rich stock assessments used for manangement in Alaska (under the North Pacfic Fisheries Management Council) in mind, it could be adapted for use in other regions. 
 
