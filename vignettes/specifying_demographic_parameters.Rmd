@@ -22,7 +22,14 @@ Required population parameters include:
 5. `sel`: Fishery selectivity `[nyears, nages, nsexes, nregions, nfleets]`
 6. `ret`: Fishery retention `[nyears, nages, nsexes, nregions, nfleets]`
 7. `dmr`: Fishery discard mortality (as an instantenous rate) `[nyears, nages, nsexes, nregions, nfleets]`
+
+If observations are being simulated, survey selectivity must also be specified:
+
 8. `surv_sel`: Survey selectivity `[nyears, nages, nsexes, nregions, nsurveys]`
+
+For spatial models (those where `nregions > 1`), a "movement" demographic matrix is also required as input. Movement can be specified to vary by age and sex, but can not currently vary through time. 
+
+9. `movement`: Movement matrix `[nregions, nregions, nages, nsexes]`
 
 #### Building Parameter Matrices
 To facilitate easier creation of these multi-dimensional parameter matrices, a helper function `generate_param_matrix(...)` has been provided. This function accepts as input a single value, a vector of values, or a matrix/array of values, and a list of dimensions over which to fill a fully-formed parameter matrix with that input.
@@ -92,35 +99,3 @@ dem_params <- list(
 
 An additional helper function `validate_dem_params`, takes as input a list of population parameter matrices, and the expected dimensions, and will check if all required parameter matrices are present and of appropriate dimensions. If required parameters are missing, or are of incorrect dimensions, an error will be returned. It is recommended that this function be used prior to running the model to verify that the input parameters matrices are correctly specified.
 
-If observations are being simulated (e.g. `simulate_observations = TRUE`), users must also supply a list of observation parameters (`obs_pars`) that defines how the model should simulate observation data. Required components of this list are:
-
-1. `is_survey`: whether observations are coming from a fishery fleet or a scientific survey
-2. `qs`: catchability coefficients (q) for each scientific survey
-3. `rpn`: whether the model should simulate an RPN (relative population number) for this fishery/survey
-4. `rpn_cv` the coefficient of variation (CV) to use when simulating RPNs
-5. `rpw`: whether the model should simulate an RPW (relative population weight) for this fishery/survey
-6. `rpw_cv`: the CV to use when simulating RPWs
-7. `acs`: whether the model should simulate age composition data for this fishery/survey
-8. `ac_samp`: the total number of samples to use when simulating age composition data
-9. `ac_as_integers`: whether age composition data should be returned as integers (`TRUE`) or as proportions (FALSE)
-10. `acs_agg_sex`: whether the age composition data should be aggregated sex (if `FALSE`, then the value supplied in `ac_samp` will apply across both sexes)
-
-All 10 options should be a vector of length `nyears+nsurveys`. For options which may not apply to a given fishery/survey (e.g. `q` for a fishery), a placeholder value must still be supplied, but will be ignored when the calculation is performed internally.
-
-For example, the below `obs_pars` list would generate RPNs and RPWs for 2 surveys, and age composition data (sex-disaggregated and as integers) for 2 fisheries and 2 surveys.
-
-```{r, eval=FALSE}
-obs_pars <- list(
-    # longline fishery, trawl fishery, longline survey, trawl survey
-    is_survey   = c(0, 0, 1, 1),        # is this a survey (1) or fishery (0)
-    qs          = c(1, 1, 6.41, 0.85),  # catchability coefficient (q) for surveys
-    rpn         = c(0, 0, 1, 1),        # should RPNs be computed (yes=1, no=0)
-    rpn_cv      = c(0, 0, 0.1, 0.1),    # RPN CV
-    rpw         = c(0, 0, 1, 1),        # should RPWs be computed (yes=1, no=0)
-    rpw_cv      = c(0, 0, 0.1, 0.1),    # RPW CV
-    acs         = c(1, 1, 1, 1),        # should age compositions be computed (yes=1, no=0)
-    ac_samps    = c(50, 30, 50, 30),    # total sample size for age composition observations
-    ac_as_integers  = c(TRUE, TRUE, TRUE, TRUE), # return age comps as integers (TRUE) or proportions (FALSE)
-    acs_agg_sex     = c(FALSE, FALSE, FALSE, FALSE) # should age comps be aggregated by sex
-)
-```

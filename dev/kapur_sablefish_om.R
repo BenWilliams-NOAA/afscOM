@@ -64,6 +64,8 @@ mort_by_stock <- kapur2024_sablefish_data$mortality
 mort_by_region <- c(t(mort_by_stock) %*% t(region_stock_matrix)) # convert stock mortality to regional mortalities
 mort_matrix <- generate_param_matrix(mort_by_region, dimension_names = dimension_names, by=c("region"))
 
+kapur2024_sablefish_data$selectivity[,,5,]
+
 selex <- aperm(kapur2024_sablefish_data$selectivity[,1:nages,,,drop=FALSE], c(1, 2, 4, 3))
 dimnames(selex) <- dimension_names[c("time", "age", "sex", "fleet")]
 selex_matrix <- generate_param_matrix(selex, dimension_names = dimension_names, by=c("time", "age", "sex", "fleet"))
@@ -216,3 +218,169 @@ afscom_bio_plot <- reshape2::melt(apply(ssbaa, c(1, 4), sum)) %>%
 library(patchwork)
 
 kapur2024_bio_plot + afscom_bio_plot + plot_layout(guides="collect")
+ggsave(file.path("inst", "images", "kapur2024_afscom_ssb_comparison.png"))
+
+load("~/Desktop/maia_sablefish_io/instF_yais.rdata")
+
+instF_yais %>% group_by(year, subarea) %>%
+    summarise(F = max(F_value)) %>%
+    print(n=200)
+
+    ggplot(aes(x=year, y=F, color=subarea))+
+        geom_line(linewidth=1.2)+
+        labs(y="F", title="Kapur et al. 2024 Regional F")+
+        coord_cartesian(ylim=c(0, 0.5))+
+        theme_bw()
+
+load("~/Desktop/maia_sablefish_io/instF_yf.rdata")
+instF_yf %>%
+    mutate(
+        year = year-1960+1,
+        fleet = case_when(
+            fleet == "AK_FIX" ~ "F1",
+            fleet == "AK_TWL" ~ "F2",
+            fleet == "BC_LL" ~ "F3",
+            fleet == "BC_TRAP" ~ "F4",
+            fleet == "BC_TWL" ~ "F5",
+            fleet == "CC_FIX" ~ "F6",
+            fleet == "CC_TWL" ~ "F7",
+        )
+    ) %>%
+    left_join(
+        reshape2::melt(om_sim$faa) %>% as_tibble() %>%
+        rename(
+            "year"="Var1",
+            "age"="Var2",
+            "sex"="Var3",
+            "region"="Var4",
+            "fleet"="Var5",
+        ) %>% 
+        mutate(
+            sex = case_when(sex == 1 ~ "F", TRUE ~ "M"),
+            region = case_when(
+                region == 1 ~ "R1",
+                region == 2 ~ "R2",
+                region == 3 ~ "R3",
+                region == 4 ~ "R4",
+                region == 5 ~ "R5",
+                region == 6 ~ "R6",
+            ),
+            fleet = case_when(
+                fleet == 1 ~ "F1",
+                fleet == 2 ~ "F2",
+                fleet == 3 ~ "F3",
+                fleet == 4 ~ "F4",
+                fleet == 5 ~ "F5",
+                fleet == 6 ~ "F6",
+                fleet == 7 ~ "F7",
+            )
+        ) %>%
+        group_by(year, fleet) %>%
+        summarise(F = max(value)),
+        by = c("year", "fleet")
+    ) %>%
+    rename(
+        "kapur2024"="F_value",
+        "afscOM"="F"
+    ) %>%
+    pivot_longer(kapur2024:afscOM, names_to="model", values_to="value") %>%
+
+    ggplot(aes(x=year, y=value, color=fleet, linetype=model))+
+        geom_line(linewidth=1.2)+
+        labs(y="F", title="Kapur et al. 2024 vs afscOM Fleet Specific Fishing Mortality")+
+        coord_cartesian(ylim=c(0, 0.5))+
+        theme_bw()+
+        facet_wrap(~fleet)
+
+ggsave(file.path("vignettes", "images", "kapur2024_afscom_fishmort_comparison.png"))
+
+reshape2::melt(om_sim$faa) %>% as_tibble() %>%
+    rename(
+        "time"="Var1",
+        "age"="Var2",
+        "sex"="Var3",
+        "region"="Var4",
+        "fleet"="Var5",
+    ) %>% 
+    mutate(
+        sex = case_when(sex == 1 ~ "F", TRUE ~ "M"),
+        region = case_when(
+            region == 1 ~ "R1",
+            region == 2 ~ "R2",
+            region == 3 ~ "R3",
+            region == 4 ~ "R4",
+            region == 5 ~ "R5",
+            region == 6 ~ "R6",
+        ),
+        fleet = case_when(
+            fleet == 1 ~ "F1",
+            fleet == 2 ~ "F2",
+            fleet == 3 ~ "F3",
+            fleet == 4 ~ "F4",
+            fleet == 5 ~ "F5",
+            fleet == 6 ~ "F6",
+            fleet == 7 ~ "F7",
+        )
+    ) %>%
+    group_by(time, fleet) %>%
+    summarise(F = max(value)) %>%
+
+    ggplot(aes(x=time, y=F, color=fleet))+
+        geom_line(linewidth=1.2)+
+        labs(y="F", title="afscOM Fleet F")+
+        coord_cartesian(ylim=c(0, 0.5))+
+        theme_bw()+
+        facet_wrap(~fleet)
+
+
+
+# "sex" = c("F", "M"),
+#     "region" = c("R1", "R2", "R3", "R4", "R5", "R6"),
+#     "fleet" = c("F1", "F2", "F3", "F4", "F5", "F6", "F7")
+
+kapur2024_sablefish_data$catch %>% as_tibble() %>%
+    group_by(year, fleet) %>%
+    summarise(catch = sum(catch_t)) %>%
+
+    ggplot(aes(x=year, y=catch, color=fleet))+
+        geom_line(linewidth=1.2)+
+        labs(y="F", title="Kapur et al. 2024 Fleet Catch")+
+        theme_bw()+
+        facet_wrap(~fleet)
+
+reshape2::melt(om_sim$caa) %>% as_tibble() %>%
+    rename(
+        "time"="Var1",
+        "age"="Var2",
+        "sex"="Var3",
+        "region"="Var4",
+        "fleet"="Var5",
+    ) %>% 
+    mutate(
+        sex = case_when(sex == 1 ~ "F", TRUE ~ "M"),
+        region = case_when(
+            region == 1 ~ "R1",
+            region == 2 ~ "R2",
+            region == 3 ~ "R3",
+            region == 4 ~ "R4",
+            region == 5 ~ "R5",
+            region == 6 ~ "R6",
+        ),
+        fleet = case_when(
+            fleet == 1 ~ "F1",
+            fleet == 2 ~ "F2",
+            fleet == 3 ~ "F3",
+            fleet == 4 ~ "F4",
+            fleet == 5 ~ "F5",
+            fleet == 6 ~ "F6",
+            fleet == 7 ~ "F7",
+        )
+    ) %>%
+    group_by(time, fleet) %>%
+    summarise(catch = sum(value)) %>%
+
+    ggplot(aes(x=time, y=catch, color=fleet))+
+        geom_line(linewidth=1.2)+
+        labs(y="F", title="afscOM Fleet Catch")+
+        theme_bw()+
+        facet_wrap(~fleet)

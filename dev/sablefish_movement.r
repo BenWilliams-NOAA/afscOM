@@ -8,6 +8,23 @@ devtools::load_all()
 load(file.path(here::here(), "data/sablefish_assessment_data.rda"))
 assessment <- sablefish_assessment_data
 
+ssb_recuit_apportionment <- function(naa, dem_params){
+    ssb <- naa[,,1,]*dem_params$waa[,,1,]*dem_params$mat[,,1,]
+    ssb_by_region <- apply(ssb, 2, sum)
+    return(
+        array(ssb_by_region/sum(ssb_by_region), dim=c(1, ncol(ssb)))
+    )
+}
+
+
+age2_apportionment <- function(naa, dem_params){
+    age2 <- naa[,1,,]
+    age2_by_region <- apply(age2, 2, sum)
+    return(
+        array(age2_by_region/sum(age2_by_region), dim=c(1, ncol(age2)))
+    )
+}
+
 #' 1. Define model dimensions and dimension names
 #'  - nyears: number of years over which to simulate
 #'  - nages: number of age classes to use
@@ -88,6 +105,7 @@ survey_sel <- generate_param_matrix(survey_selex_mat, dimension_names = dimensio
 survey_sel[(57:64),,1,,1] <- matrix(rep(assessment$agesel[, "srv10sel.f"], length(57:64)), ncol=nages, byrow=TRUE)
 survey_sel[(57:64),,2,,1] <- matrix(rep(assessment$agesel[, "srv10sel.m"], length(57:64)), ncol=nages, byrow=TRUE)
 
+# Movement matrices from Hanselman et al. 2018
 small_movement <- matrix(
     c(
         0.503, 0.294, 0.127, 0.021, 0.019, 
@@ -147,7 +165,7 @@ init_naa[,,1,] <- assessment$natage.female["1960",]/nregions
 init_naa[,,2,] <- assessment$natage.male["1960",]/nregions
 
 recruitment <- assessment$natage.female[,1]*2
-recruitment <- as.vector(sample(recruitment, size=nyears, replace=TRUE))
+recruitment <- as.vector(sample(recruitment, size=nyears+1, replace=TRUE))
 
 catch_timeseries <- matrix(rep(0, nyears), nrow=nyears)
 
@@ -171,44 +189,133 @@ obs_pars <- list(
 model_options$simulate_observations <- TRUE
 model_options$obs_pars <- obs_pars
 
-om_sim <- project_multi(
+# Simulation 1
+# Recruitment split equally amongst regions
+model_options1 <- model_options
+model_options1$recruit_apportionment <- matrix(1/nregions, nrow=nyears+1, ncol=nregions, byrow = TRUE)
+model_options1$recruit_apportionment_random <- TRUE
+om1 <- project_multi(
+    init_naa = init_naa, 
+    removals_timeseries = catch_timeseries,
+    recruitment = as.matrix(recruitment), 
+    dem_params = dem_params, 
+    nyears = nyears, 
+    model_options = model_options1
+)
+
+# Simulation 2
+# Recruitment split based on proportions from Fenske 2022
+model_options2 <- model_options
+model_options2$recruit_apportionment <- matrix(rep(c(0.25, 0.43, 0.13, 0.07, 0.14), nyears+1), ncol=nregions, byrow=TRUE)
+model_options2$recruit_apportionment_random <- TRUE
+om2 <- project_multi(
     init_naa = init_naa, 
     removals_timeseries = catch_timeseries,
     recruitment = recruitment, 
     dem_params = dem_params, 
     nyears = nyears, 
-    model_options = model_options
+    model_options = model_options2
 )
 
-om_sim$naa
+# Simulation 3
+# Recruitment split based on the regional proportion of age-2 individuals
+model_options3 <- model_options
+model_options3$recruit_apportionment <- age2_apportionment
+model_options3$recruit_apportionment_random <- TRUE
+om3 <- project_multi(
+    init_naa = init_naa, 
+    removals_timeseries = catch_timeseries,
+    recruitment = recruitment, 
+    dem_params = dem_params, 
+    nyears = nyears, 
+    model_options = model_options3
+)
 
-ssb_by_region <- apply(om_sim$naa[1:(nyears),,1,]*dem_params$waa[,,1,]*dem_params$mat[,,1,], c(1, 2, 3), sum)
-plot(apply(om_sim$naa[1:(nyears),,1,]*dem_params$waa[,,1,]*dem_params$mat[,,1,], c(1), sum))
+# Simulation 4
+# Recruitment split based on the regional proportion of spawning biomass
+model_options4 <- model_options
+model_options4$recruit_apportionment <- ssb_recuit_apportionment
+model_options4$recruit_apportionment_random <- TRUE
+om4 <- project_multi(
+    init_naa = init_naa, 
+    removals_timeseries = catch_timeseries,
+    recruitment = recruitment, 
+    dem_params = dem_params, 
+    nyears = nyears, 
+    model_options = model_options4
+)
 
-ssb <- compute_ssb(om_sim$naa, dem_params)
-p1 <- plot_ssb(ssb)
 
-reshape2::melt(ssb_by_region) %>%
+# om_sim <- project_multi(
+#     init_naa = init_naa, 
+#     removals_timeseries = catch_timeseries,
+#     recruitment = recruitment, 
+#     dem_params = dem_params, 
+#     nyears = nyears, 
+#     model_options = model_options
+# )
+
+# dimnames(om_sim$naa) <- list("time"=1:(nyears+1), "age"=2:31, "sex"=c("F", "M"), "region"=c("EGOA", "CGOA", "WGOA", "BS", "AI"))
+dimnames(om1$naa) <- list("time"=1:(nyears+1), "age"=2:31, "sex"=c("F", "M"), "region"=c("EGOA", "CGOA", "WGOA", "BS", "AI"))
+dimnames(om2$naa) <- list("time"=1:(nyears+1), "age"=2:31, "sex"=c("F", "M"), "region"=c("EGOA", "CGOA", "WGOA", "BS", "AI"))
+dimnames(om3$naa) <- list("time"=1:(nyears+1), "age"=2:31, "sex"=c("F", "M"), "region"=c("EGOA", "CGOA", "WGOA", "BS", "AI"))
+dimnames(om4$naa) <- list("time"=1:(nyears+1), "age"=2:31, "sex"=c("F", "M"), "region"=c("EGOA", "CGOA", "WGOA", "BS", "AI"))
+
+bind_rows(
+    reshape2::melt(om1$naa) %>% mutate(om="om1"),
+    reshape2::melt(om2$naa) %>% mutate(om="om2"),
+    reshape2::melt(om3$naa) %>% mutate(om="om3"),
+    reshape2::melt(om4$naa) %>% mutate(om="om4")
+) %>%
     mutate(age_group = case_when(
         age %in% 2:7 ~ "Small",
         age %in% 8:14 ~ "Medium",
         age %in% 15:100 ~ "Large"
     )) %>%
-    group_by(time, age_group, region) %>%
-    summarise(value = mean(value)) %>%
-    ggplot(aes(x=time, y=value, color=age_group))+
+    mutate(
+        age_group = factor(age_group)
+    ) %>%
+    filter(time < 100) %>%
+    group_by(time, age_group, region, om) %>%
+    summarise(value = mean(sum(value))) %>%
+    ggplot(aes(x=time, y=value, fill=age_group)) +
+        geom_col(position="fill")+
+        scale_fill_manual(values=c("blue", "red", "black"))+
+        facet_grid(rows=vars(region), cols=vars(om))+
+        theme_bw()+
+        coord_cartesian(expand=0)
+
+bind_rows(
+    reshape2::melt(apply(om1$naa[1:(nyears),,1,]*dem_params$waa[,,1,], c(1, 2, 3), sum)) %>% mutate(om="om1"),
+    reshape2::melt(apply(om2$naa[1:(nyears),,1,]*dem_params$waa[,,1,], c(1, 2, 3), sum)) %>% mutate(om="om2"),
+    reshape2::melt(apply(om3$naa[1:(nyears),,1,]*dem_params$waa[,,1,], c(1, 2, 3), sum)) %>% mutate(om="om3"),
+    reshape2::melt(apply(om4$naa[1:(nyears),,1,]*dem_params$waa[,,1,], c(1, 2, 3), sum)) %>% mutate(om="om4")
+) %>%
+    group_by(time, region, om) %>%
+    summarise(value = sum(value)) %>%
+
+    ggplot(aes(x=time, y=value, color=om))+
         geom_line()+
         facet_wrap(~region)
 
-reshape2::melt(ssb_by_region) %>%
+
+m <- bind_rows(
+    reshape2::melt(om1$naa) %>% mutate(om="om1"),
+    reshape2::melt(om2$naa) %>% mutate(om="om2"),
+    reshape2::melt(om3$naa) %>% mutate(om="om3"),
+    reshape2::melt(om4$naa) %>% mutate(om="om4")
+) %>%
     mutate(age_group = case_when(
         age %in% 2:7 ~ "Small",
         age %in% 8:14 ~ "Medium",
         age %in% 15:100 ~ "Large"
     )) %>%
-    group_by(time, age_group, region) %>%
-    summarise(value = mean(value)) %>%
+    filter(time < 100) %>%
+    group_by(age_group, region) %>%
+    summarise(value = mean(sum(value))) %>%
+    pivot_wider(names_from="region", values_from="value") %>%
+    ungroup() %>%
+    select(EGOA:AI) %>%
+    as.matrix
 
-    ggplot(aes(x=time, y=value, fill=age_group)) +
-        geom_col(position="fill")+
-        facet_wrap(~region)
+apply(m, 1, \(x) x/sum(x))
