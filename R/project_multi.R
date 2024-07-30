@@ -66,24 +66,15 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
         region_props <- subset_matrix(model_options$region_apportionment, y, d=1, drop=FALSE)
         fleet_props <- subset_matrix(model_options$fleet_apportionment, y, d=1, drop=FALSE)
 
-        if(!is.function(model_options$recruit_apportionment)){
-            rec <- subset_matrix(r$full_recruitment, y+1, d=1, drop=FALSE)
-        }else {
-            projected_rec_props <- do.call(
-                model_options$recruit_apportionment, 
-                c(list(naa=naa[y,,,,drop=FALSE], dem_params=dp.y), model_options$recruitment_pars)
-            )
-            rec_props[y+1,] <- array(projected_rec_props, dim=c(1, nregions))
-            rec <- array(recruitment[y+1]*projected_rec_props, dim=c(1, nregions))
-        }
+        rec <- get_annual_recruitment(
+            y = y,
+            rec_timeseries = r$full_recruitment,
+            apportionment = r$rec_props,
+            apportion_random = model_options$recruit_apportionment_random,
+            apportionment_pars = model_options$recruit_apportionment_pars,
+            list(naa=naa[y,,,,drop=FALSE], dem_params=dp.y)
+        )
         
-        if(!is.null(model_options$recruit_apportionment_random) & model_options$recruit_apportionment_random){
-            rand_rec_props <- rmultinom(1, size=30, prob = rec_props[y+1,])
-            rand_rec_props <- rand_rec_props/sum(rand_rec_props)
-            rec <- array(recruitment[y+1]*rand_rec_props, dim=c(1, nregions))
-        }
-
-
         out_vars <- project(
             removals = removals_input,
             dem_params=dp.y,

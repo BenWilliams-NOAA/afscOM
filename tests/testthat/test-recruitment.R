@@ -96,3 +96,93 @@ test_that("Recruitment array, apportionment function", {
 
 })
 
+
+test_that("Get annual recuits, fixed apportionment", {
+
+    nyears <- 10
+    nregions <- 5
+    recruitment <- array(20, dim=c(nyears+1, 1))
+    model_options <- list(
+        recruit_apportionment = c(0.5, 0.2, 0.1, 0.1, 0.1),
+        recruit_apportionment_random = FALSE
+    )
+
+    r <- calculate_recruitment(recruitment, model_options$recruit_apportionment, nyears, nregions)
+
+    r_y <- get_annual_recruitment(
+        y = 1,
+        rec_timeseries = r$full_recruitment,
+        apportionment = r$rec_props,
+        apportion_random = model_options$recruit_apportionment_random,
+        apportionment_pars = model_options$recruit_apportionment_pars
+    )
+
+    expect_equal(r_y, array(20*c(0.5, 0.2, 0.1, 0.1, 0.1), dim=c(1, 5)))
+
+})
+
+test_that("Get annual recuits, function apportionment", {
+
+    example_rec_generation_function <- function(input1, input2){
+        return(c(0.5, 0.2, 0.1, 0.1, 0.1))
+    }
+
+    nyears <- 10
+    nregions <- 5
+    recruitment <- array(20, dim=c(nyears+1, 1))
+    model_options <- list(
+        recruit_apportionment = example_rec_generation_function,
+        recruit_apportionment_pars = list(
+            input1 = 12,
+            input2 = 24
+        ),
+        recruit_apportionment_random = FALSE
+    )
+
+    r <- calculate_recruitment(recruitment, model_options$recruit_apportionment, nyears, nregions)
+
+    r_y <- get_annual_recruitment(
+        y = 1,
+        rec_timeseries = r$full_recruitment,
+        apportionment = r$rec_props,
+        apportion_random = model_options$recruit_apportionment_random,
+        apportionment_pars = model_options$recruit_apportionment_pars
+    )
+
+    expect_equal(r_y, array(20*c(0.5, 0.2, 0.1, 0.1, 0.1), dim=c(1, 5)))
+
+})
+
+test_that("Get annual recuits, fixed apportionment stochastic", {
+
+    example_rec_generation_function <- function(input1, input2){
+        return(c(0.5, 0.2, 0.1, 0.1, 0.1))
+    }
+
+    nyears <- 10
+    nregions <- 5
+    recruitment <- array(20, dim=c(nyears+1, 1))
+    model_options <- list(
+        recruit_apportionment = example_rec_generation_function,
+        recruit_apportionment_pars = list(
+            input1 = 12,
+            input2 = 24
+        ),
+        recruit_apportionment_random = TRUE
+    )
+
+    r <- calculate_recruitment(recruitment, model_options$recruit_apportionment, nyears, nregions)
+
+    set.seed(1120)
+    r_y <- get_annual_recruitment(
+        y = 1,
+        rec_timeseries = r$full_recruitment,
+        apportionment = r$rec_props,
+        apportion_random = model_options$recruit_apportionment_random,
+        apportionment_pars = model_options$recruit_apportionment_pars
+    )
+
+    expect_equal(r_y/sum(r_y), array(c(0.533, 0.133, 0.066, 0.133, 0.133), dim=c(1, 5)), tolerance=1e-2)
+    expect_equal(r_y, array(c(10.67, 2.67, 1.33, 2.67, 2.67), dim=c(1, 5)), tolerance = 1e-1)
+
+})

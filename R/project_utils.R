@@ -8,10 +8,6 @@ calculate_recruitment <- function(rec_timeseries, apportionment, nyears, nregion
     }else{
         rec_props <- apportionment
     }
-    
-    # if(!is.null(apportionment) & !is.function(apportionment)){
-    #     rec_props <- apportionment
-    # }
 
     # if recruitment is entered as a vector of global recruitment and
     # regional recruitment apportionment
@@ -20,12 +16,31 @@ calculate_recruitment <- function(rec_timeseries, apportionment, nyears, nregion
     if(!is.function(rec_props)){
         full_recruitment <- sweep(rec_props, 1, rec_timeseries, FUN="*")
     }
-    
-    # if(is.vector(rec_timeseries) || is.array(rec_timeseries) & dim(rec_timeseries)[2] == 1){
-        
-    # }else if(all(is.array(rec_timeseries) & dim(rec_timeseries) > 1)){
-    #     full_recruitment <- rec_timeseries
-    # }
 
     return(listN(rec_props, full_recruitment))
+}
+
+get_annual_recruitment <- function(y, rec_timeseries, apportionment, apportion_random, apportionment_pars, ...){
+    
+    rec_props <- array(NA, dim=c(1, nregions))
+    if(!is.function(apportionment)){
+        rec <- subset_matrix(rec_timeseries, y+1, d=1, drop=FALSE)
+        rec_props <- rec/sum(rec)
+    }else {
+        projected_rec_props <- do.call(
+            apportionment, 
+            c(list(), apportionment_pars)
+        )
+        rec_props <- array(projected_rec_props, dim=c(1, nregions))
+        rec <- array(rec_timeseries[y+1,]*projected_rec_props, dim=c(1, nregions))
+    }
+    
+    if(apportion_random){
+        rand_rec_props <- rmultinom(1, size=30, prob = rec_props)
+        rand_rec_props <- rand_rec_props/sum(rand_rec_props)
+        rec <- array(rec_timeseries[y+1,]*rand_rec_props, dim=c(1, nregions))
+    }
+
+    return(rec)
+
 }

@@ -145,7 +145,7 @@ TACs <- (assessment$t.series[,"Catch_HAL"]+assessment$t.series[,"Catch_TWL"])
 # fixed_fleet_prop <- assessment$t.series[,"Catch_HAL"]/(assessment$t.series[,"Catch_HAL"]+assessment$t.series[,"Catch_TWL"])
 # trawl_fleet_prop <- 1-fixed_fleet_prop
 
-model_options <- list()
+model_options <- setup_model_options(model_dimensions = model_params)
 # model_options <- list(
 #     region_apportionment = matrix(1, nrow=nyears, ncol=nregions),
 #     fleet_apportionment = matrix(rep(c(fixed_fleet_prop, trawl_fleet_prop), nyears), ncol=nfleets),
