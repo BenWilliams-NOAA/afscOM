@@ -6,8 +6,9 @@ articles:
   model_dimensions: model_dimensions.html
   model_options: model_options.html
   multiyear_projections: multiyear_projections.html
+  nep_transboundary_sablefish: nep_transboundary_sablefish.html
   observation_processes: observation_processes.html
   spatial_om_example: spatial_om_example.html
   specifying_demographic_parameters: specifying_demographic_parameters.html
-last_built: 2024-07-26T20:40Z
+last_built: 2024-07-30T09:49Z
 
