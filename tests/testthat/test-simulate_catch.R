@@ -159,3 +159,63 @@ expect_equal(apply(caa_tmp, c(1, 4), sum), matrix(c(50, 50), ncol=2), tolerance=
 
 
 })
+
+test_that("Apportion catch with recruitment props", {
+    nyears <- 10
+    nregions <- 5
+    nfleets <- 4
+    catch_timeseries <- rep(20, nyears)
+    
+    fleet_apportionment <- array(
+      matrix(c(0.5, 0.3, 0.1, 0.1), nrow=nyears, ncol=nfleets, byrow=TRUE), 
+      dim=c(nyears, nfleets, nregions)
+    )
+
+    model_options <- list(
+      fleet_apportionment = fleet_apportionment,
+      removals_input = "catch",
+      simulate_observations = FALSE
+    )
+
+    c <- apportion_catch(
+      catch_timeseries = catch_timeseries,
+      apportionment = model_options$fleet_apportionment,
+      nyears = nyears,
+      nfleets = nfleets,
+      nregions = nregions
+    )
+
+    true_catch <- sweep(fleet_apportionment, 1, catch_timeseries, FUN="*")
+    expect_equal(c$full_catch, true_catch)
+})
+
+
+test_that("Apportion catch with catch matrix", {
+    nyears <- 10
+    nregions <- 5
+    nfleets <- 4
+    catch_timeseries <- rep(20, nyears)
+    
+    fleet_apportionment <- array(
+      matrix(c(0.5, 0.3, 0.1, 0.1)/nregions, nrow=nyears, ncol=nfleets, byrow=TRUE), 
+      dim=c(nyears, nfleets, nregions)
+    )
+
+    true_catch <- sweep(fleet_apportionment, 1, catch_timeseries, FUN="*")
+
+    model_options <- list(
+      removals_input = "catch",
+      simulate_observations = FALSE
+    )
+
+    c <- apportion_catch(
+      catch_timeseries = true_catch,
+      apportionment = model_options$fleet_apportionment,
+      nyears = nyears,
+      nfleets = nfleets,
+      nregions = nregions
+    )
+
+    expect_equal(c$full_catch, true_catch)
+    expect_equal(c$region_fleet_props, fleet_apportionment, tolerance=1e-5)
+})
