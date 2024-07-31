@@ -47,6 +47,22 @@ get_annual_recruitment <- function(y, rec_timeseries, apportionment, apportion_r
 
 apportion_catch <- function(catch_timeseries, apportionment, nyears, nfleets, nregions){
     
+    # Derive the recruitment proportions from an input catch
+    # matrix if provided
+    if(length(dim(catch_timeseries)) == 3 && all(dim(catch_timeseries) == c(nyears, nfleets, nregions))){
+        region_fleet_props <- vapply(
+            1:nyears, 
+            function(y){
+                catch_y <- catch_timeseries[y,,]
+                catch_y/sum(catch_y)
+            },
+            FUN.VALUE = array(0, dim=c(nfleets, nregions))
+        )
+        region_fleet_props <- aperm(region_fleet_props, c(3, 1, 2))
+        full_catch <- catch_timeseries
+        return(listN(region_fleet_props, full_catch))
+    }
+
     region_fleet_props <- NULL
     if(is.null(apportionment)){
         region_fleet_props <- array(1/nregions, dim=c(nyears, nfleets, nregions))
