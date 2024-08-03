@@ -53,6 +53,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/intro.html">intro</a>
+    </li>
+    <li>
       <a href="../articles/model_dimensions.html">Model Dimensions</a>
     </li>
     <li>
@@ -93,27 +96,64 @@
 
     
     
-<p>The basal component of the <code>afscOM</code> packages is the <code><a href="../reference/project.html">project()</a></code> function.</p>
+<p>The basal component of the <code>afscOM</code> packages is the
+<code><a href="../reference/project.html">project()</a></code> function.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">om</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/project.html">project</a></span><span class="op">(</span><span class="va">removals</span>, <span class="va">fleet.props</span>, <span class="va">dem_params</span>, <span class="va">prev_naa</span>, <span class="va">recruitment</span>, <span class="va">options</span><span class="op">)</span></span></code></pre></div>
-<p>This function projects a population forward a single year based on the previous year’s age structure, and the current year’s demographic parameters, removals, and recruitment.</p>
+<p>This function projects a population forward a single year based on
+the previous year’s age structure, and the current year’s demographic
+parameters, removals, and recruitment.</p>
 <div class="section level4">
 <h4 id="the-project_multi-function">The <code>project_multi()</code> Function<a class="anchor" aria-label="anchor" href="#the-project_multi-function"></a>
 </h4>
-<p>However, it is often desirable to conduct multi-year forward projections. This is as simple as wrapping the <code><a href="../reference/project.html">project()</a></code> function as shown above in a for loop and doing some careful indexing. The <code>afscOM</code> package provides an additional <code><a href="../reference/project_multi.html">project_multi()</a></code> function that handles such projection simulation.</p>
+<p>However, it is often desirable to conduct multi-year forward
+projections. This is as simple as wrapping the <code><a href="../reference/project.html">project()</a></code>
+function as shown above in a for loop and doing some careful indexing.
+The <code>afscOM</code> package provides an additional
+<code><a href="../reference/project_multi.html">project_multi()</a></code> function that handles such projection
+simulation.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">om</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/project_multi.html">project_multi</a></span><span class="op">(</span><span class="va">init_naa</span>, <span class="va">removals</span>, <span class="va">recruitment</span>, <span class="va">dem_params</span>, <span class="va">nyears</span>, <span class="va">model_options</span><span class="op">)</span></span></code></pre></div>
-<p>The key differences between the <code>project_multi</code> and basic <code>project</code> function are in how the input parameters are defined.</p>
-<p>For the basic <code>project</code> function, the parameters all represent single year inputs. So, the “removals” parameter represents the amount of catch to take in the next projection year, while the “recruitment” parameter represents how many recruits enter the population in the next projection year. Similarly, the “dem_params” input parameter, represents the value of the demographic rates for a single year (so they have dimension <code>[1, nages, nsexes, nregions, nfleets]</code>).</p>
-<p>The <code>project_multi</code> function, however, expects all inputs as vectors of length <code>nyears</code>. By providing vectors of catch and recruitment, the <code>project_multi</code> function iteratively applies a specific catch level and number of recruits to the population for multiple years.</p>
-<p>Rarely are catch levels or recruitment levels known in the future, but <code><a href="../reference/project_multi.html">project_multi()</a></code> does not currently support generating new catch or recruitment levels based on the current internal state of the population (e.g. recruitment can not be pulled from a stock recruit curve based on annual spawning biomass).</p>
-<p>Future versions of the <code>afscOM</code> may implement means to dynamically generate recruitment based on internal population state (such as a stock recruit relationship), as well as means of computing future catch levels from simple harvest control rules.</p>
+<p>The key differences between the <code>project_multi</code> and basic
+<code>project</code> function are in how the input parameters are
+defined.</p>
+<p>For the basic <code>project</code> function, the parameters all
+represent single year inputs. So, the “removals” parameter represents
+the amount of catch to take in the next projection year, while the
+“recruitment” parameter represents how many recruits enter the
+population in the next projection year. Similarly, the “dem_params”
+input parameter, represents the value of the demographic rates for a
+single year (so they have dimension
+<code>[1, nages, nsexes, nregions, nfleets]</code>).</p>
+<p>The <code>project_multi</code> function, however, expects all inputs
+as vectors of length <code>nyears</code>. By providing vectors of catch
+and recruitment, the <code>project_multi</code> function iteratively
+applies a specific catch level and number of recruits to the population
+for multiple years.</p>
+<p>Rarely are catch levels or recruitment levels known in the future,
+but <code><a href="../reference/project_multi.html">project_multi()</a></code> does not currently support generating
+new catch or recruitment levels based on the current internal state of
+the population (e.g. recruitment can not be pulled from a stock recruit
+curve based on annual spawning biomass).</p>
+<p>Future versions of the <code>afscOM</code> may implement means to
+dynamically generate recruitment based on internal population state
+(such as a stock recruit relationship), as well as means of computing
+future catch levels from simple harvest control rules.</p>
 </div>
 <div class="section level4">
 <h4 id="custom-multiyear-projection-frameworks">Custom Multiyear Projection Frameworks<a class="anchor" aria-label="anchor" href="#custom-multiyear-projection-frameworks"></a>
 </h4>
-<p>The builtin <code><a href="../reference/project_multi.html">project_multi()</a></code> function will work fine for users interested in basic population projections. However, users with more complex needs (e.g. a custom observation generation process), will need to implement thir own multi-year projection framework. This is not difficult, as the <code><a href="../reference/project_multi.html">project_multi()</a></code> function is, essentially, only a for-loop wrapper around the single-year <code><a href="../reference/project.html">project()</a></code> function, but some care must be taken to ensure that removals, recruitment, and demographic parameters are being approporiately applied.</p>
-<p>This is the basic skeleton of the <code>project_multi</code> function that should be reused for custom multiyear projection functions.</p>
+<p>The builtin <code><a href="../reference/project_multi.html">project_multi()</a></code> function will work fine for
+users interested in basic population projections. However, users with
+more complex needs (e.g. a custom observation generation process), will
+need to implement thir own multi-year projection framework. This is not
+difficult, as the <code><a href="../reference/project_multi.html">project_multi()</a></code> function is, essentially,
+only a for-loop wrapper around the single-year <code><a href="../reference/project.html">project()</a></code>
+function, but some care must be taken to ensure that removals,
+recruitment, and demographic parameters are being approporiately
+applied.</p>
+<p>This is the basic skeleton of the <code>project_multi</code> function
+that should be reused for custom multiyear projection functions.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">project_multi</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">...</span><span class="op">)</span><span class="op">{</span></span>
 <span>    <span class="co"># [...]</span></span>
@@ -134,13 +174,45 @@
 <span>    <span class="co"># [...]</span></span>
 <span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p>The key components that users implementing their own framework need to take note of are marked as comments in the above code block.</p>
+<p>The key components that users implementing their own framework need
+to take note of are marked as comments in the above code block.</p>
 <ol style="list-style-type: decimal">
-<li><p>The basic <code>project</code> function only takes input that represent a single-year at a time. The demographic parameters list (<code>dem_params</code> in the above block) is almost always going to be a list of matrices representing demographic parameter values across many years. As such, it must be subsetted down to a single year to be provided to the <code>project</code> function. The <code>subset_dem_params</code> function handles this by iteratively subsetting each element in the <code>dem_params</code> list to a single “row” along dimension 1 (time). It is equivalent to <code>dem_params$*[y,,,,drop=FALSE]</code> across each element in the list.</p></li>
-<li><p>Like with (1), the timeseries of removals must also be reduced to a single year. The <code>subset_matrix</code> function works identically to <code>subset_dem_params</code> but for single matrices and vectors (where as <code>subset_dem_params</code> operates on complex lists).</p></li>
-<li><p>The <code>project</code> function requires that <code>fleet.props</code> be provided as input to ensure catch is correctly removed by each fleet. Fleet apportionment schemes should be stored in <code>model_options$fleet_apportionment</code> (see <a href="model_options.html">“Model Options”</a>), and can be subsetted down to a single year of apportionments with a call to <code>lapply</code>. It’s important to ensure that a vector of fleet apportionments is passed to <code>project</code> and not a list (hence the call to <code>unlist</code> in the above code block).</p></li>
-<li><p>The numbers-at-age-and-sex vector to start the year is also required. Care needs to be taken to ensure that the special case of year-1 of the projection is appropriately handled, but after that, users can simply use <code>naa=out_vars$naa_tmp</code>. In the above code blocks, annual numbers-at-age are stored in a larger <code>naa</code> matrix for reporting after completion of the simulation. If doing something simiar, users need to be careful to ensure that the object passed to the <code>prev_naa</code> argument of the <code>project</code> function is a fully formed, 4-dimensional, matrix of dimensions <code>[1, nages, nsexes, nregions]</code>.</p></li>
-<li><p>A single recruitment value should be passed to the project function. Subset any recruitment vector appropriately.</p></li>
+<li><p>The basic <code>project</code> function only takes input that
+represent a single-year at a time. The demographic parameters list
+(<code>dem_params</code> in the above block) is almost always going to
+be a list of matrices representing demographic parameter values across
+many years. As such, it must be subsetted down to a single year to be
+provided to the <code>project</code> function. The
+<code>subset_dem_params</code> function handles this by iteratively
+subsetting each element in the <code>dem_params</code> list to a single
+“row” along dimension 1 (time). It is equivalent to
+<code>dem_params$*[y,,,,drop=FALSE]</code> across each element in the
+list.</p></li>
+<li><p>Like with (1), the timeseries of removals must also be reduced to
+a single year. The <code>subset_matrix</code> function works identically
+to <code>subset_dem_params</code> but for single matrices and vectors
+(where as <code>subset_dem_params</code> operates on complex
+lists).</p></li>
+<li><p>The <code>project</code> function requires that
+<code>fleet.props</code> be provided as input to ensure catch is
+correctly removed by each fleet. Fleet apportionment schemes should be
+stored in <code>model_options$fleet_apportionment</code> (see <a href="model_options.html">“Model Options”</a>), and can be subsetted
+down to a single year of apportionments with a call to
+<code>lapply</code>. It’s important to ensure that a vector of fleet
+apportionments is passed to <code>project</code> and not a list (hence
+the call to <code>unlist</code> in the above code block).</p></li>
+<li><p>The numbers-at-age-and-sex vector to start the year is also
+required. Care needs to be taken to ensure that the special case of
+year-1 of the projection is appropriately handled, but after that, users
+can simply use <code>naa=out_vars$naa_tmp</code>. In the above code
+blocks, annual numbers-at-age are stored in a larger <code>naa</code>
+matrix for reporting after completion of the simulation. If doing
+something simiar, users need to be careful to ensure that the object
+passed to the <code>prev_naa</code> argument of the <code>project</code>
+function is a fully formed, 4-dimensional, matrix of dimensions
+<code>[1, nages, nsexes, nregions]</code>.</p></li>
+<li><p>A single recruitment value should be passed to the project
+function. Subset any recruitment vector appropriately.</p></li>
 </ol>
 </div>
   </div>

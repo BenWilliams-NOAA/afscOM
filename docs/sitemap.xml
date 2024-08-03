@@ -4,12 +4,6 @@
     <loc>/404.html</loc>
   </url>
   <url>
-    <loc>/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>/LICENSE.html</loc>
-  </url>
-  <url>
     <loc>/articles/afscOM.html</loc>
   </url>
   <url>
@@ -40,7 +34,10 @@
     <loc>/index.html</loc>
   </url>
   <url>
-    <loc>/reference/F_to_mu.html</loc>
+    <loc>/LICENSE-text.html</loc>
+  </url>
+  <url>
+    <loc>/LICENSE.html</loc>
   </url>
   <url>
     <loc>/reference/assessment.html</loc>
@@ -68,6 +65,9 @@
   </url>
   <url>
     <loc>/reference/find_F.html</loc>
+  </url>
+  <url>
+    <loc>/reference/F_to_mu.html</loc>
   </url>
   <url>
     <loc>/reference/generate_param_matrix.html</loc>
@@ -103,10 +103,10 @@
     <loc>/reference/sablefish_dem_params.html</loc>
   </url>
   <url>
-    <loc>/reference/set_model_params.html</loc>
+    <loc>/reference/setup_model_options.html</loc>
   </url>
   <url>
-    <loc>/reference/setup_model_options.html</loc>
+    <loc>/reference/set_model_params.html</loc>
   </url>
   <url>
     <loc>/reference/simulate_ac.html</loc>

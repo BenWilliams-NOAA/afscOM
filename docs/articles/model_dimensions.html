@@ -53,6 +53,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/intro.html">intro</a>
+    </li>
+    <li>
       <a href="../articles/model_dimensions.html">Model Dimensions</a>
     </li>
     <li>
@@ -93,27 +96,45 @@
 
     
     
-<p>The <code>afscOM</code> model is an age-structured, multi-sex, multi-fleet, spatially-explicit population dynamics model. The model has been designed to handle any number of age-classes, up to 2 sexes, any number of fishing fleets, and any number of spatial regions, so long as the model parameters are appropriately dimensioned. In order to parameterize an OM using this package, the following model dimensions should be defined:</p>
+<p>The <code>afscOM</code> model is an age-structured, multi-sex,
+multi-fleet, spatially-explicit population dynamics model. The model has
+been designed to handle any number of age-classes, up to 2 sexes, any
+number of fishing fleets, and any number of spatial regions, so long as
+the model parameters are appropriately dimensioned. In order to
+parameterize an OM using this package, the following model dimensions
+should be defined:</p>
 <ol style="list-style-type: decimal">
 <li>
-<code>nyears</code>: the number of years over which the user intends to run the model for</li>
+<code>nyears</code>: the number of years over which the user intends
+to run the model for</li>
 <li>
 <code>nages</code>: the number of age classes in the population</li>
 <li>
-<code>nsexes</code>: the number of sexes to model (1 = females only, 2 = females and males)</li>
+<code>nsexes</code>: the number of sexes to model (1 = females only,
+2 = females and males)</li>
 <li>
-<code>nregions</code>: the number of spatial regions in the model</li>
+<code>nregions</code>: the number of spatial regions in the
+model</li>
 <li>
-<code>nfleets</code>: the number of fishing fleets to simulate catch from</li>
+<code>nfleets</code>: the number of fishing fleets to simulate catch
+from</li>
 </ol>
-<p>The model is not sensitive to what true age corresponds to the initial age class, so there is no difference between starting a model at age-2 and starting a model at age-0, so long as recruitment is appropriately scaled.</p>
-<p>If users wish to generate observations from scientific surveys, an additional model dimension must also be defined:</p>
+<p>The model is not sensitive to what true age corresponds to the
+initial age class, so there is no difference between starting a model at
+age-2 and starting a model at age-0, so long as recruitment is
+appropriately scaled.</p>
+<p>If users wish to generate observations from scientific surveys, an
+additional model dimension must also be defined:</p>
 <ol start="6" style="list-style-type: decimal">
 <li>
-<code>nsurveys</code>: the number of survey fleets to simulate observations from</li>
+<code>nsurveys</code>: the number of survey fleets to simulate
+observations from</li>
 </ol>
-<p>Throughout the documentation for this package, model dimensions will be routintely referred to in the following format: <code>[nyears, nages, nsexes, nregions, nfleets]</code>.</p>
-<p><em>NOTE: At present, the model has not been thoroughly tested with more than 1 spatial region.</em></p>
+<p>Throughout the documentation for this package, model dimensions will
+be routintely referred to in the following format:
+<code>[nyears, nages, nsexes, nregions, nfleets]</code>.</p>
+<p><em>NOTE: At present, the model has not been thoroughly tested with
+more than 1 spatial region.</em></p>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

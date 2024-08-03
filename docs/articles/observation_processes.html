@@ -53,6 +53,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/intro.html">intro</a>
+    </li>
+    <li>
       <a href="../articles/model_dimensions.html">Model Dimensions</a>
     </li>
     <li>
@@ -93,18 +96,46 @@
 
     
     
-<p>Users can optionally request for <code>afscOM</code> to simulate observations from fishery catch or scientific surveys, by specifying <code>simulate_observations=TRUE</code> in the <code>model_options</code> list object. The observation submodel is currently developed based on surveys used by NOAA AFSC assessment scientists, but may be generalized in the future.</p>
-<p><em>NOTE: The observation submodel has not been tested when the model contains multiple spatial regions.</em></p>
+<p>Users can optionally request for <code>afscOM</code> to simulate
+observations from fishery catch or scientific surveys, by specifying
+<code>simulate_observations=TRUE</code> in the
+<code>model_options</code> list object. The observation submodel is
+currently developed based on surveys used by NOAA AFSC assessment
+scientists, but may be generalized in the future.</p>
+<p><em>NOTE: The observation submodel has not been tested when the model
+contains multiple spatial regions.</em></p>
 <div class="section level4">
 <h4 id="scientific-surveys">Scientific Surveys<a class="anchor" aria-label="anchor" href="#scientific-surveys"></a>
 </h4>
-<p>The observation submodel generates relative population number (RPN) abundance indices, relative population weight (RPW) abundance indices, and age composition data from two scientific surveys: the Alaska longline survey [<em>citation</em>] and the NOAA bottom trawl survey [<em>citation</em>]. Data generated from each survey is representative of the entire coastwide population (even though some regions of Alaska are only sampled by the longline survey occur in alternating years). Surveys are assumed to occur halfay through the projection year, and survey catches are not removed from the population.</p>
-<p>Abundance indices (RPNs and RPWs) are log-normally distributed. For RPNs, the predicted abundance index is:</p>
-<p><span class="math inline">\(I_y = q^{ll}\sum{N_{y,a,s}\exp{(-Z_{y,a,s}/2})v^{ll}_{y,a,s}}\)</span></p>
+<p>The observation submodel generates relative population number (RPN)
+abundance indices, relative population weight (RPW) abundance indices,
+and age composition data from two scientific surveys: the Alaska
+longline survey [<em>citation</em>] and the NOAA bottom trawl survey
+[<em>citation</em>]. Data generated from each survey is representative
+of the entire coastwide population (even though some regions of Alaska
+are only sampled by the longline survey occur in alternating years).
+Surveys are assumed to occur halfay through the projection year, and
+survey catches are not removed from the population.</p>
+<p>Abundance indices (RPNs and RPWs) are log-normally distributed. For
+RPNs, the predicted abundance index is:</p>
+<p><span class="math inline">\(I_y =
+q^{ll}\sum{N_{y,a,s}\exp{(-Z_{y,a,s}/2})v^{ll}_{y,a,s}}\)</span></p>
 <p>And for RPWs is:</p>
-<p><span class="math inline">\(I_y = q^{trwl}\sum{N_{y,a,s}\exp{(-Z_{y,a,s}/2})v^{trwl}_{y,a,s}w_{y,a,s}}\)</span>.</p>
-<p>For both surveys <span class="math inline">\(q\)</span> represents the catchability coefficient for the specific survey and <span class="math inline">\(v\)</span> represents the survey selectivity. For RPWs, <span class="math inline">\(w\)</span> represents weight-at-age-and-sex. R functions for computing RPNs and RPWs according to the above equations are available as <code><a href="../reference/simulate_rpn.html">simulate_rpn()</a></code> and <code><a href="../reference/simulate_rpw.html">simulate_rpw()</a></code>.</p>
-<p>Observations are lognorally distributed around the predicted log abundance index (i.e. <span class="math inline">\(log(I_y)\)</span>). Lognormal observations are bias-corrected to ensure that the log-mean and arithemtic-mean are consistent. Users must specify a coefficient of variation (CV) for abundance index observations for each survey. The underlying function that yields lognormal observations is as follows:</p>
+<p><span class="math inline">\(I_y =
+q^{trwl}\sum{N_{y,a,s}\exp{(-Z_{y,a,s}/2})v^{trwl}_{y,a,s}w_{y,a,s}}\)</span>.</p>
+<p>For both surveys <span class="math inline">\(q\)</span> represents
+the catchability coefficient for the specific survey and <span class="math inline">\(v\)</span> represents the survey selectivity. For
+RPWs, <span class="math inline">\(w\)</span> represents
+weight-at-age-and-sex. R functions for computing RPNs and RPWs according
+to the above equations are available as <code><a href="../reference/simulate_rpn.html">simulate_rpn()</a></code> and
+<code><a href="../reference/simulate_rpw.html">simulate_rpw()</a></code>.</p>
+<p>Observations are lognorally distributed around the predicted log
+abundance index (i.e. <span class="math inline">\(log(I_y)\)</span>).
+Lognormal observations are bias-corrected to ensure that the log-mean
+and arithemtic-mean are consistent. Users must specify a coefficient of
+variation (CV) for abundance index observations for each survey. The
+underlying function that yields lognormal observations is as
+follows:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># pred is the predicted abudnance index as described above</span></span>
 <span><span class="co"># cv is a user input model_option</span></span>
@@ -112,8 +143,26 @@
 <span>    <span class="va">sds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">cv</span><span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Lognormal.html" class="external-link">rlnorm</a></span><span class="op">(</span><span class="fl">1</span>, meanlog<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">pred</span><span class="op">)</span><span class="op">-</span><span class="op">(</span><span class="va">sds</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span>, sdlog <span class="op">=</span> <span class="va">sds</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p>Age composition data is multinomially distributed. Predicted age compositions are calculated as the proportion of the population that is each age (e.g. <span class="math inline">\(p_y = N_{y,a,s}/\sum_a{N_{y,a,s}}\)</span>). Users can, optionally, specify whether age composition data should be generate in a sex-aggregated or sex-disaggregated (the default) fashion. Is disaggregated comps are requested, prediction compoistions represent the proportion of population in each age, of each sex. An R function for computing age composition predictions is available as <code><a href="../reference/simulate_ac.html">simulate_ac()</a></code>.</p>
-<p>Observations are multinomially distributed about the prediction age compositions. A user supplied number of multinomially samples (<span class="math inline">\(n\)</span>) regulates how many random draws are taken from the multinomial distribution. Users can specify if the returned observations are in proportions, or integer format (which is necesarry for some estimation models), through the <code>as_integers</code> model option. As with the predictions, observations can be either sex-aggregated or sex-disaggregated (the default). An optional aging error matrix can also be applied to observation (<em>though this hs not been thoroughly tested</em>). The underlying function that yields multinomial observations is as follows:</p>
+<p>Age composition data is multinomially distributed. Predicted age
+compositions are calculated as the proportion of the population that is
+each age (e.g. <span class="math inline">\(p_y =
+N_{y,a,s}/\sum_a{N_{y,a,s}}\)</span>). Users can, optionally, specify
+whether age composition data should be generate in a sex-aggregated or
+sex-disaggregated (the default) fashion. Is disaggregated comps are
+requested, prediction compoistions represent the proportion of
+population in each age, of each sex. An R function for computing age
+composition predictions is available as <code><a href="../reference/simulate_ac.html">simulate_ac()</a></code>.</p>
+<p>Observations are multinomially distributed about the prediction age
+compositions. A user supplied number of multinomially samples (<span class="math inline">\(n\)</span>) regulates how many random draws are
+taken from the multinomial distribution. Users can specify if the
+returned observations are in proportions, or integer format (which is
+necesarry for some estimation models), through the
+<code>as_integers</code> model option. As with the predictions,
+observations can be either sex-aggregated or sex-disaggregated (the
+default). An optional aging error matrix can also be applied to
+observation (<em>though this hs not been thoroughly tested</em>). The
+underlying function that yields multinomial observations is as
+follows:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">simulate_multinomial_obs</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">pred</span>, <span class="va">samp_size</span>, <span class="va">aggregate_sex</span><span class="op">=</span><span class="cn">FALSE</span>, <span class="va">as_integers</span><span class="op">=</span><span class="cn">FALSE</span>, <span class="va">age_err</span><span class="op">=</span><span class="cn">NA</span><span class="op">)</span><span class="op">{</span></span>
 <span>    <span class="va">multi</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">0</span>, dim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">pred</span><span class="op">)</span>, dimnames<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/dimnames.html" class="external-link">dimnames</a></span><span class="op">(</span><span class="va">pred</span><span class="op">)</span><span class="op">)</span></span>
@@ -139,13 +188,31 @@
 <div class="section level4">
 <h4 id="fisheries-data">Fisheries Data<a class="anchor" aria-label="anchor" href="#fisheries-data"></a>
 </h4>
-<p>At present, only catch-at-age data is generated from fisheries catch. The age composition data is generated in same way as for surveys, except that data is representative of catch-at-age from the whole system ratherthan population numbers-at-age. An R function for computing predicted catch-at-age observations is available as <code><a href="../reference/simulate_caa.html">simulate_caa()</a></code>. Like with survey age compositions, fisheries catch-at-age is multinomially distributed.</p>
+<p>At present, only catch-at-age data is generated from fisheries catch.
+The age composition data is generated in same way as for surveys, except
+that data is representative of catch-at-age from the whole system
+ratherthan population numbers-at-age. An R function for computing
+predicted catch-at-age observations is available as
+<code><a href="../reference/simulate_caa.html">simulate_caa()</a></code>. Like with survey age compositions,
+fisheries catch-at-age is multinomially distributed.</p>
 </div>
 <div class="section level4">
 <h4 id="custom-observation-processes">Custom Observation Processes<a class="anchor" aria-label="anchor" href="#custom-observation-processes"></a>
 </h4>
-<p>The observation submodels currently built-in to <code>afcsOM</code> is designed to emulate common data sources and data types for NOAA stock assessment biologists, but does not cover the full scope of possible observation data types. For example, this is not currently support for generating fishery CPUE indices or egg productions indices. For more complex observation processes, users can author custom observation submodels to generate additional data.</p>
-<p>To implement a custom observation submodel, turn off the defalt observation model by setting <code>model_options$simulate_observations=FALSE</code> (this ensures that the <code>project</code> function wont generate its own observations). From there, you can define any type of function necesarry, and provide, as input, outputs from the <code><a href="../reference/project.html">project()</a></code> function. For example:</p>
+<p>The observation submodels currently built-in to <code>afcsOM</code>
+is designed to emulate common data sources and data types for NOAA stock
+assessment biologists, but does not cover the full scope of possible
+observation data types. For example, this is not currently support for
+generating fishery CPUE indices or egg productions indices. For more
+complex observation processes, users can author custom observation
+submodels to generate additional data.</p>
+<p>To implement a custom observation submodel, turn off the defalt
+observation model by setting
+<code>model_options$simulate_observations=FALSE</code> (this ensures
+that the <code>project</code> function wont generate its own
+observations). From there, you can define any type of function
+necesarry, and provide, as input, outputs from the
+<code><a href="../reference/project.html">project()</a></code> function. For example:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model_options</span><span class="op">$</span><span class="va">obs_pars</span><span class="op">$</span><span class="va">sex_rat</span><span class="op">$</span><span class="va">sd</span> <span class="op">&lt;-</span> <span class="fl">0.05</span></span>
 <span><span class="va">custom_observation_process</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">naa</span>, <span class="va">model_options</span><span class="op">)</span><span class="op">{</span></span>
@@ -164,8 +231,14 @@
 <span></span>
 <span><span class="va">naa</span> <span class="op">&lt;-</span> <span class="va">out</span><span class="op">$</span><span class="va">naa_tmp</span></span>
 <span><span class="va">propmale_obs</span> <span class="op">&lt;-</span> <span class="fu">custom_observation_process</span><span class="op">(</span><span class="va">naa</span>, <span class="va">model_options</span><span class="op">)</span></span></code></pre></div>
-<p>If users want to simply augment the current set of observations (as is being done in the above example), setting <code>model_options$simulate_observations=FALSE</code> is not strictly necesarry.</p>
-<p>For multiyear simulations, users will need to implement their own multiyear simulation framework with the custom observation model. See the <a href="multiyear_projections.html">“Multiyear Projections”</a> page for additional information.</p>
+<p>If users want to simply augment the current set of observations (as
+is being done in the above example), setting
+<code>model_options$simulate_observations=FALSE</code> is not strictly
+necesarry.</p>
+<p>For multiyear simulations, users will need to implement their own
+multiyear simulation framework with the custom observation model. See
+the <a href="multiyear_projections.html">“Multiyear Projections”</a>
+page for additional information.</p>
 </div>
   </div>
 
