@@ -1,0 +1,195 @@
+---
+title: "intro"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{intro}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+The `afscOM` package can be downloaded and installed using: 
+
+```{r setup}
+remotes::install_github("BenWilliams-NOAA/afscOM")`
+library(afscOM)
+```
+
+## Model Dimensions
+The `afscOM` model is an age-structured, multi-sex, multi-fleet, spatially-explicit population dynamics model. 
+The model has been designed to handle any number of age-classes, up to 2 sexes, any number of fishing fleets, and any number of spatial regions, so long as the model parameters are appropriately dimensioned. 
+In order to parameterize an OM using this package, the following model dimensions need to be defined:
+
+1. `nyears`: the number of years over which the user intends to run the model for
+2. `nages`: the number of age classes in the population
+3. `nsexes`: the number of sexes to model (1 = females only, 2 = females and males)
+4. `nregions`: the number of spatial regions in the model
+5. `nfleets`: the number of fishing fleets to simulate
+
+The model is not sensitive to what true age corresponds to the initial age class, so there is no difference between starting a model at age-2 and starting a model at age-0, so long as recruitment is appropriately scaled.
+
+Optionally, users can also specify:
+6. `nsurveys`: the number of survey fleets to simulate observations from
+
+```{r, eval=FALSE}
+nyears = 20
+nages = 11
+nsexes = 2
+nregions = 1
+nfleets = 2
+
+
+dim_names <- list(
+    time = 1:nyears,
+    age = 2:12,
+    sex = c("F", "M"),
+    region = "alaska",
+    fleet = c("Fixed", "Trawl"))
+```
+
+
+
+## Population Parameters
+To parameterize a model for `afcsOM` to behave like a specific population, the user needs to specify a set of population demographic parameters. 
+These parameters all take the same computational structure: a multi-dimensional array.
+
+These multidimensional arrays *MUST* follow the same dimension structure for `afscOM` to work correctly. 
+Biological parameters, such as natural mortality, maturity, and weight-at-age should all have array dimensions: `[nyears, nages, nsexes, nregions]`. 
+
+Fishery and survey fleet parameters, such as selectivity, retention, and discard mortality, have array dimensions: `[nyears, nages, nsexes, nregions, nfleets]` (for fishing fleets) or `[nyears, nages, nsexes, nregions, nsurveys]` (for survey fleets).
+
+
+In this structure the first index along the "sex" dimension (dimension 3) will correspond to parameters for females, while the second index will correspond to parameters for males.
+
+
+#### Building Parameter Matrices
+To facilitate creation of these multi-dimensional parameter matrices, a helper function `generate_param_matrix(...)` is provided. 
+This function accepts as input a single value, a vector of values, or a matrix/array of values, and a list of dimensions over which to fill a fully-formed parameter matrix with that input.
+
+For example, if natural mortality (*M*) is assumed to be constant across time, age, sex, and space, the following code will create an `[nyears, nages, nsexes, nregions]` parameter matrix where every value is the same:
+
+```{r eval=FALSE}
+M <- 0.113179
+mort <- generate_param_matrix(M, dimension_names = dim_names)
+```
+
+If maturity is assume to vary by age, but is otherwise constant across time, sex, and space, the following code will create a properly formed parameter matrix where each age has a different maturity level:
+
+```{r eval=FALSE}
+maturity <- c(0.0, 0.1, 0.3, 0.5, 0.7, 0.9, 1.0, 1.0, 1.0, 1.0, 1.0)
+mat <- generate_param_matrix(maturity, dimension_names = dim_names, by="age")
+```
+
+Finally, if weight-at-age (WAA) varies by both age and sex, the following code will create the appropriately formed parameter matrix with different values for WAA by age and sex, but repeated across time and space:
+
+```{r, eval=FALSE}
+# 11 ages, 2 sexes
+weight_mat <- cbind(f = seq(2,22, 2),
+                    m = 1:11)
+waa <- generate_param_matrix(weight_mat, dimension_names = dim_names, by=c("age", "sex"))
+```
+
+The `generate_param_matrix()` requires the user to specify the dimension names, these names must match the fields in `dim_names`. 
+If these names do not match, an error will be returned to the user.
+
+For fleet parameters, such as selectivity or retention, an extra dimension `nfleets` is required. 
+`generate_param_matrix` has an additional, `include_fleet_dim` variable, if `include_fleet_dim = TRUE` additional parameter will be automatically included. 
+
+For example:
+
+```{r eval=FALSE}
+selex_mat <- array(NA, dim=c(11, 2, 2), dimnames=dim_names[c("age", "sex", "fleet")])
+selex_mat[,1,1] <- c(0.0, 0.1, 0.3, 0.5, 0.7, 0.9, 1.0, 1.0, 1.0, 1.0, 1.0)
+selex_mat[,2,1] <- c(0.0, 0.1, 0.2, 0.4, 0.6, 0.7, 0.8, 0.9, 1.0, 1.0, 1.0)
+selex_mat[,1,2] <- c(0.3, 0.7, 1.0, 1.0, 0.9, 0.7, 0.6, 0.5, 0.4, 0.4, 0.4)
+selex_mat[,2,2] <- c(0.2, 0.6, 1.0, 0.95, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.3)
+sel <- generate_param_matrix(selex_mat, dimension_names = dim_names, by=c("age", "sex", "fleet"), include_fleet_dim = TRUE)
+?generate_param_matrix
+```
+
+
+An additional helper function `validate_dem_params`, takes as input a list of population parameter matrices, and the expected dimensions, and will check if all required parameter matrices are present and of appropriate dimensions. 
+It is recommended that this function be used prior to running the model to verify that the input parameters matrices are correctly specified.
+
+Required population parameters include:
+
+1. `mort`: Natural mortality
+2. `mat`: Maturity
+3. `waa`: Weight-at-age
+4. `sexrat`: Population sex ratio
+5. `sel`: Fishery selectivity
+6. `ret`: Fishery retention
+7. `dmr`: Fishery discard mortality (as an instantaneous rate)
+8. `surv_sel`: Survery selectivity
+
+Optionally, user can also specify:
+
+9. `fec`: fecundity
+
+Once these population parameter matrices have been defined, they need to be added to a list that will be passed as a parameter to the OM:
+
+```{r, eval=FALSE}
+dem_params <- list(
+    waa=waa,
+    mat=mat,
+    mort=mort,
+    sexrat=sexrat,
+    sel=sel,
+    ret=ret,
+    dmr=dmr,
+    surv_sel=survey_sel
+)
+```
+
+## Model Options
+Several model options are also available and can be specified via a named list. 
+Current options include:
+
+1. `region_apportionment`: an unnamed list of vectors (of length `nyears`) specifying what proportion of the TAC should be allocated to each spatial region. There should be as many vector as there are regions.
+2. `fleet_apportionment`: an unnamed list of vectors (of length `nyears`) specifying what proportion of the TAC should be allocated to each fishing fleet. There should be as many vectors as there are fishing fleets. 
+3. `removals_input`: input units of removals (either "catch" is inputs are a TAC, or "F" is an instantaneous fishing mortality rate)
+4. `simulate_observations`: whether to simulate observations from the OM (TRUE/FALSE)
+
+Note that if `removals_input=FALSE`, the `region_apportionment` and `fleet_apportionment` options will be ignored. 
+
+There is not currently support for fleet apportionments that vary both spatially and temporally. 
+
+If observations are being simulated (e.g. `simulate_observations = TRUE`), users must also supply a list of observation parameters (`obs_pars`) that defines how the model should simulate observation data. Required components of this list are:
+
+1. `is_survey`: whether observations are coming from a fishery fleet or a scientific survey
+2. `qs`: catchability coefficients (q) for each scientific survey
+3. `rpn`: whether the model should simulate an RPN (relative population number) for this fishery/survey
+4. `rpn_cv` the coefficient of variation (CV) to use when simulating RPNs
+5. `rpw`: whether the model should simulate an RPW (relative population weight) for this fishery/survey
+6. `rpw_cv`: the CV to use when simulating RPWs
+7. `acs`: whether the model should simulate age composition data for this fishery/survey
+8. `ac_samp`: the total number of samples to use when simulating age composition data
+9. `ac_as_integers`: whether age composition data should be returned as integers (`TRUE`) or as proportions (FALSE)
+10. `acs_agg_sex`: whether the age composition data should be aggregated sex (if `FALSE`, then the value supplied in `ac_samp` will apply across both sexes)
+
+All 10 options should be a vector of length `nyears+nsurveys`. For options which may not apply to a given fishery/survey (e.g. `q` for a fishery), a placeholder value must still be supplied, but will be ignored when the calculation is performed internally.
+
+For example, the below `obs_pars` list would generate RPNs and RPWs for 2 surveys, and age composition data (sex-disaggregated and as integers) for 2 fisheries and 2 surveys.
+
+```{r, eval=FALSE}
+obs_pars <- list(
+    # longline fishery, trawl fishery, longline survey, trawl survey
+    is_survey   = c(0, 0, 1, 1),        # is this a survey (1) or fishery (0)
+    qs          = c(1, 1, 6.41, 0.85),  # catchability coefficient (q) for surveys
+    rpn         = c(0, 0, 1, 1),        # should RPNs be computed (yes=1, no=0)
+    rpn_cv      = c(0, 0, 0.1, 0.1),    # RPN CV
+    rpw         = c(0, 0, 1, 1),        # should RPWs be computed (yes=1, no=0)
+    rpw_cv      = c(0, 0, 0.1, 0.1),    # RPW CV
+    acs         = c(1, 1, 1, 1),        # should age compositions be computed (yes=1, no=0)
+    ac_samps    = c(50, 30, 50, 30),    # total sample size for age composition observations
+    ac_as_integers  = c(TRUE, TRUE, TRUE, TRUE), # return age comps as integers (TRUE) or proportions (FALSE)
+    acs_agg_sex     = c(FALSE, FALSE, FALSE, FALSE) # should age comps be aggregated by sex
+)
+```
