@@ -49,12 +49,12 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
     )
 
     # full_recruitment <- array(NA, dim=c(nyears, 1, 1, nregions))
-    r <- apportion_recruitment(
-        rec_timeseries = recruitment, 
-        apportionment = model_options$recruit_apportionment,
-        nyears = nyears,
-        nregions = nregions
-    )
+    # r <- apportion_recruitment(
+    #     rec_timeseries = recruitment, 
+    #     apportionment = model_options$recruit_apportionment,
+    #     nyears = nyears,
+    #     nregions = nregions
+    # )
 
     if(model_options$removals_input == "catch"){
         c <- apportion_catch(
@@ -78,9 +78,21 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
         # region_props <- subset_matrix(model_options$region_apportionment, y, d=1, drop=FALSE)
         # fleet_props <- subset_matrix(model_options$fleet_apportionment, y, d=1, drop=FALSE)
 
+        if(is.function(recruitment)){
+            r_y <- do.call(recruitment, c(list(naa=naa[y,,,,drop=FALSE], dem_params=dp.y), model_options$recruitment_pars))
+        }else{
+            rs <- array(recruitment, dim=c(nyears+1, 1))
+            r_y <- subset_matrix(rs, y+1, d=1, drop=FALSE)
+        }
+
+        r <- apportion_recruitment_single(
+            recruits = as.vector(r_y),
+            apportionment = subset_matrix(model_options$recruit_apportionment, y+1, d=1, drop=FALSE),
+            nregions = nregions
+        )
+
         rec <- get_annual_recruitment(
-            y = y,
-            rec_timeseries = r$full_recruitment,
+            recruitment = r$full_recruitment,
             apportionment = r$rec_props,
             apportion_random = model_options$random_apportion_recruits,
             apportionment_pars = model_options$recruit_apportionment_pars,
