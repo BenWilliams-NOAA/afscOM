@@ -189,3 +189,23 @@ test_that("Get annual recuits, fixed apportionment stochastic", {
     expect_equal(r_y, array(c(10.67, 2.67, 1.33, 2.67, 2.67), dim=c(1, 5)), tolerance = 1e-1)
 
 })
+
+test_that("beverton-holt SRR", {
+    load("data/simple_om.rda")
+    naa <- simple_om$init_naa
+    dp_y <- subset_dem_params(simple_om$dem_params, 1, d=1, drop=FALSE)
+
+    recruits <- beverton_holt(naa/10, dp_y, h=1, R0=25, S0=300)
+    expect_equal(recruits, 25)
+})
+
+test_that("beverton-holt SRR", {
+    load("data/simple_om.rda")
+    naa <- simple_om$init_naa
+    dp_y <- subset_dem_params(simple_om$dem_params, 1, d=1, drop=FALSE)
+
+    ssb <- compute_ssb(naa/10, dp_y)[1,1]
+
+    recruits <- beverton_holt(naa/10, dp_y, h=0.5, R0=25, S0=300)
+    expect_equal(recruits, 22.12885, tolerance=1e-4)
+})
