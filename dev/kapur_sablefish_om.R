@@ -176,23 +176,16 @@ fleet_apportionment[is.nan(fleet_apportionment)] <- 0
 regional_catch_timeseries <- sweep(region_apportionment[1:60,], 1, matrix(catch_timeseries, ncol=1), FUN="*")
 region_fleet_catch_timeseries <- sweep(fleet_apportionment[1:60,,], c(1, 3), regional_catch_timeseries, FUN="*")
 
-region_apportionment
-sweep(fleet_apportionment, c(1, 3), region_apportionment, FUN="*")
+total_fleet_apportionment <- sweep(fleet_apportionment, c(1, 3), region_apportionment, FUN="*")
 
-region_apportionment[1,]
-fleet_apportionment[1,,]
-
-# total_fleet_apportionment <- sweep(fleet_apportionment, c(1, 3), region_apportionment, FUN="*")
-total_fleet_apportionment <- apply(fleet_apportionment, 1, function(x){
-    
-})
+total_catch <- sweep(total_fleet_apportionment[1:60,,], 1, as.matrix(catch_timeseries), FUN="*")
 
 # Set all model options
 model_options <- list()
 model_options$removals_input = "catch"
 model_options$fleet_apportionment = total_fleet_apportionment
 model_options$recruit_apportionment = recruit_apportionment
-model_options$recruit_apportionment_random = FALSE
+model_options$random_apportion_recruits = FALSE
 model_options$do_recruits_move = FALSE
 model_options$simulate_observations = FALSE
 
