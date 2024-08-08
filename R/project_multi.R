@@ -79,11 +79,14 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
         # fleet_props <- subset_matrix(model_options$fleet_apportionment, y, d=1, drop=FALSE)
 
         if(is.function(recruitment)){
-            r_y <- do.call(recruitment, c(list(naa=naa[y,,,,drop=FALSE], dem_params=dp.y), model_options$recruitment_pars))
+            r_y <- do.call(recruitment, c(list(naa=naa[y,,,,drop=FALSE], dem_params=dp.y, seed=model_options$seed), model_options$recruitment_pars))
         }else{
             rs <- array(recruitment, dim=c(nyears+1, 1))
             r_y <- subset_matrix(rs, y+1, d=1, drop=FALSE)
         }
+
+        # r_y <- ifelse(!is.null(model_options$recruitment_devs), as.vector(exp(log(r_y)+model_options$recruitment_devs[y+1])), as.vector(r_y))
+        r_y <- as.vector(r_y)
 
         r <- apportion_recruitment_single(
             recruits = as.vector(r_y),

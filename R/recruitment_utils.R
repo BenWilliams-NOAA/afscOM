@@ -12,9 +12,11 @@
 #'
 #' @example
 #'
-beverton_holt <- function(naa, dem_params, h, R0, S0){
+beverton_holt <- function(naa, dem_params, h, R0, S0, sigR, seed){
+    set.seed(seed)
     ssb <- compute_ssb(naa, dem_params)[1,1]
     bh <- (4*R0*h*ssb)/((1-h)*R0*(S0/R0) + (5*h - 1)*ssb)
-    return(bh)
+    rec <- rlnorm(1, meanlog = log(bh)-sigR*sigR/2, sdlog=sigR)
+    return(rec)
 }
 

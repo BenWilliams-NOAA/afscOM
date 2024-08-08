@@ -26,9 +26,13 @@ simple_om$options$do_recruits_move = FALSE
 simple_om$options$simulate_observations = FALSE
 simple_om$options$recruitment_pars = list(
     h = 0.75,
-    R0 = median(simple_om$recruitment),
-    S0 = 2000
+    R0 = 150,
+    S0 = 2000,
+    sigR = 1.04
 )
+simple_om$options$seed = 1120
+# simple_om$options$recruitment_devs <- rnorm(model_dimensions$nyears+1, mean=0, sd=1.04)
+
 
 # run the om simulatino
 om_sim <- project_multi(
