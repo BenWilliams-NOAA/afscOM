@@ -5,7 +5,7 @@
 \alias{sablefish_assessment_data}
 \title{Sablefish assessment}
 \format{
-A list containing assessment data:
+A list containing assessment data
 }
 \usage{
 sablefish_assessment_data

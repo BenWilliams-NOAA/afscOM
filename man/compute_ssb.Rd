@@ -2,10 +2,7 @@
 % Please edit documentation in R/derived_quantities.R
 \name{compute_ssb}
 \alias{compute_ssb}
-\title{Compute Spawning Stock Biomass
-#'
-Compute SSB from a matrix of NAA and a set of demagraphic
-parameters.}
+\title{Compute Spawning Stock Biomass}
 \usage{
 compute_ssb(naa, dem_params)
 }
@@ -15,8 +12,6 @@ compute_ssb(naa, dem_params)
 \item{dem_params}{demagraphic parameters list}
 }
 \description{
-Compute Spawning Stock Biomass
-#'
-Compute SSB from a matrix of NAA and a set of demagraphic
+Compute SSB from a matrix of NAA and a set of demographic
 parameters.
 }

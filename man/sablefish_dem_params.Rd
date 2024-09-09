@@ -5,7 +5,7 @@
 \alias{sablefish_dem_params}
 \title{Demographic parameter matrices for Alaska Sablefish}
 \format{
-A list containing demographic matrices:
+A list containing demographic matrices
 }
 \usage{
 sablefish_dem_params
