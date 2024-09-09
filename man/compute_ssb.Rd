@@ -7,7 +7,7 @@
 compute_ssb(naa, dem_params)
 }
 \arguments{
-\item{naa}{numbers-at-age matrix}
+\item{naa}{numbers-at-age matrix [nyears, nages, nsexes, nregions]}
 
 \item{dem_params}{demagraphic parameters list}
 }
