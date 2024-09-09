@@ -68,6 +68,7 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
         c <- removals_timeseries
     }
 
+    set.seed(model_options$seed)
     for(y in 1:nyears){
 
         # Subset the demographic parameters list to only the current year
@@ -79,7 +80,7 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
         # fleet_props <- subset_matrix(model_options$fleet_apportionment, y, d=1, drop=FALSE)
 
         if(is.function(recruitment)){
-            r_y <- do.call(recruitment, c(list(naa=naa[y,,,,drop=FALSE], dem_params=dp.y, seed=model_options$seed), model_options$recruitment_pars))
+            r_y <- do.call(recruitment, c(list(naa=naa[y,,,,drop=FALSE], dem_params=dp.y), model_options$recruitment_pars))
         }else{
             rs <- array(recruitment, dim=c(nyears+1, 1))
             r_y <- subset_matrix(rs, y+1, d=1, drop=FALSE)

@@ -164,9 +164,9 @@ setup_model_options <- function(model_dimensions){
         list(
             removals_input = "catch",
             simulate_observations = TRUE,
-            region_apportionment = matrix(1/model_dimensions$nregions, nrow=model_dimensions$nyears, ncol=model_dimensions$nregions)),
+            region_apportionment = matrix(1/model_dimensions$nregions, nrow=model_dimensions$nyears, ncol=model_dimensions$nregions),
             fleet_apportionment = array(1/model_dimensions$nfleets, dim=c(model_dimensions$nyears, model_dimensions$nfleets, model_dimensions$nregions)),
-            recruit_apportionment = matrix(1/model_dimensions$nregions, nrow=model_dimensions$nyears, ncol=model_dimensions$nregions)),
+            recruit_apportionment = matrix(1/model_dimensions$nregions, nrow=model_dimensions$nyears, ncol=model_dimensions$nregions),
             recruit_apportionment_random = FALSE,
             do_recruits_move = TRUE
         )
