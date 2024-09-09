@@ -82,7 +82,7 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
             y = y,
             rec_timeseries = r$full_recruitment,
             apportionment = r$rec_props,
-            apportion_random = model_options$random_apportion_recruits,
+            apportion_random = model_options$recruit_apportionment_random,
             apportionment_pars = model_options$recruit_apportionment_pars,
             nregions = nregions,
             list(naa=naa[y,,,,drop=FALSE], dem_params=dp.y)
