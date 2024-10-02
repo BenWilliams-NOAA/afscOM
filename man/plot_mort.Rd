@@ -11,6 +11,6 @@ plot_mort(mort, is_dmr = FALSE)
 }
 \description{
 Generates plot of mortality-at-age across time, age, sex,
-and region as appropriate. This function can be used for 
+and region as appropriate. This function can be used for
 both natural and discard mortality
 }

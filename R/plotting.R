@@ -1,5 +1,5 @@
 #' Plot demographic parameters
-#' 
+#'
 #' Generate standard plot for all demographic
 #' parameter matrices. Output plots will include:
 #' - weight-at-age
@@ -16,12 +16,11 @@
 #' @param out_dir optional directory to save plots to
 #' @param ... additional parameters to be passed to `ggsave`
 #'
-#' @export plot_demographic_parameters
+#' @export
 #'
-#' @example
 #'
 plot_demographic_parameters <- function(dem_params, params=NA, show_plots=TRUE, out_dir=NA, ...){
-    
+
     waa_plot  <- plot_waa(dem_params$waa)
     mat_plot  <- plot_mat(dem_params$mat)
     mort_plot <- plot_mort(dem_params$mort, is_dmr=FALSE)
@@ -55,15 +54,14 @@ plot_demographic_parameters <- function(dem_params, params=NA, show_plots=TRUE, 
 }
 
 #' Plot Weight-at-Age
-#' 
+#'
 #' Generates plot of weight-at-age across time, age, sex,
 #' and region as appropriate.
 #'
 #' @param waa four-dimensional weight-at-age matrix
 #'
-#' @export plot_waa
+#' @export
 #'
-#' @example
 #'
 plot_waa <- function(waa){
 
@@ -82,7 +80,7 @@ plot_waa <- function(waa){
         coord_cartesian(expand=0)+
         labs(x="Age", y="Weight", color="Sex", linetype="Time Block", title="Weight-at-Age")+
         theme_bw()
-    
+
     if(dimensions$nregions > 1){
         plot <- plot + facet_wrap(~region, scales="free_y")
     }
@@ -92,16 +90,14 @@ plot_waa <- function(waa){
 }
 
 #' Plot Maturity-at-Age
-#' 
+#'
 #' Generates plot of maturity-at-age across time, age, sex,
 #' and region as appropriate. Only the female maturity ogive
 #' is plotted.
 #'
 #' @param mat four-dimensional maturity-at-age matrix
 #'
-#' @export plot_mat
-#'
-#' @example
+#' @export
 #'
 plot_mat <- function(mat){
 
@@ -131,16 +127,14 @@ plot_mat <- function(mat){
 }
 
 #' Plot Mortality
-#' 
+#'
 #' Generates plot of mortality-at-age across time, age, sex,
-#' and region as appropriate. This function can be used for 
+#' and region as appropriate. This function can be used for
 #' both natural and discard mortality
 #'
 #' @param waa four-dimensional mortality-at-age matrix
 #'
-#' @export plot_mort
-#'
-#' @example
+#' @export
 #'
 plot_mort <- function(mort, is_dmr=FALSE){
 
@@ -169,16 +163,14 @@ plot_mort <- function(mort, is_dmr=FALSE){
 }
 
 #' Plot Selectivity-at-Age and Retention-at-Age
-#' 
+#'
 #' Generates plot of selectivity-at-age or retention-at-age
 #' across time, age, sex, region, and fleet as appropriate.
 #'
 #' @param selret five-dimensional selectivity-at-age or
 #' retention-at-age matrix
 #'
-#' @export plot_selret
-#'
-#' @example
+#' @export
 #'
 plot_selret <- function(selret, is_selectivity=TRUE){
 
@@ -342,15 +334,15 @@ plot_atage <- function(atage){
         mutate(total_naa = sum(naa)) %>%
         mutate(prop = naa/total_naa) %>%
         mutate(avg_age = weighted.mean(age, prop))
-        
+
 
     plot <- ggplot(atage_df)+
         geom_point(aes(x=time, y=age, size=prop, color=prop))+
         geom_line(
-            data=atage_df %>% distinct(time, avg_age), 
+            data=atage_df %>% distinct(time, avg_age),
             aes(x=time, y=avg_age),
-            linewidth=2, 
-            color='red', 
+            linewidth=2,
+            color='red',
             show.legend = FALSE
         )+
         coord_cartesian(expand=0.01)+
