@@ -45,16 +45,16 @@ required elements set to sensible default values."><!-- mathjax --><script src="
       <a href="../articles/multiyear_projections.html">Conducting Multiyear Projections</a>
     </li>
     <li>
-      <a href="../articles/observation_processes.html">Observation Processes</a>
-    </li>
-    <li>
-      <a href="../articles/specifying_demographic_parameters.html">Specifying Demographic Rates</a>
-    </li>
-    <li>
       <a href="../articles/nep_transboundary_sablefish.html">Example: Northeast Pacific Transboundary Sablefish Model</a>
     </li>
     <li>
+      <a href="../articles/observation_processes.html">Observation Processes</a>
+    </li>
+    <li>
       <a href="../articles/spatial_om_example.html">A Spatial Model Example</a>
+    </li>
+    <li>
+      <a href="../articles/specifying_demographic_parameters.html">Specifying Demographic Rates</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
@@ -87,6 +87,14 @@ required elements set to sensible default values.</p>
 
 </dl></div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
+<span>     <span class="va">dimensions</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>nyears<span class="op">=</span><span class="fl">60</span>, nages<span class="op">=</span><span class="fl">50</span>, nsexes<span class="op">=</span><span class="fl">2</span>, nregions<span class="op">=</span><span class="fl">1</span>, nfleets<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+<span>     <span class="va">model_options</span> <span class="op">=</span> <span class="fu">setup_model_options</span><span class="op">(</span><span class="va">dimensions</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span></code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

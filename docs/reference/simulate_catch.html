@@ -44,16 +44,16 @@
       <a href="../articles/multiyear_projections.html">Conducting Multiyear Projections</a>
     </li>
     <li>
-      <a href="../articles/observation_processes.html">Observation Processes</a>
-    </li>
-    <li>
-      <a href="../articles/specifying_demographic_parameters.html">Specifying Demographic Rates</a>
-    </li>
-    <li>
       <a href="../articles/nep_transboundary_sablefish.html">Example: Northeast Pacific Transboundary Sablefish Model</a>
     </li>
     <li>
+      <a href="../articles/observation_processes.html">Observation Processes</a>
+    </li>
+    <li>
       <a href="../articles/spatial_om_example.html">A Spatial Model Example</a>
+    </li>
+    <li>
+      <a href="../articles/specifying_demographic_parameters.html">Specifying Demographic Rates</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
@@ -75,7 +75,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">simulate_catch</span><span class="op">(</span><span class="va">removals</span>, <span class="va">fleet.props</span>, <span class="va">dem_params</span>, <span class="va">naa</span>, <span class="va">options</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">simulate_catch</span><span class="op">(</span><span class="va">removals</span>, <span class="va">dem_params</span>, <span class="va">naa</span>, <span class="va">options</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -84,16 +84,16 @@
 <dd><p>desired removals either in catch or F units</p></dd>
 
 
-<dt>fleet.props</dt>
-<dd><p>the proportion of the TAC that should be taken by each fleet</p></dd>
-
-
 <dt>dem_params</dt>
 <dd><p>demographic parameter matrices for population</p></dd>
 
 
 <dt>naa</dt>
 <dd><p>the current numbers-at-age in the population</p></dd>
+
+
+<dt>fleet.props</dt>
+<dd><p>the proportion of the TAC that should be taken by each fleet</p></dd>
 
 
 <dt>option</dt>

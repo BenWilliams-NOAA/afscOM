@@ -44,16 +44,16 @@
       <a href="../articles/multiyear_projections.html">Conducting Multiyear Projections</a>
     </li>
     <li>
-      <a href="../articles/observation_processes.html">Observation Processes</a>
-    </li>
-    <li>
-      <a href="../articles/specifying_demographic_parameters.html">Specifying Demographic Rates</a>
-    </li>
-    <li>
       <a href="../articles/nep_transboundary_sablefish.html">Example: Northeast Pacific Transboundary Sablefish Model</a>
     </li>
     <li>
+      <a href="../articles/observation_processes.html">Observation Processes</a>
+    </li>
+    <li>
       <a href="../articles/spatial_om_example.html">A Spatial Model Example</a>
+    </li>
+    <li>
+      <a href="../articles/specifying_demographic_parameters.html">Specifying Demographic Rates</a>
     </li>
   </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
@@ -73,10 +73,6 @@
           <p class="section-desc"></p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="F_to_mu.html">F_to_mu()</a></code> </p>
-        </td>
-        <td><p>instantaneous rate to harvest rate</p></td>
-      </tr><tr><td>
           <p><code><a href="baranov.html">baranov()</a></code> </p>
         </td>
         <td><p>Baranov Catch Equation</p></td>
@@ -85,14 +81,27 @@
         </td>
         <td><p>Catch-at-age</p></td>
       </tr><tr><td>
+          <p><code><a href="compute_bio.html">compute_bio()</a></code> </p>
+        </td>
+        <td><p>Compute Total Stock Biomass</p></td>
+      </tr><tr><td>
+          <p><code><a href="compute_fleet_catch.html">compute_fleet_catch()</a></code> </p>
+        </td>
+        <td><p>Compute Catch by Fishing Fleet</p></td>
+      </tr><tr><td>
           <p><code><a href="compute_ssb.html">compute_ssb()</a></code> </p>
         </td>
-        <td><p>Compute Spawning Stock Biomass
-#'
-Compute SSB from a matrix of NAA and a set of demagraphic
-parameters.</p></td>
+        <td><p>Compute Spawning Stock Biomass</p></td>
       </tr><tr><td>
-          <p><code><a href="cyclic.recruitment.html">cyclic.recruitment()</a></code> </p>
+          <p><code><a href="compute_total_catch.html">compute_total_catch()</a></code> </p>
+        </td>
+        <td><p>Compute Total Catch</p></td>
+      </tr><tr><td>
+          <p><code><a href="compute_total_f.html">compute_total_f()</a></code> </p>
+        </td>
+        <td><p>Compute Total Fishing Mortality</p></td>
+      </tr><tr><td>
+          <p><code><a href="cyclic_recruitment.html">cyclic_recruitment()</a></code> </p>
         </td>
         <td><p>Generate log-recruitment from two defined regimes of a specified length</p></td>
       </tr><tr><td>
@@ -112,6 +121,10 @@ parameters.</p></td>
         </td>
         <td><p>Find F given a desired level of catch</p></td>
       </tr><tr><td>
+          <p><code><a href="F_to_mu.html">F_to_mu()</a></code> </p>
+        </td>
+        <td><p>instantaneous rate to harvest rate</p></td>
+      </tr><tr><td>
           <p><code><a href="generate_param_matrix.html">generate_param_matrix()</a></code> </p>
         </td>
         <td><p>Generate a filled parameter matrix</p></td>
@@ -127,6 +140,26 @@ parameters.</p></td>
           <p><code><a href="mu_to_F.html">mu_to_F()</a></code> </p>
         </td>
         <td><p>harvest rate to instantaneous</p></td>
+      </tr><tr><td>
+          <p><code><a href="plot_demographic_parameters.html">plot_demographic_parameters()</a></code> </p>
+        </td>
+        <td><p>Plot demographic parameters</p></td>
+      </tr><tr><td>
+          <p><code><a href="plot_mat.html">plot_mat()</a></code> </p>
+        </td>
+        <td><p>Plot Maturity-at-Age</p></td>
+      </tr><tr><td>
+          <p><code><a href="plot_mort.html">plot_mort()</a></code> </p>
+        </td>
+        <td><p>Plot Mortality</p></td>
+      </tr><tr><td>
+          <p><code><a href="plot_selret.html">plot_selret()</a></code> </p>
+        </td>
+        <td><p>Plot Selectivity-at-Age and Retention-at-Age</p></td>
+      </tr><tr><td>
+          <p><code><a href="plot_waa.html">plot_waa()</a></code> </p>
+        </td>
+        <td><p>Plot Weight-at-Age</p></td>
       </tr><tr><td>
           <p><code><a href="project.html">project()</a></code> </p>
         </td>
@@ -152,13 +185,17 @@ parameters.</p></td>
         </td>
         <td><p>Demographic parameter matrices for Alaska Sablefish</p></td>
       </tr><tr><td>
+          <p><code><a href="setup_model_options.html">setup_model_options()</a></code> </p>
+        </td>
+        <td><p>Set Default Values for Model Options</p></td>
+      </tr><tr><td>
           <p><code><a href="set_model_params.html">set_model_params()</a></code> </p>
         </td>
         <td><p>Setup model parameters</p></td>
       </tr><tr><td>
-          <p><code><a href="setup_model_options.html">setup_model_options()</a></code> </p>
+          <p><code><a href="simple_om.html">simple_om</a></code> </p>
         </td>
-        <td><p>Set Default Values for Model Options</p></td>
+        <td><p>OM Components for a Simple Simulation</p></td>
       </tr><tr><td>
           <p><code><a href="simulate_ac.html">simulate_ac()</a></code> </p>
         </td>
@@ -209,6 +246,10 @@ Description</p></td>
           <p><code><a href="simulate_rpw.html">simulate_rpw()</a></code> </p>
         </td>
         <td><p>Simulate Relative Population Weight Index</p></td>
+      </tr><tr><td>
+          <p><code><a href="spatial_sablefish_assessment_data.html">spatial_sablefish_assessment_data</a></code> </p>
+        </td>
+        <td><p>Spatial Sablefish Assessment</p></td>
       </tr><tr><td>
           <p><code><a href="subset_dem_params.html">subset_dem_params()</a></code> </p>
         </td>
