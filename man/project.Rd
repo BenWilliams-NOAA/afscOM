@@ -4,18 +4,18 @@
 \alias{project}
 \title{Project population forward by 1 year}
 \usage{
-project(removals, fleet.props, dem_params, prev_naa, recruitment, options = NA)
+project(removals, dem_params, prev_naa, recruitment, options = NA)
 }
 \arguments{
 \item{removals}{population removals (either in catch or F units)}
-
-\item{fleet.props}{the proportion of the TAC allocated to each fleet}
 
 \item{dem_params}{list of demographic parameter matrices}
 
 \item{prev_naa}{the NAA in the previous timestep}
 
 \item{recruitment}{total recruiment to occurin this year}
+
+\item{fleet.props}{the proportion of the TAC allocated to each fleet}
 
 \item{option}{additional model options}
 }

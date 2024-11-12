@@ -4,16 +4,16 @@
 \alias{simulate_catch}
 \title{Simulate catches in one region during on year}
 \usage{
-simulate_catch(removals, fleet.props, dem_params, naa, options)
+simulate_catch(removals, dem_params, naa, options)
 }
 \arguments{
 \item{removals}{desired removals either in catch or F units}
 
-\item{fleet.props}{the proportion of the TAC that should be taken by each fleet}
-
 \item{dem_params}{demographic parameter matrices for population}
 
 \item{naa}{the current numbers-at-age in the population}
+
+\item{fleet.props}{the proportion of the TAC that should be taken by each fleet}
 
 \item{option}{list of model options}
 }
