@@ -13,7 +13,7 @@
 #'
 #' @export simulate_observations
 #'
-simulate_observations <- function(naa, waa, selex, faa, zaa, obs_pars, age_error=NA){
+simulate_observations <- function(naa, waa, selex, faa, zaa, caa, obs_pars, age_error=NA){
 
     # ll_selex <- subset_matrix(selex, r=1, d=5, drop=TRUE)
     # tw_selex <- subset_matrix(selex, r=2, d=5, drop=TRUE)
@@ -22,7 +22,8 @@ simulate_observations <- function(naa, waa, selex, faa, zaa, obs_pars, age_error
     # twfish_faa <- subset_matrix(faa, r=2, d=5, drop=TRUE)
 
     model_params <- get_model_dimensions(selex)
-
+    
+    catch_obs <- array(NA, c(1, 1, 1, model_params$nfleets))
     rpn_preds <- array(NA, c(1, 1, 1, model_params$nfleets))
     rpn_obs <- array(NA, c(1, 1, 1, model_params$nfleets))
     rpw_preds <- array(NA, c(1, 1, 1, model_params$nfleets))
@@ -34,11 +35,15 @@ simulate_observations <- function(naa, waa, selex, faa, zaa, obs_pars, age_error
     for(s in 1:model_params$nfleets){
         fishery <- fishery + !obs_pars$is_survey[s]
         surv_sel <- subset_matrix(selex, r=s, d=5, drop=TRUE)
+
+        if(!obs_pars$is_survey[s] && obs_pars$catch_cv[s]){
+            catch <- sum(caa[,,,,s])
+            catch_obs[,,,s] <- simulate_lognormal_obs(catch, obs_pars$catch_cv[s])
+        }
         
         if(obs_pars$rpn[s]){
             rpn_preds[,,,s] <- simulate_rpn(obs_pars$qs[s], naa, surv_sel, zaa)
             rpn_obs[,,,s] <-  simulate_lognormal_obs(rpn_preds[,,,s], obs_pars$rpn_cv[s])
-            
         }
 
         if(obs_pars$rpw[s]){
@@ -103,7 +108,7 @@ simulate_observations <- function(naa, waa, selex, faa, zaa, obs_pars, age_error
 
     # Simulate Trawl Fishery Age Compositions (mulitnomial)
     preds <- listN(rpn_preds, rpw_preds, ac_preds)
-    obs   <- listN(rpn_obs, rpw_obs, ac_obs)
+    obs   <- listN(catch_obs, rpn_obs, rpw_obs, ac_obs)
 
     return(list(
         preds=preds,

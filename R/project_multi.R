@@ -41,18 +41,20 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
     )
 
     survey_obs <- list(
+        catch = array(NA, dim=c(nyears, 1, 1, nregions, nfleets)), 
         rpns = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
         rpws = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
         acs  = array(NA, dim=c(nyears, nages, nsexes, nregions, nsurveys+nfleets))
     )
 
     # full_recruitment <- array(NA, dim=c(nyears, 1, 1, nregions))
-    r <- apportion_recruitment(
-        rec_timeseries = recruitment,
-        apportionment = model_options$recruit_apportionment,
-        nyears = nyears,
-        nregions = nregions
-    )
+
+    # r <- apportion_recruitment(
+    #     rec_timeseries = recruitment, 
+    #     apportionment = model_options$recruit_apportionment,
+    #     nyears = nyears,
+    #     nregions = nregions
+    # )
 
     if(model_options$removals_input == "catch"){
         c <- apportion_catch(
@@ -66,6 +68,7 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
         c <- removals_timeseries
     }
 
+    set.seed(model_options$seed)
     for(y in 1:nyears){
 
         # Subset the demographic parameters list to only the current year
@@ -76,9 +79,24 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
         # region_props <- subset_matrix(model_options$region_apportionment, y, d=1, drop=FALSE)
         # fleet_props <- subset_matrix(model_options$fleet_apportionment, y, d=1, drop=FALSE)
 
+        if(is.function(recruitment)){
+            r_y <- do.call(recruitment, c(list(naa=naa[y,,,,drop=FALSE], dem_params=dp.y), model_options$recruitment_pars))
+        }else{
+            rs <- array(recruitment, dim=c(nyears+1, 1))
+            r_y <- subset_matrix(rs, y+1, d=1, drop=FALSE)
+        }
+
+        # r_y <- ifelse(!is.null(model_options$recruitment_devs), as.vector(exp(log(r_y)+model_options$recruitment_devs[y+1])), as.vector(r_y))
+        r_y <- as.vector(r_y)
+
+        r <- apportion_recruitment_single(
+            recruits = as.vector(r_y),
+            apportionment = subset_matrix(model_options$recruit_apportionment, y+1, d=1, drop=FALSE),
+            nregions = nregions
+        )
+
         rec <- get_annual_recruitment(
-            y = y,
-            rec_timeseries = r$full_recruitment,
+            recruitment = r$full_recruitment,
             apportionment = r$rec_props,
             apportion_random = model_options$recruit_apportionment_random,
             apportionment_pars = model_options$recruit_apportionment_pars,
@@ -111,6 +129,7 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
             survey_preds$rpws[y,,,,] <- out_vars$survey_preds$rpws
             survey_preds$acs[y,,,,]  <- out_vars$survey_preds$acs
 
+            survey_obs$catch[y,,,,] <- out_vars$survey_obs$catch
             survey_obs$rpns[y,,,,] <- out_vars$survey_obs$rpns
             survey_obs$rpws[y,,,,] <- out_vars$survey_obs$rpws
             survey_obs$acs[y,,,,]  <- out_vars$survey_obs$acs

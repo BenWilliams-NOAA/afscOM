@@ -86,6 +86,7 @@ subset_dem_params <- function(dem_params, r, d=1, drop=TRUE){
 #'
 subset_matrix <- function(mat, r, d=1, drop=TRUE){
     if(is.null(mat)) return(NULL)
+    if(is.vector(mat)) return(mat)
     tmp <- rlang::duplicate(mat)
     ndims <- length(dim(mat))
     idxs <- c(as.list(rep(TRUE, d-1)), list(r), as.list(rep(TRUE, ndims-d)))
@@ -165,8 +166,10 @@ setup_model_options <- function(model_dimensions){
             removals_input = "catch",
             simulate_observations = TRUE,
             region_apportionment = matrix(1/model_dimensions$nregions, nrow=model_dimensions$nyears, ncol=model_dimensions$nregions),
+            region_apportionment = matrix(1/model_dimensions$nregions, nrow=model_dimensions$nyears, ncol=model_dimensions$nregions),
             fleet_apportionment = array(1/model_dimensions$nfleets, dim=c(model_dimensions$nyears, model_dimensions$nfleets, model_dimensions$nregions)),
             recruit_apportionment = matrix(1/model_dimensions$nregions, nrow=(model_dimensions$nyears+1), ncol=model_dimensions$nregions),
+            recruit_apportionment = matrix(1/model_dimensions$nregions, nrow=model_dimensions$nyears+1, ncol=model_dimensions$nregions),
             recruit_apportionment_random = FALSE,
             do_recruits_move = TRUE
         )
