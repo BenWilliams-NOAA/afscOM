@@ -1,7 +1,7 @@
 #' Project Population Forward Multiple Years
-#' 
+#'
 #' A wrapper function around the base `project` function that handles
-#' projecting forward multiple years given a removals timeseries and a 
+#' projecting forward multiple years given a removals timeseries and a
 #' recruitment timeseries.
 #'
 #' @param init_naa numbers-at-age matrix in starting year ([1, nages, nsexes, nregions])
@@ -11,9 +11,7 @@
 #' @param nyears number of projection yeas
 #' @param model_option list of additional model options
 #'
-#' @export project_multi
-#'
-#' @example
+#' @export
 #'
 project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params, nyears, model_options){
 
@@ -50,6 +48,7 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
     )
 
     # full_recruitment <- array(NA, dim=c(nyears, 1, 1, nregions))
+
     # r <- apportion_recruitment(
     #     rec_timeseries = recruitment, 
     #     apportionment = model_options$recruit_apportionment,
@@ -104,7 +103,7 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
             nregions = nregions,
             list(naa=naa[y,,,,drop=FALSE], dem_params=dp.y)
         )
-        
+
         out_vars <- project(
             removals = removals_input,
             dem_params=dp.y,

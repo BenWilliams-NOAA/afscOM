@@ -1,5 +1,5 @@
 #' Compute Spawning Stock Biomass
-#' 
+#'
 #' Compute SSB from a matrix of NAA and a set of demographic
 #' parameters.
 #'
@@ -8,7 +8,7 @@
 #'
 #' @export compute_ssb
 #'
-#' @example
+
 #'
 compute_ssb <- function(naa, dem_params){
     return(
@@ -17,7 +17,7 @@ compute_ssb <- function(naa, dem_params){
 }
 
 #' Compute Total Stock Biomass
-#' 
+#'
 #' Compute biomass from a matrix of NAA and a set of demographic
 #' parameters. This computes the sum of male and female biomass
 #' across all age classes. For mature female biomass, see
@@ -26,9 +26,9 @@ compute_ssb <- function(naa, dem_params){
 #' @param naa numbers-at-age matrix [nyears, nages, nsexes, nregions]
 #' @param dem_params demagraphic parameters list
 #'
-#' @export compute_bio 
+#' @export compute_bio
 #'
-#' @example
+
 #'
 compute_bio <- function(naa, dem_params){
     return(
@@ -37,14 +37,14 @@ compute_bio <- function(naa, dem_params){
 }
 
 #' Compute Total Catch
-#' 
+#'
 #' Compute total catch volume (in mt) from a matrix of CAA.
 #'
 #' @param caa catch-at-age matrix [nyears, nages, nsexes, nregions, nfleets]
 #'
-#' @export compute_total_catch 
+#' @export compute_total_catch
 #'
-#' @example
+
 #'
 compute_total_catch <- function(caa){
     return(
@@ -53,7 +53,7 @@ compute_total_catch <- function(caa){
 }
 
 #' Compute Catch by Fishing Fleet
-#' 
+#'
 #' Compute total catch volume (in mt) for each fishing
 #' fleet from a matrix of CAA.
 #'
@@ -61,7 +61,7 @@ compute_total_catch <- function(caa){
 #'
 #' @export compute_fleet_catch
 #'
-#' @example
+
 #'
 compute_fleet_catch <- function(caa){
     return(
@@ -70,7 +70,7 @@ compute_fleet_catch <- function(caa){
 }
 
 #' Compute Total Fishing Mortality
-#' 
+#'
 #' Compute total fishing mortality from a matrix of FAA.
 #' Note that this is an approximation of total fishing mortality,
 #' and assumes that selectivity = 1 for some age class.
@@ -79,7 +79,7 @@ compute_fleet_catch <- function(caa){
 #'
 #' @export compute_total_f
 #'
-#' @example
+
 #'
 compute_total_f <- function(faa){
     return(

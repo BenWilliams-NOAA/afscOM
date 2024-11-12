@@ -13,3 +13,10 @@ setup_model_options(model_dimensions)
 Set up a fully formed model_options list object with all
 required elements set to sensible default values.
 }
+\examples{
+\dontrun{
+     dimensions = list(nyears=60, nages=50, nsexes=2, nregions=1, nfleets=1)
+     model_options = setup_model_options(dimensions)
+}
+
+}

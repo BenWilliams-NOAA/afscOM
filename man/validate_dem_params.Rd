@@ -19,12 +19,30 @@ return a descriptive error message
 }
 \description{
 Helper function for validating that all required demographic
-parameter matrices have been defined and that they are all of 
+parameter matrices have been defined and that they are all of
 the correct dimension.
 }
 \details{
-Required demographic parameters are: mort, waa, sexrat, sel, 
+Required demographic parameters are: mort, waa, sexrat, sel,
 ret, dmr, and surv_sel
 
 Expected dimensions are: [nyears, nages, nsexes, nregions, nfleets]
+}
+\examples{
+\dontrun{
+
+     model_dims = list(nyears=64, nages=30, nsexes=2, nregions=1, nfleets=2)
+     dem_params = list(
+         mort = mortality_matrix,
+         waa = weight_matrix,
+         sexrat = sexratio_matrix,
+         sel = selectivity_matrix,
+         ret = retention_matrix
+         dmr = disard_mortality_matrix,
+         surv_sel = survey_selectivity_matrix
+     )
+     dem_params = validate_dem_params(dem_params, model_dims)
+
+}
+
 }
