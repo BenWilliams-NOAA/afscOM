@@ -20,6 +20,7 @@ assessment <- sablefish_assessment_data
 #' arrays with smaller dimensions values, vectors, or matrices.
 nyears <- 64
 nages  <- 30
+nlengths <- 30
 nsexes <- 2
 nregions <- 1
 nfleets <- 2
@@ -33,7 +34,7 @@ dimension_names <- list(
     "fleet" = c("Fixed", "Trawl")
 )
 
-model_params <- set_model_params(nyears, nages, nsexes, nregions, nfleets)
+model_params <- set_model_params(nyears, nages, nlengths, nsexes, nregions, nfleets)
 model_options <- setup_model_options(model_params)
 
 #' 2. Generate list with appropriate demographic parameters
@@ -88,6 +89,15 @@ survey_sel <- generate_param_matrix(survey_selex_mat, dimension_names = dimensio
 survey_sel[(57:64),,1,,1] <- matrix(rep(assessment$agesel[, "srv10sel.f"], length(57:64)), ncol=nages, byrow=TRUE)
 survey_sel[(57:64),,2,,1] <- matrix(rep(assessment$agesel[, "srv10sel.m"], length(57:64)), ncol=nages, byrow=TRUE)
 
+# size-age transition matrix
+lengths <- seq(41, 99, 2)
+sizeage_matrix <- array(NA, dim=c(nlengths, nages, nsexes, nyears), dimnames = list("length"=lengths, "age"=2:31, "sex"=c("F", "M"), "time"=1:nyears))
+
+sizeage_matrix[,,1,1:36] <- assessment$sizeage.f.block1
+sizeage_matrix[,,2,1:36] <- assessment$sizeage.m.block1
+sizeage_matrix[,,1,37:nyears] <- assessment$sizeage.f.block2
+sizeage_matrix[,,2,37:nyears] <- assessment$sizeage.m.block2
+
 dem_params <- list(
     waa=waa,
     mat=mat,
@@ -97,6 +107,7 @@ dem_params <- list(
     ret=ret,
     dmr=dmr,
     surv_sel=survey_sel
+    sizeage_matrix = sizeage_matrix
 )
 
 # saveRDS(dem_params, file="data/sabelfish_dem_params.RDS")
@@ -234,6 +245,7 @@ p6 <- plot_atage(om_sim$caa) + labs(title="Catch-at-age")
 
 plot(1:nyears, catch, type="l")
 points(1:nyears, apply(om_sim$survey_obs$catch, 1, sum), col="red")
+
 
 # ssb_comp <- data.frame(
 #     year=1960:2023,

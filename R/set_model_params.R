@@ -12,11 +12,12 @@
 #' /dontrun{
 #' set_model_params(nyears, nages, nsexes=1, nregions=1, nfleets=1)
 #' }
-set_model_params <- function(nyears, nages, nsexes=1, nregions=1, nfleets=1){
+set_model_params <- function(nyears, nages, nlengths=1, nsexes=1, nregions=1, nfleets=1){
     return(
         list(
             nyears = nyears,
             nages = nages,
+            nlengths = nlengths,
             nsexes = nsexes,
             nregions = nregions,
             nfleets = nfleets
