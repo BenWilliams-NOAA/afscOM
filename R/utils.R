@@ -144,15 +144,16 @@ extend_years <- function(dem_params, dimension, e, new.dimnames=NA){
 
 
 #' Set Default Values for Model Options
-#' 
+#'
 #' Set up a fully formed model_options list object with all
 #' required elements set to sensible default values.
 #'
 #' @param model_dimensions model dimensions list object
 #'
-#' @export setup_model_options
+#' @export
 #'
-#' @example \dontrun{
+#' @examples
+#' \dontrun{
 #'      dimensions = list(nyears=60, nages=50, nsexes=2, nregions=1, nfleets=1)
 #'      model_options = setup_model_options(dimensions)
 #' }

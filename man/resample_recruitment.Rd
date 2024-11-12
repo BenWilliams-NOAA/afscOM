@@ -18,6 +18,13 @@ resample_recruitment(n, hist_rec, seed = NA)
 recruitment timeseries.
 }
 \description{
-Draw `n` random samples, with replacement, from the 
+Draw `n` random samples, with replacement, from the
 historical recruitment timeseries.
+}
+\examples{
+set.seed(1120)
+n <- 100
+hist.rec <- c(100, 200, 50, 100, 120)
+resample.recruitment(n, hist.rec)
+
 }

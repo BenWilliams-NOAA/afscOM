@@ -1,6 +1,6 @@
 #' Resample from historical recruitment timeseries
 #'
-#' Draw `n` random samples, with replacement, from the 
+#' Draw `n` random samples, with replacement, from the
 #' historical recruitment timeseries.
 #'
 #' @param n number of samples to draw
@@ -9,10 +9,10 @@
 #'
 #' @return `n` random samples from the historical
 #' recruitment timeseries.
-#' 
-#' @export resample_recruitment
 #'
-#' @example
+#' @export
+#'
+#' @examples
 #' set.seed(1120)
 #' n <- 100
 #' hist.rec <- c(100, 200, 50, 100, 120)
@@ -37,19 +37,19 @@ mean_recruitment <- function(n, log.mu, sd, seed=NA){
 #' Description
 #'
 #' @param n number of recruitment events
-#' @param mu.rec vector of mean log-recruitment levels, one for each regime
-#' @param sd.rec vector of recruitment variation, one for each regime
+#' @param mu_rec vector of mean log-recruitment levels, one for each regime
+#' @param sd_rec vector of recruitment variation, one for each regime
 #' @param dur duration of regimes
 #' @param start which regime to start in
 #' @param seed a random seed (optional)
 #'
 #' @return `n` log-recruitment levels from two different regimes of
 #' length `dur`.
-#' @export cyclic.recruitment
-#' 
-#' @example
-cyclic.recruitment <- function(n, mu_rec, sd_rec, dur, start=1, seed=NA){
-    
+#' @export
+#'
+
+cyclic_recruitment <- function(n, mu_rec, sd_rec, dur, start=1, seed=NA){
+
     if(!is.na(seed)){
         set.seed(seed)
     }

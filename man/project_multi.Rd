@@ -28,6 +28,6 @@ project_multi(
 }
 \description{
 A wrapper function around the base `project` function that handles
-projecting forward multiple years given a removals timeseries and a 
+projecting forward multiple years given a removals timeseries and a
 recruitment timeseries.
 }
