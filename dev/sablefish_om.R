@@ -146,6 +146,7 @@ TACs <- (assessment$t.series[,"Catch_HAL"]+assessment$t.series[,"Catch_TWL"])
 # trawl_fleet_prop <- 1-fixed_fleet_prop
 
 model_options <- setup_model_options(model_dimensions = model_params)
+model_options$random_apportion_recruits <- FALSE
 # model_options <- list(
 #     region_apportionment = matrix(1, nrow=nyears, ncol=nregions),
 #     fleet_apportionment = matrix(rep(c(fixed_fleet_prop, trawl_fleet_prop), nyears), ncol=nfleets),
@@ -171,6 +172,7 @@ obs_pars <- list(
     # longline fishery, trawl fishery, longline survey, trawl survey
     is_survey   = c(0, 0, 1, 1),  # is this a survey (1) or fishery (0)
     qs          = c(1, 1, 6.41, 0.85), # catchability coefficient (q) for surveys
+    catch_cv    = c(0.1, 0.1, 0, 0), # CV on catch for catch observations
     rpn         = c(0, 0, 1, 1), # should RPNs be computed (yes=1, no=0)
     rpn_cv      = c(0, 0, 0.1, 0.1), # RPN CV
     rpw         = c(0, 0, 1, 1), # should RPWs be computed (yes=1, no=0)
@@ -229,6 +231,9 @@ p4 <- plot_f(f)
 
 p5 <- plot_atage(om_sim$naa) + labs(title="Numbers-at-age")
 p6 <- plot_atage(om_sim$caa) + labs(title="Catch-at-age")
+
+plot(1:nyears, catch, type="l")
+points(1:nyears, apply(om_sim$survey_obs$catch, 1, sum), col="red")
 
 # ssb_comp <- data.frame(
 #     year=1960:2023,

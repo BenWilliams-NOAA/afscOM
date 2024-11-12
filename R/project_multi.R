@@ -43,6 +43,7 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
     )
 
     survey_obs <- list(
+        catch = array(NA, dim=c(nyears, 1, 1, nregions, nfleets)), 
         rpns = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
         rpws = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
         acs  = array(NA, dim=c(nyears, nages, nsexes, nregions, nsurveys+nfleets))
@@ -129,6 +130,7 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
             survey_preds$rpws[y,,,,] <- out_vars$survey_preds$rpws
             survey_preds$acs[y,,,,]  <- out_vars$survey_preds$acs
 
+            survey_obs$catch[y,,,,] <- out_vars$survey_obs$catch
             survey_obs$rpns[y,,,,] <- out_vars$survey_obs$rpns
             survey_obs$rpws[y,,,,] <- out_vars$survey_obs$rpws
             survey_obs$acs[y,,,,]  <- out_vars$survey_obs$acs

@@ -44,6 +44,7 @@ project <- function(removals, dem_params, prev_naa, recruitment, options=NA){
     )
 
     survey_obs <- list(
+        catch = array(NA, dim=c(1, 1, 1, model_params$nregions, model_params$nfleets)),
         rpns = array(NA, dim=c(1, 1, 1, model_params$nregions, model_params$nsurveys)),
         rpws = array(NA, dim=c(1, 1, 1, model_params$nregions, model_params$nsurveys)),
         acs  = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions, model_params$nsurveys+model_params$nfleets))
@@ -116,12 +117,14 @@ project <- function(removals, dem_params, prev_naa, recruitment, options=NA){
                 selex = big_selex,
                 faa = faa_tmp[,,,r,,drop=FALSE],
                 zaa = zaa_tmp[,,,r,drop=FALSE],
+                caa = land_caa_tmp[,,,r,,drop=FALSE],
                 obs_pars = options$obs_pars
             )
             survey_preds$rpns[,,,r,] <- obs$preds$rpn_preds[,,,as.logical(options$obs_pars$is_survey)]
             survey_preds$rpws[,,,r,] <- obs$preds$rpw_preds[,,,as.logical(options$obs_pars$is_survey)]
             survey_preds$acs[,,,r,]  <- obs$preds$ac_preds
 
+            survey_obs$catch[,,,r,] <- obs$obs$catch_obs[,,,!as.logical(options$obs_pars$is_survey)]
             survey_obs$rpns[,,,r,] <- obs$obs$rpn_obs[,,,as.logical(options$obs_pars$is_survey)]
             survey_obs$rpws[,,,r,] <- obs$obs$rpw_obs[,,,as.logical(options$obs_pars$is_survey)]
             survey_obs$acs[,,,r,]  <- obs$obs$ac_obs
