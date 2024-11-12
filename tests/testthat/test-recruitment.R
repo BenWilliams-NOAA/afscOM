@@ -107,11 +107,10 @@ test_that("Get annual recuits, fixed apportionment", {
         recruit_apportionment_random = FALSE
     )
 
-    r <- apportion_recruitment(recruitment, model_options$recruit_apportionment, nyears, nregions)
+    r <- apportion_recruitment_single(recruitment[1], model_options$recruit_apportionment, nregions)
 
     r_y <- get_annual_recruitment(
-        y = 1,
-        rec_timeseries = r$full_recruitment,
+        recruitment = r$full_recruitment,
         apportionment = r$rec_props,
         apportion_random = model_options$recruit_apportionment_random,
         apportionment_pars = model_options$recruit_apportionment_pars,
@@ -140,11 +139,10 @@ test_that("Get annual recuits, function apportionment", {
         recruit_apportionment_random = FALSE
     )
 
-    r <- apportion_recruitment(recruitment, model_options$recruit_apportionment, nyears, nregions)
+    r <- apportion_recruitment_single(recruitment[1], model_options$recruit_apportionment, nregions)
 
     r_y <- get_annual_recruitment(
-        y = 1,
-        rec_timeseries = r$full_recruitment,
+        recruitment = r$full_recruitment,
         apportionment = r$rec_props,
         apportion_random = model_options$recruit_apportionment_random,
         apportionment_pars = model_options$recruit_apportionment_pars,
@@ -173,12 +171,11 @@ test_that("Get annual recuits, fixed apportionment stochastic", {
         recruit_apportionment_random = TRUE
     )
 
-    r <- apportion_recruitment(recruitment, model_options$recruit_apportionment, nyears, nregions)
+    r <- apportion_recruitment_single(recruitment[1], model_options$recruit_apportionment, nregions)
 
     set.seed(1120)
     r_y <- get_annual_recruitment(
-        y = 1,
-        rec_timeseries = r$full_recruitment,
+        recruitment = r$full_recruitment,
         apportionment = r$rec_props,
         apportion_random = model_options$recruit_apportionment_random,
         apportionment_pars = model_options$recruit_apportionment_pars,
@@ -188,4 +185,24 @@ test_that("Get annual recuits, fixed apportionment stochastic", {
     expect_equal(r_y/sum(r_y), array(c(0.533, 0.133, 0.066, 0.133, 0.133), dim=c(1, 5)), tolerance=1e-2)
     expect_equal(r_y, array(c(10.67, 2.67, 1.33, 2.67, 2.67), dim=c(1, 5)), tolerance = 1e-1)
 
+})
+
+test_that("beverton-holt SRR", {
+    load(file.path(here::here(), "data/simple_om.rda"))
+    naa <- simple_om$init_naa
+    dp_y <- subset_dem_params(simple_om$dem_params, 1, d=1, drop=FALSE)
+
+    recruits <- beverton_holt(naa/10, dp_y, h=1, R0=25, S0=300)
+    expect_equal(recruits, 25)
+})
+
+test_that("beverton-holt SRR", {
+    load(file.path(here::here(), "data/simple_om.rda"))
+    naa <- simple_om$init_naa
+    dp_y <- subset_dem_params(simple_om$dem_params, 1, d=1, drop=FALSE)
+
+    ssb <- compute_ssb(naa/10, dp_y)[1,1]
+
+    recruits <- beverton_holt(naa/10, dp_y, h=0.5, R0=25, S0=300)
+    expect_equal(recruits, 22.12885, tolerance=1e-4)
 })
