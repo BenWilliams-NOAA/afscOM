@@ -27,7 +27,7 @@ test_that("project_multi reproduces sablefish timeseries", {
         removals_input = "F",
         simulate_observations = FALSE,
         recruit_apportionment = NULL,
-        random_apportion_recruits = FALSE
+        recruit_apportionment_random = FALSE
     )
 
     om_sim <- project_multi(

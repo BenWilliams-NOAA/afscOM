@@ -202,7 +202,7 @@ plot_selret <- function(selret, is_selectivity=TRUE){
 }
 
 
-plot_ssb <- function(ssb){
+plot_ssb <- function(ssb, comparison=NA){
 
     nregions <- ncol(ssb)
 
