@@ -63,6 +63,9 @@ subset_dem_params <- function(dem_params, r, d=1, drop=TRUE){
     ps <- names(tmp)
     for(n in ps){
         if(n == "movement" || any(is.na(dem_params[[n]]))) next;
+        if(n == "sizeage_matrix"){
+            d <- ifelse(d==1, 5, d)
+        }
         tmp[[n]] <- subset_matrix(dem_params[[n]], r, d, drop)
     }
     return(tmp)
