@@ -21,6 +21,7 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
     nsexes <- model_dimensions$nsexes
     nregions <- model_dimensions$nregions
     nfleets <- model_dimensions$nfleets
+    nlengths <- dim(dem_params$sizeage_matrix)[1]
     # nsurveys <- get_model_dimensions(dem_params$surv_sel)$nsurveys
     nsurveys <- ifelse(model_options$simulate_observations, get_model_dimensions(dem_params$surv_sel)$nfleets, 0)
 
@@ -37,14 +38,16 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
     survey_preds <- list(
         rpns = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
         rpws = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
-        acs  = array(NA, dim=c(nyears, nages, nsexes, nregions, nsurveys+nfleets))
+        acs  = array(NA, dim=c(nyears, nages, nsexes, nregions, nsurveys+nfleets)),
+        lcs  = array(NA, dim=c(nyears, nlengths, nsexes, nregions, nsurveys+nfleets))
     )
 
     survey_obs <- list(
         catch = array(NA, dim=c(nyears, 1, 1, nregions, nfleets)), 
         rpns = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
         rpws = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
-        acs  = array(NA, dim=c(nyears, nages, nsexes, nregions, nsurveys+nfleets))
+        acs  = array(NA, dim=c(nyears, nages, nsexes, nregions, nsurveys+nfleets)),
+        lcs  = array(NA, dim=c(nyears, nlengths, nsexes, nregions, nsurveys+nfleets))
     )
 
     # full_recruitment <- array(NA, dim=c(nyears, 1, 1, nregions))
@@ -128,11 +131,13 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
             survey_preds$rpns[y,,,,] <- out_vars$survey_preds$rpns
             survey_preds$rpws[y,,,,] <- out_vars$survey_preds$rpws
             survey_preds$acs[y,,,,]  <- out_vars$survey_preds$acs
+            survey_preds$lcs[y,,,,]  <- out_vars$survey_preds$lcs
 
             survey_obs$catch[y,,,,] <- out_vars$survey_obs$catch
             survey_obs$rpns[y,,,,] <- out_vars$survey_obs$rpns
             survey_obs$rpws[y,,,,] <- out_vars$survey_obs$rpws
             survey_obs$acs[y,,,,]  <- out_vars$survey_obs$acs
+            survey_obs$lcs[y,,,,]  <- out_vars$survey_obs$lcs
         }
 
     }
