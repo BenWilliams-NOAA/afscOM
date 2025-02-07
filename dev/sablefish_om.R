@@ -91,12 +91,12 @@ survey_sel[(57:64),,2,,1] <- matrix(rep(assessment$agesel[, "srv10sel.m"], lengt
 
 # size-age transition matrix
 lengths <- seq(41, 99, 2)
-sizeage_matrix <- array(NA, dim=c(nlengths, nages, nsexes, nyears), dimnames = list("length"=lengths, "age"=2:31, "sex"=c("F", "M"), "time"=1:nyears))
+sizeage_matrix <- array(NA, dim=c(nlengths, nages, nsexes, nregions, nyears), dimnames = list("length"=lengths, "age"=2:31, "sex"=c("F", "M"), "region"="Alaska", "time"=1:nyears))
 
-sizeage_matrix[,,1,1:36] <- assessment$sizeage.f.block1
-sizeage_matrix[,,2,1:36] <- assessment$sizeage.m.block1
-sizeage_matrix[,,1,37:nyears] <- assessment$sizeage.f.block2
-sizeage_matrix[,,2,37:nyears] <- assessment$sizeage.m.block2
+sizeage_matrix[,,1,,1:36] <- assessment$sizeage.f.block1
+sizeage_matrix[,,2,,1:36] <- assessment$sizeage.m.block1
+sizeage_matrix[,,1,,37:nyears] <- assessment$sizeage.f.block2
+sizeage_matrix[,,2,,37:nyears] <- assessment$sizeage.m.block2
 
 dem_params <- list(
     waa=waa,
@@ -106,7 +106,7 @@ dem_params <- list(
     sel=sel,
     ret=ret,
     dmr=dmr,
-    surv_sel=survey_sel
+    surv_sel=survey_sel,
     sizeage_matrix = sizeage_matrix
 )
 
@@ -191,7 +191,11 @@ obs_pars <- list(
     acs         = c(1, 1, 1, 1), # should age compositions be computed (yes=1, no=0)
     ac_samps    = c(50, 30, 50, 30), # total sample size for age composition observations
     ac_as_integers  = c(TRUE, TRUE, TRUE, TRUE), # return age comps as integers (TRUE) or proportions (FALSE)
-    acs_agg_sex     = c(FALSE, FALSE, FALSE, FALSE) # should age comps be aggregated by sex
+    acs_agg_sex     = c(FALSE, FALSE, FALSE, FALSE), # should age comps be aggregated by sex
+    lcs         = c(1, 1, 1, 1), # should age compositions be computed (yes=1, no=0)
+    lc_samps    = c(50, 30, 50, 30), # total sample size for age composition observations
+    lc_as_integers  = c(TRUE, TRUE, TRUE, TRUE), # return age comps as integers (TRUE) or proportions (FALSE)
+    lcs_agg_sex     = c(FALSE, FALSE, FALSE, FALSE) # should age comps be aggregated by sex
 )
 model_options$simulate_observations <- TRUE
 model_options$obs_pars <- obs_pars
@@ -312,8 +316,8 @@ p
 
 ll_surv_data <- data.frame(assessment$obssrv3) %>% rownames_to_column("Year")
 ll_surv_data$Year <- as.numeric(ll_surv_data$Year)
-ll_surv_data$om_pred <- om_sim$survey_preds$ll_rpn[31:64,,,]
-ll_surv_data$om <- om_sim$survey_obs$ll_rpn[31:64,,,]
+ll_surv_data$om_pred <- om_sim$survey_preds$rpns[31:64,,,,1]
+ll_surv_data$om <- om_sim$survey_obs$rpns[31:64,,,,1]
 ll_surv_data$om.lci <- ll_surv_data$om -1.96*0.20*ll_surv_data$om
 ll_surv_data$om.uci <- ll_surv_data$om +1.96*0.20*ll_surv_data$om
 
@@ -331,8 +335,8 @@ p1 <- ggplot(ll_surv_data, aes(x=Year, y=obssrv3, group=1))+
 
 ll_surv_data <- data.frame(assessment$obssrv1) %>% rownames_to_column("Year")
 ll_surv_data$Year <- as.numeric(ll_surv_data$Year)
-ll_surv_data$om_pred <- om_sim$survey_preds$ll_rpw[31:64,,,]
-ll_surv_data$om <- om_sim$survey_obs$ll_rpw[31:64,,,]
+ll_surv_data$om_pred <- om_sim$survey_preds$rpws[31:64,,,,1]
+ll_surv_data$om <- om_sim$survey_obs$rpws[31:64,,,,1]
 ll_surv_data$om.lci <- ll_surv_data$om -1.96*0.10*ll_surv_data$om
 ll_surv_data$om.uci <- ll_surv_data$om +1.96*0.10*ll_surv_data$om
 
@@ -350,8 +354,8 @@ p2 <- ggplot(ll_surv_data, aes(x=Year, y=obssrv1, group=1))+
 
 tw_surv_data <- data.frame(assessment$obssrv7) %>% rownames_to_column("Year")
 tw_surv_data$Year <- as.numeric(tw_surv_data$Year)
-tw_surv_data$om_pred <- om_sim$survey_preds$tw_rpw[tw_surv_data$Year-1960+1,,,]
-tw_surv_data$om <- om_sim$survey_obs$tw_rpw[tw_surv_data$Year-1960+1,,,]
+tw_surv_data$om_pred <- om_sim$survey_preds$rpws[tw_surv_data$Year-1960+1,,,,2]
+tw_surv_data$om <- om_sim$survey_obs$rpws[tw_surv_data$Year-1960+1,,,,2]
 tw_surv_data$om.lci <- tw_surv_data$om -1.96*0.10*tw_surv_data$om
 tw_surv_data$om.uci <- tw_surv_data$om +1.96*0.10*tw_surv_data$om
 
@@ -369,7 +373,6 @@ p3 <- ggplot(tw_surv_data, aes(x=Year, y=obssrv7, group=1))+
 
 p1/p2/p3 + plot_layout(guides="collect")
 
-
 survey_obs$ll_rpn
 survey_preds$ll_rpn
 n = length(survey_obs$ll_rpn)
@@ -378,3 +381,22 @@ exp((1/n)*sum(log(survey_obs$ll_rpn/pn[1:64])))
 ssb_comp$om_bio
 
 pn <- apply(naa[1:64,,,]*dem_params$surv_sel[1:64,,,,1], 1, sum)
+
+
+waa_plot <- plot_waa(dem_params$waa[64,,,,drop=FALSE])
+mat_plot <- plot_mat(dem_params$mat[64,,,,drop=FALSE])
+sel_plot <- plot_selret(dem_params$sel[64,,,,,drop=FALSE])
+mort_plot <- plot_mort(dem_params$mort[64,,,,drop=FALSE])
+
+(mort_plot+waa_plot)/(mat_plot+sel_plot) + plot_layout(guides="collect") & custom_theme
+ggsave("~/Desktop/demographics.png", width=12, height=7.5, units="in")
+
+custom_theme <- theme_bw()+theme(
+    panel.spacing.y = unit(0.5, "cm"),
+    panel.grid.minor = element_blank(),
+    axis.title = element_text(size=14),
+    axis.text = element_text(size=14),
+    strip.text = element_text(size=14),
+    legend.text = element_text(size=14),
+    legend.position = "bottom"
+)
