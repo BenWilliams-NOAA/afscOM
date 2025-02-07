@@ -45,13 +45,18 @@ simulate_rpw <- function(q, naa, waa, sel, zaa){
 #' @param sel selectivity-at-age vector
 #' @param aggregate_sex whether to return sex-aggregated comps or not (default FALSE
 #'
-#' @export simulate_ac
+#' @export simulate_comp
 #'
 #'
-simulate_ac <- function(naa, sel, aggregate_sex=FALSE){
+simulate_comp <- function(naa, sel, sizeage_matrix=NULL, aggregate_sex=FALSE){
     eac <- naa*sel
+
     if(all(eac == 0)){
         return(array(0, dim=dim(naa), dimnames=dimnames(naa)))
+    }
+
+    if(!is.null(sizeage_matrix)){
+        eac <- compute_length_structure(eac, sizeage_matrix)
     }
 
     if(aggregate_sex){
@@ -85,13 +90,17 @@ simulate_ac <- function(naa, sel, aggregate_sex=FALSE){
 #' @export simulate_caa
 #'
 #'
-simulate_caa <- function(naa, faa, zaa, aggregate_sex=FALSE){
+simulate_caa <- function(naa, faa, zaa, sizeage_matrix=NULL, aggregate_sex=FALSE){
 
     caa <- naa*faa*(1-exp(-zaa))/zaa
 
     # Short circuit, return 0s is no catch
     if(all(caa == 0)){
         return(array(0, dim=dim(caa), dimnames=dimnames(caa)))
+    }
+
+    if(!is.null(sizeage_matrix)){
+        caa <- compute_length_structure(caa, sizeage_matrix)
     }
 
     caa_prop <- array(apply(caa, c(3), \(x) x/rowSums(x)), dim=dim(naa), dimnames=dimnames(naa))
