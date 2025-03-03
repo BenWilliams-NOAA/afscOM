@@ -224,17 +224,21 @@ catch <- compute_total_catch(om_sim$caa)
 fleet_catch <- compute_fleet_catch(om_sim$caa)
 f <- compute_total_f(om_sim$faa)
 
+library(patchwork)
+
+# Plot SSB, catch, biomass, and fishing mortality
 p1 <- plot_ssb(ssb)
 p2 <- plot_catch(catch)
 p3 <- plot_bio(bio)
 p4 <- plot_f(f)
+(p1+p2)/(p3+p4)+plot_layout(guides="collect")
 
+# Plot NAA and CAA
 p5 <- plot_atage(om_sim$naa) + labs(title="Numbers-at-age")
 p6 <- plot_atage(om_sim$caa) + labs(title="Catch-at-age")
+(p5+p6) + plot_layout(guides="collect")
 
-plot(1:nyears, catch, type="l")
-points(1:nyears, apply(om_sim$survey_obs$catch, 1, sum), col="red")
-
+# Calculate and plot timeseries of B40
 f_props <- aperm(apply(apply(om_sim$faa, c(1, 5), \(x) max(x)), 1, \(y) y/sum(y)), c(2, 1))
 brps <- sapply(
     1:nyears,
@@ -247,73 +251,12 @@ brps <- sapply(
     }
 )
 
-# ssb_comp <- data.frame(
-#     year=1960:2023,
-#     assess_ssb=assessment$t.series[, "spbiom"],
-#     om_ssb=ssb,
-#     assess_catch=TACs,
-#     om_catch=catch,
-#     assess_bio=assessment$t.series[, "totbiom"],
-#     om_bio = bio,
-#     assess_f = assessment$t.series[,"fmort"],
-#     om_f = f
-# )
 
-# library(ggplot2)
-
-# p1 <- ggplot(ssb_comp, aes(x=year))+
-#     geom_line(aes(y=assess_ssb, color="Assessment"))+
-#     geom_line(aes(y=om_ssb, color="OM"), size=0.7)+
-#     scale_y_continuous(limits=c(0, 300), breaks=seq(0, 300, 50))+
-#     scale_x_continuous(breaks=seq(1960, 2020, 10))+
-#     coord_cartesian(expand=0)+
-#     scale_color_manual(name="Model", values=c("black", "red"))+
-#     labs(y="SSB", x="Year", title="Spawning Biomass Comparison")+
-#     theme_bw()
-
-# p2 <- ggplot(ssb_comp, aes(x=year))+
-#     geom_line(aes(y=assess_catch, color="Assessment"))+
-#     geom_line(aes(y=om_catch, color="OM"), size=0.7)+
-#     scale_y_continuous(limits=c(0, 60), breaks=seq(0, 60, 10))+
-#     scale_x_continuous(breaks=seq(1960, 2020, 10))+
-#     coord_cartesian(expand=0)+
-#     scale_color_manual(name="Model", values=c("black", "red"))+
-#     labs(y="Catch", x="Year", title="Total Catch Comparison")+
-#     theme_bw()
-
-# p3 <- ggplot(ssb_comp, aes(x=year))+
-#     geom_line(aes(y=assess_bio, color="Assessment"))+
-#     geom_line(aes(y=om_bio, color="OM"), size=0.7)+
-#     scale_y_continuous(limits=c(0, 750), breaks=seq(0, 750, 100))+
-#     scale_x_continuous(breaks=seq(1960, 2020, 10))+
-#     coord_cartesian(expand=0)+
-#     scale_color_manual(name="Model", values=c("black", "red"))+
-#     labs(y="Biomass", x="Year", title="Total Biomass Comparison")+
-#     theme_bw()
-
-# p4 <- ggplot(ssb_comp, aes(x=year))+
-#     geom_line(aes(y=assess_f, color="Assessment"))+
-#     geom_line(aes(y=om_f, color="OM"), size=0.7)+
-#     scale_y_continuous(limits=c(0, 0.2), breaks=seq(0, 0.2, 0.05))+
-#     scale_x_continuous(breaks=seq(1960, 2020, 10))+
-#     coord_cartesian(expand=0)+
-#     scale_color_manual(name="Model", values=c("black", "red"))+
-#     labs(y="F", x="Year", title="Fishing Mortality Comparison")+
-#     theme_bw()
-
-# library(patchwork)
-
-p <- (p1+p2)/(p3+p4)+plot_layout(guides="collect")
-p
-
-(p5+p6) + plot_layout(guides="collect")
-#ggsave("~/Desktop/sablefish_assess_om.png", plot=p, width=8, height=8, units=c("in"))
-
-
+# Plot survey index observations
 ll_surv_data <- data.frame(assessment$obssrv3) %>% rownames_to_column("Year")
 ll_surv_data$Year <- as.numeric(ll_surv_data$Year)
-ll_surv_data$om_pred <- om_sim$survey_preds$ll_rpn[31:64,,,]
-ll_surv_data$om <- om_sim$survey_obs$ll_rpn[31:64,,,]
+ll_surv_data$om_pred <- om_sim$survey_preds$rpn[31:64,,,,1]
+ll_surv_data$om <- om_sim$survey_obs$rpn[31:64,,,,1]
 ll_surv_data$om.lci <- ll_surv_data$om -1.96*0.20*ll_surv_data$om
 ll_surv_data$om.uci <- ll_surv_data$om +1.96*0.20*ll_surv_data$om
 
@@ -331,8 +274,8 @@ p1 <- ggplot(ll_surv_data, aes(x=Year, y=obssrv3, group=1))+
 
 ll_surv_data <- data.frame(assessment$obssrv1) %>% rownames_to_column("Year")
 ll_surv_data$Year <- as.numeric(ll_surv_data$Year)
-ll_surv_data$om_pred <- om_sim$survey_preds$ll_rpw[31:64,,,]
-ll_surv_data$om <- om_sim$survey_obs$ll_rpw[31:64,,,]
+ll_surv_data$om_pred <- om_sim$survey_preds$rpw[31:64,,,,1]
+ll_surv_data$om <- om_sim$survey_obs$rpw[31:64,,,,1]
 ll_surv_data$om.lci <- ll_surv_data$om -1.96*0.10*ll_surv_data$om
 ll_surv_data$om.uci <- ll_surv_data$om +1.96*0.10*ll_surv_data$om
 
@@ -350,8 +293,8 @@ p2 <- ggplot(ll_surv_data, aes(x=Year, y=obssrv1, group=1))+
 
 tw_surv_data <- data.frame(assessment$obssrv7) %>% rownames_to_column("Year")
 tw_surv_data$Year <- as.numeric(tw_surv_data$Year)
-tw_surv_data$om_pred <- om_sim$survey_preds$tw_rpw[tw_surv_data$Year-1960+1,,,]
-tw_surv_data$om <- om_sim$survey_obs$tw_rpw[tw_surv_data$Year-1960+1,,,]
+tw_surv_data$om_pred <- om_sim$survey_preds$rpw[tw_surv_data$Year-1960+1,,,,2]
+tw_surv_data$om <- om_sim$survey_obs$rpw[tw_surv_data$Year-1960+1,,,,2]
 tw_surv_data$om.lci <- tw_surv_data$om -1.96*0.10*tw_surv_data$om
 tw_surv_data$om.uci <- tw_surv_data$om +1.96*0.10*tw_surv_data$om
 
