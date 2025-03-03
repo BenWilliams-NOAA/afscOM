@@ -142,6 +142,27 @@ calculate_npfmc_ref_points <- function(nages, mort, mat, waa, sel, ret, avg_rec)
 }
 
 
+#' Calculate F/B Reference Points via SPR Methods
+#' 
+#' Calculate fishing mortality and biological 
+#' fisheries reference points via traditional SPR
+#' methods.
+#'
+#' @param nages number of ages in age structure
+#' @param dem_params list of demographic parameters 
+#' subset to a single year
+#' @param joint_selret list of total selectivity and 
+#' retention across all fleets, weighted by relative
+#' fleet-specific fishing mortality (compute using
+#' `calculate_joint_selret`)
+#' @param spr_target desired SPR proportion
+#' @param rec recruitment used to calculate BRP
+#'
+#' @return list of Fref and Bref
+#' @export calculate_spr_refpoints
+#'
+#' @example
+#'
 calculate_spr_refpoints <- function(nages, dem_params, joint_selret, spr_target, rec){
     mort <- dem_params$mort[,,1,]
     mat <- dem_params$mat[,,1,]
@@ -150,6 +171,6 @@ calculate_spr_refpoints <- function(nages, dem_params, joint_selret, spr_target,
     ret <- joint_selret$ret[,,1,,drop=FALSE]
 
     Fref <- compute_fx(nages, mort, mat, waa, sel, ret, target_x = spr_target)
-    Bref <- compute_bx(nages, mort, mat, waa, sel, ret, F=spr_target, avg_rec=rec)
+    Bref <- compute_bx(nages, mort, mat, waa, sel, ret, F=Fref, avg_rec=rec)
     return(listN(Fref, Bref))
 }
