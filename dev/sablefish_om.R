@@ -235,6 +235,18 @@ p6 <- plot_atage(om_sim$caa) + labs(title="Catch-at-age")
 plot(1:nyears, catch, type="l")
 points(1:nyears, apply(om_sim$survey_obs$catch, 1, sum), col="red")
 
+f_props <- aperm(apply(apply(om_sim$faa, c(1, 5), \(x) max(x)), 1, \(y) y/sum(y)), c(2, 1))
+brps <- sapply(
+    1:nyears,
+    function(x){
+        dp_y <- subset_dem_params(dem_params, r=x, d=1, drop=FALSE)
+        selret <- calculate_joint_selret(dp_y$sel, dp_y$ret, prop_fs = f_props[x,])
+        rec <- unlist(slider::slide(om_sim$naa[,1,1,], mean, .before=Inf))
+        rps <- calculate_spr_refpoints(nages, dp_y, selret, spr_target=0.40, rec[x])
+        return(rps$Bref)
+    }
+)
+
 # ssb_comp <- data.frame(
 #     year=1960:2023,
 #     assess_ssb=assessment$t.series[, "spbiom"],
