@@ -73,11 +73,11 @@ apportion_catch <- function(catch_timeseries, apportionment, nyears, nfleets, nr
     # matrix if provided
     nyears <- ifelse(is.array(catch_timeseries), dim(catch_timeseries)[1], length(catch_timeseries))
 
-    if(length(dim(catch_timeseries)) == 5 && all(dim(catch_timeseries) == c(nyears, 1, 1, nregions, nfleets))){
+    if(length(dim(catch_timeseries)) == 3 && all(dim(catch_timeseries) == c(nyears, nfleets, nregions))){
         region_fleet_props <- vapply(
             1:nyears, 
             function(y){
-                catch_y <- catch_timeseries[y,,,,]
+                catch_y <- catch_timeseries[y,,]
                 catch_y/sum(catch_y)
             },
             FUN.VALUE = array(0, dim=c(nfleets, nregions))
@@ -93,7 +93,7 @@ apportion_catch <- function(catch_timeseries, apportionment, nyears, nfleets, nr
     }else if(is.vector(apportionment)){
         region_fleet_props <- array(apportionment, dim=c(nyears, nfleets, nregions))
     }else{
-        region_fleet_props <- apportionment[1:nyears,,]
+        region_fleet_props <- apportionment[1:nyears,,,drop=FALSE]
     }
 
     # if recruitment is entered as a vector of global recruitment and

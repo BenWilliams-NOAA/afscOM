@@ -40,7 +40,7 @@ simulate_catch <- function(removals, dem_params, naa, options){
         if(options$removals_input == "catch"){
             # Apportion catch-based removals based on provided
             # fleet apportionment scheme.
-            remove <- removals[,1,1,f]
+            remove <- removals[,f]
 
             # Solve for F that removes catch
             F_f <- find_F(
