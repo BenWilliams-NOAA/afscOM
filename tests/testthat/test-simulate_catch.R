@@ -27,7 +27,7 @@ test_that("single year catch simulation for one fleet", {
   naa[,,1,] <- assessment$natage.female["2023",]*1e6
   naa[,,2,] <- assessment$natage.male["2023",]*1e6
 
-  tac <- 7000
+  tac <- array(7000, c(64, 1, 1))
   catch <- apportion_catch(
       catch_timeseries = tac,
       apportionment = model_options$fleet_apportionment,
@@ -81,7 +81,7 @@ test_that("single year catch simulation for two fleets", {
   naa[,,1,] <- assessment$natage.female["2023",]*1e6
   naa[,,2,] <- assessment$natage.male["2023",]*1e6
 
-  tac <- 7000
+  tac <- array(7000, c(64, 1, 1))
   catch <- apportion_catch(
       catch_timeseries = tac,
       apportionment = model_options$fleet_apportionment,
@@ -126,7 +126,7 @@ test_that("single year catch simulation with two regions and one fleet", {
 
   caa_tmp         = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions, model_params$nfleets))
 
-  tac <- 100
+  tac <- array(100, c(25, 1, 1))
   suppressWarnings({
 
     catch <- apportion_catch(
@@ -154,9 +154,11 @@ test_that("single year catch simulation with two regions and one fleet", {
 
   })
 
-expect_equal(sum(caa_tmp), tac, tolerance=1e-4)
-expect_equal(apply(caa_tmp, c(1, 4), sum), matrix(c(50, 50), ncol=2), tolerance=1e-4)
+  total_catch <- apply(caa_tmp, 1, sum)
+  region_catch <- apply(caa_tmp, c(1, 3), sum)
 
+  expect_equal(total_catch, 100, tolerance=1e-4)
+  expect_equal(apply(caa_tmp, c(1, 4), sum), matrix(c(50, 50), ncol=2), tolerance=1e-4)
 
 })
 
