@@ -6,7 +6,7 @@
 #'
 #' @param init_naa numbers-at-age matrix in starting year ([1, nages, nsexes, nregions])
 #' @param removals_timeseries vector of removals (either catch of F) of length nyears
-#' @param recruitment vector of recruitmene of length nyears
+#' @param recruitment vector of recruitment of length nyears
 #' @param dem_params list of demographic parameter matrices
 #' @param nyears number of projection yeas
 #' @param model_option list of additional model options
@@ -74,10 +74,17 @@ project_multi <- function(init_naa, removals_timeseries, recruitment, dem_params
         # Subset the demographic parameters list to only the current year
         # and DO NOT drop lost dimensions.
         dp.y <- subset_dem_params(dem_params = dem_params, y, d=1, drop=FALSE)
+        if(y > dim(c)[1]){
+            hcr_out <- apply_harvest_control_rule(model_dimensions, hcr_func=model_options$hcr$hcr_func, hcr_pars=model_options$hcr$hcr_pars)
+            new_c <- array(NA, dim=c(dim(c)[1]+1, 1, 1, nregions, nfleets))
+            new_c[1:dim(c)[1],,,,] <- c
+            new_c[y,,,,] <- hcr_out
+            c <- new_c
+        }
+
         removals_input <- subset_matrix(c, y, d=1, drop=FALSE)
-        # removals_input <- subset_matrix(removals_timeseries, y, d=1, drop=FALSE)
-        # region_props <- subset_matrix(model_options$region_apportionment, y, d=1, drop=FALSE)
-        # fleet_props <- subset_matrix(model_options$fleet_apportionment, y, d=1, drop=FALSE)
+        
+        
 
         if(is.function(recruitment)){
             r_y <- do.call(recruitment, c(list(naa=naa[y,,,,drop=FALSE], dem_params=dp.y), model_options$recruitment_pars))
