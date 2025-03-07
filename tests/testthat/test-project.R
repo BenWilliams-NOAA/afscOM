@@ -44,7 +44,7 @@ test_that("1yr projection w/o movement", {
   removals_input <- subset_matrix(removals, 1, d=1, drop=FALSE)
 
   suppressWarnings({
-    out_vars <- project(
+    out_vars <- project_single(
         removals=removals_input, 
         dem_params=dem_params, 
         prev_naa=naa, 
@@ -91,7 +91,7 @@ test_that("1yr projection w F input", {
   f_timeseries <- array(c(0.006515313, 0.000000000), dim=c(1, 1, 1, 1, 2))
   f_timeseries <- subset_matrix(f_timeseries, y, d=1, drop=FALSE)
   suppressWarnings({
-    out_vars <- project(removals=f_timeseries, dem_params=dem_params, prev_naa=naa, recruitment=rec, options=model_options)
+    out_vars <- project_single(removals=f_timeseries, dem_params=dem_params, prev_naa=naa, recruitment=rec, options=model_options)
   })
 
   total_catch <- apply(out_vars$caa_tmp, 1, sum)

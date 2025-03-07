@@ -1,4 +1,4 @@
-test_that("project_multi reproduces sablefish timeseries", {
+test_that("project reproduces sablefish timeseries", {
     
     load(file.path(here::here(), "data/sablefish_assessment_data.rda"))
     assessment <- sablefish_assessment_data
@@ -30,7 +30,7 @@ test_that("project_multi reproduces sablefish timeseries", {
         recruit_apportionment_random = FALSE
     )
 
-    om_sim <- project_multi(
+    om_sim <- project(
         init_naa, 
         f_timeseries, 
         recruitment, 
@@ -46,7 +46,7 @@ test_that("project_multi reproduces sablefish timeseries", {
 
 })
 
-test_that("project_multi reproduces sablefish timeseries with catch timeseries", {
+test_that("project reproduces sablefish timeseries with catch timeseries", {
     
     load(file.path(here::here(), "data/sablefish_assessment_data.rda"))
     assessment <- sablefish_assessment_data
@@ -78,7 +78,7 @@ test_that("project_multi reproduces sablefish timeseries with catch timeseries",
         recruit_apportionment_random = FALSE
     )
     suppressWarnings({
-        om_sim <- project_multi(
+        om_sim <- project(
             init_naa, 
             catch_timeseries, 
             recruitment, 

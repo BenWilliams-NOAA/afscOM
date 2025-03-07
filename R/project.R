@@ -1,157 +1,148 @@
-#' Project population forward by 1 year
+#' Project Population Forward Multiple Years
 #'
-#' Given a TAC, the previous population age structure, demographic information
-#' (e.g. natural mortality, selectivity, retention, etc.), and recruitment,
-#' determine the numbers-at-age present in the population for the following year.
+#' A wrapper function around the base `project` function that handles
+#' projecting forward multiple years given a removals timeseries and a
+#' recruitment timeseries.
 #'
-#' @param removals population removals (either in catch or F units)
-#' @param fleet.props the proportion of the TAC allocated to each fleet
+#' @param init_naa numbers-at-age matrix in starting year ([1, nages, nsexes, nregions])
+#' @param removals_timeseries vector of removals (either catch of F) of length nyears
+#' @param recruitment vector of recruitment of length nyears
 #' @param dem_params list of demographic parameter matrices
-#' @param prev_naa the NAA in the previous timestep
-#' @param recruitment total recruiment to occurin this year
-#' @param option additional model options
-#'
-#' @return list of derived quantities included landed catch-at-age,
-#' discarded catch-at-age, total catch-at-age, F-at-age, and numbers-at-age.
+#' @param nyears number of projection yeas
+#' @param model_option list of additional model options
 #'
 #' @export project
 #'
-project <- function(removals, dem_params, prev_naa, recruitment, options=NA){
+project <- function(init_naa, removals_timeseries, recruitment, dem_params, nyears, model_options){
 
-    model_params <- get_model_dimensions(dem_params$sel)
-    model_params$nsurveys <- ifelse(options$simulate_observations, get_model_dimensions(dem_params$surv_sel)$nfleets, 0)
-    # if(!("region_apportionment" %in% names(options))){
-    #     options$region_apportionment <- rep(1/model_params$nregions, model_params$nregions)
-    # }
+    model_dimensions <- get_model_dimensions(dem_params$sel)
+    nyears <- model_dimensions$nyears
+    nages <- model_dimensions$nages
+    nsexes <- model_dimensions$nsexes
+    nregions <- model_dimensions$nregions
+    nfleets <- model_dimensions$nfleets
+    nsurveys <- ifelse(model_options$simulate_observations, get_model_dimensions(dem_params$surv_sel)$nfleets, 0)
 
-    # if(model_params$nregions < 2){
-    #     options$region_apportionment <- 1
-    # }
+    land_caa    = array(NA, dim=c(nyears, nages, nsexes, nregions, nfleets))
+    disc_caa    = array(NA, dim=c(nyears, nages, nsexes, nregions, nfleets))
+    caa         = array(NA, dim=c(nyears, nages, nsexes, nregions, nfleets))
+    faa         = array(NA, dim=c(nyears, nages, nsexes, nregions, nfleets))
+    naa         = array(NA, dim=c(nyears+1, nages, nsexes, nregions))
+    naa[1,,,] = init_naa
 
-    # TODO: make this into a list and add function to update the whole list at once
-    land_caa_tmp    = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions, model_params$nfleets))
-    disc_caa_tmp    = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions, model_params$nfleets))
-    caa_tmp         = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions, model_params$nfleets))
-    faa_tmp         = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions, model_params$nfleets))
-    F_f_tmp         = array(NA, dim=c(1, 1, 1,  model_params$nregions, model_params$nfleets))
-    zaa_tmp         = array(0,  dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions))
-    naa_tmp         = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions))
+    f           = array(NA, dim=c(nyears, 1, 1, nregions, nfleets))
+    recruits    = array(NA, dim=c(nyears+1, 1, 1, nregions))
 
     survey_preds <- list(
-        rpns = array(NA, dim=c(1, 1, 1, model_params$nregions, model_params$nsurveys)),
-        rpws = array(NA, dim=c(1, 1, 1, model_params$nregions, model_params$nsurveys)),
-        acs  = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions, model_params$nsurveys+model_params$nfleets))
+        rpns = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
+        rpws = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
+        acs  = array(NA, dim=c(nyears, nages, nsexes, nregions, nsurveys+nfleets))
     )
 
     survey_obs <- list(
-        catch = array(NA, dim=c(1, 1, 1, model_params$nregions, model_params$nfleets)),
-        rpns = array(NA, dim=c(1, 1, 1, model_params$nregions, model_params$nsurveys)),
-        rpws = array(NA, dim=c(1, 1, 1, model_params$nregions, model_params$nsurveys)),
-        acs  = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions, model_params$nsurveys+model_params$nfleets))
+        catch = array(NA, dim=c(nyears, 1, 1, nregions, nfleets)), 
+        rpns = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
+        rpws = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
+        acs  = array(NA, dim=c(nyears, nages, nsexes, nregions, nsurveys+nfleets))
     )
 
-    # Do recruitment here because there isn't regional recruitment
-    # NOTE: need to think real carefully about how to do this in a modular way
-    rec <- array(NA, dim=c(1, 1, model_params$nsexes, model_params$nregions))
-    global.rec <- as.vector(recruitment)
-    if(model_params$nregions > 1){
-        rec[1,1,,] <- sweep(dem_params$sexrat[1,1,,], 2, global.rec, FUN="*")
+    # full_recruitment <- array(NA, dim=c(nyears, 1, 1, nregions))
+
+    # r <- apportion_recruitment(
+    #     rec_timeseries = recruitment, 
+    #     apportionment = model_options$recruit_apportionment,
+    #     nyears = nyears,
+    #     nregions = nregions
+    # )
+
+    if(model_options$removals_input == "catch"){
+        c <- apportion_catch(
+            catch_timeseries = removals_timeseries,
+            apportionment = model_options$fleet_apportionment,
+            nyears = nyears,
+            nfleets = nfleets,
+            nregions = nregions
+        )$full_catch
     }else{
-        rec[1,1,,] <- global.rec*dem_params$sexrat[1,1,,]
+        c <- removals_timeseries
     }
 
-    for(r in 1:model_params$nregions){
+    set.seed(model_options$seed)
+    for(y in 1:nyears){
 
-        if(options$removals_input == "catch"){
-            # Apportion catch-based removals based on provided
-            # regional apportionment scheme.
-            remove <- subset_matrix(removals, r=r, d=3, drop=TRUE)
+        # Subset the demographic parameters list to only the current year
+        # and DO NOT drop lost dimensions.
+        dp.y <- subset_dem_params(dem_params = dem_params, y, d=1, drop=FALSE)
+        
+        # Apply harvest control rule if insufficient catch/F timeseries is
+        # provided as input...
+        #
+        # TODO: Handle case where no HCR supplied and insufficient catch/F timeseries
+        if(y > dim(c)[1] && !is.null(model_options$hcr)){
+            hcr_out <- apply_harvest_control_rule(model_dimensions, hcr_func=model_options$hcr$hcr_func, hcr_pars=model_options$hcr$hcr_pars)
+            new_c <- array(NA, dim=c(dim(c)[1]+1, 1, 1, nregions, nfleets))
+            new_c[1:dim(c)[1],,,,] <- c
+            new_c[y,,,,] <- hcr_out
+            c <- new_c
+        }
+        removals_input <- subset_matrix(c, y, d=1, drop=FALSE)
+        
+        
+
+        if(is.function(recruitment)){
+            r_y <- do.call(recruitment, c(list(naa=naa[y,,,,drop=FALSE], dem_params=dp.y), model_options$recruitment_pars))
         }else{
-            # Removals were input as F, subset to correct dimensions
-            remove <- subset_matrix(removals, r=r, d=4, drop=FALSE)
+            rs <- array(recruitment, dim=c(nyears+1, 1))
+            r_y <- subset_matrix(rs, y+1, d=1, drop=FALSE)
         }
+        r_y <- as.vector(r_y)
 
-        dp.r <- subset_dem_params(dem_params=dem_params, r=r, d=4, drop=FALSE)
-        prev_naa.r <- subset_matrix(prev_naa, r=r, d=4, drop=FALSE)
-
-        # if(length(dim(fleet_props)) > 2){
-        #     fleet_props.r <- subset_matrix(fleet_props, r, d=3, drop=TRUE)
-        # }else{
-        #     fleet_props.r <- fleet_props
-        # }
-
-        catch_vars <- simulate_catch(
-            removals=remove,
-            dem_params=dp.r,
-            naa=prev_naa.r,
-            options=options
+        r <- apportion_recruitment_single(
+            recruits = as.vector(r_y),
+            apportionment = subset_matrix(model_options$recruit_apportionment, y+1, d=1, drop=FALSE),
+            nregions = nregions
         )
 
-        land_caa_tmp[,,,r,] <- catch_vars$land_caa_tmp
-        disc_caa_tmp[,,,r,] <- catch_vars$disc_caa_tmp
-        caa_tmp[,,,r,] <- catch_vars$caa_tmp
-        faa_tmp[,,,r,] <- catch_vars$faa_tmp
-        F_f_tmp[,,,r,] <- catch_vars$F_f
+        rec <- get_annual_recruitment(
+            recruitment = r$full_recruitment,
+            apportionment = r$rec_props,
+            apportion_random = model_options$recruit_apportionment_random,
+            apportionment_pars = model_options$recruit_apportionment_pars,
+            nregions = nregions,
+            list(naa=naa[y,,,,drop=FALSE], dem_params=dp.y)
+        )
 
+        out_vars <- project_single(
+            removals = removals_input,
+            dem_params=dp.y,
+            prev_naa=naa[y,,,, drop = FALSE],
+            recruitment=rec,
+            options=model_options
+        )
 
-        tot_faa <- array(apply(catch_vars$faa_tmp, c(2, 3), sum), dim=c(1, model_params$nages, model_params$nsexes, 1))
-        zaa_tmp[,,,r] <- tot_faa+dp.r$mort
+        # update state
+        land_caa[y,,,,] <- out_vars$land_caa_tmp
+        disc_caa[y,,,,] <- out_vars$disc_caa_tmp
+        caa[y,,,,] <- out_vars$caa_tmp
+        faa[y,,,,] <- out_vars$faa_tmp
+        naa[y+1,,,] <- out_vars$naa_tmp
 
-        rec.r <- subset_matrix(rec, r=r, d=4, drop=FALSE)
-        pop_vars <- simulate_population(
-                        prev_naa=prev_naa.r, 
-                        faa=catch_vars$faa_tmp, 
-                        recruitment=rec.r, 
-                        dem_params=dp.r, 
-                        options=options
-                    )
-        naa_tmp[,,,r] <- pop_vars$naa
+        f[y,,,,] <- out_vars$F_f_tmp
+        recruits[y+1,,,] <- rec
 
-        if(!("simulate_observations" %in% names(options)) || options$simulate_observations){
-            # concatenate fishery and survey selectivity matrices for convenience later
-            big_selex <- abind::abind(dp.r$sel, dp.r$surv_sel, along=5) 
-            names(dim(big_selex)) <- names(dim(dp.r$sel))
-            obs <- simulate_observations(
-                naa = prev_naa.r,
-                waa = dp.r$waa,
-                selex = big_selex,
-                faa = faa_tmp[,,,r,,drop=FALSE],
-                zaa = zaa_tmp[,,,r,drop=FALSE],
-                caa = land_caa_tmp[,,,r,,drop=FALSE],
-                obs_pars = options$obs_pars
-            )
-            survey_preds$rpns[,,,r,] <- obs$preds$rpn_preds[,,,as.logical(options$obs_pars$is_survey)]
-            survey_preds$rpws[,,,r,] <- obs$preds$rpw_preds[,,,as.logical(options$obs_pars$is_survey)]
-            survey_preds$acs[,,,r,]  <- obs$preds$ac_preds
+        if(model_options$simulate_observations){
+            survey_preds$rpns[y,,,,] <- out_vars$survey_preds$rpns
+            survey_preds$rpws[y,,,,] <- out_vars$survey_preds$rpws
+            survey_preds$acs[y,,,,]  <- out_vars$survey_preds$acs
 
-            survey_obs$catch[,,,r,] <- obs$obs$catch_obs[,,,!as.logical(options$obs_pars$is_survey)]
-            survey_obs$rpns[,,,r,] <- obs$obs$rpn_obs[,,,as.logical(options$obs_pars$is_survey)]
-            survey_obs$rpws[,,,r,] <- obs$obs$rpw_obs[,,,as.logical(options$obs_pars$is_survey)]
-            survey_obs$acs[,,,r,]  <- obs$obs$ac_obs
+            survey_obs$catch[y,,,,] <- out_vars$survey_obs$catch
+            survey_obs$rpns[y,,,,] <- out_vars$survey_obs$rpns
+            survey_obs$rpws[y,,,,] <- out_vars$survey_obs$rpws
+            survey_obs$acs[y,,,,]  <- out_vars$survey_obs$acs
         }
 
     }
 
-     # Handle movement matrix
-    if(model_params$nregions > 1 & "movement" %in% names(dem_params)){
-        if(!options$do_recruits_move){
-            dem_params$movement[,,1,] <- diag(nregions)
-        }
-        v <- vapply(
-            1:nages, 
-            # Apply movement to the ages individualy
-            function(a) {
-                sapply(
-                    1:model_params$nsexes,
-                    # Apply movement to the sexes individually
-                    function(s) naa_tmp[1,a,s,] %*% dem_params$movement[,,a,s]
-                )
-            } , 
-            FUN.VALUE = array(0, dim=c(model_params$nregions, model_params$nsexes))
-        )
-        moved_naa <- array(aperm(v, perm=c(3, 2, 1)), dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions))
-        naa_tmp <- moved_naa
-    }
+    return(listN(land_caa, disc_caa, caa, faa, f, naa, recruits, survey_preds, survey_obs))
 
-    return(listN(land_caa_tmp, disc_caa_tmp, caa_tmp, F_f_tmp, faa_tmp, naa_tmp, survey_preds, survey_obs))
 }

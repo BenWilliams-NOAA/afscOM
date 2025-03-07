@@ -199,7 +199,7 @@ model_options$obs_pars <- obs_pars
 #' have been provided to help with correctly subsetting the
 #' demographic matrices to ensure input data is of the correct
 #' dimensionality.
-om_sim <- project_multi(
+om_sim <- project(
             init_naa = init_naa, 
             removals_timeseries = f_timeseries, 
             recruitment = recruitment, 
