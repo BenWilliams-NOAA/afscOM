@@ -204,3 +204,59 @@ calculate_joint_selret <- function(sel, ret, prop_fs=c(0.50, 0.50)){
 
     return(list(sel=joint_sel, ret=joint_ret))
 }
+
+generate_output_matrices <- function(nyears, nages, nsexes, nregions, nfleets, nsurveys){
+    land_caa    = array(NA, dim=c(nyears, nages, nsexes, nregions, nfleets))
+    disc_caa    = array(NA, dim=c(nyears, nages, nsexes, nregions, nfleets))
+    caa         = array(NA, dim=c(nyears, nages, nsexes, nregions, nfleets))
+    faa         = array(NA, dim=c(nyears, nages, nsexes, nregions, nfleets))
+    naa         = array(NA, dim=c(nyears+1, nages, nsexes, nregions))
+    # naa[1,,,] = init_naa
+
+    f           = array(NA, dim=c(nyears, 1, 1, nregions, nfleets))
+    recruits    = array(NA, dim=c(nyears+1, 1, 1, nregions))
+
+    survey_preds <- list(
+        rpns = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
+        rpws = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
+        acs  = array(NA, dim=c(nyears, nages, nsexes, nregions, nsurveys+nfleets))
+    )
+
+    survey_obs <- list(
+        catch = array(NA, dim=c(nyears, 1, 1, nregions, nfleets)), 
+        rpns = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
+        rpws = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
+        acs  = array(NA, dim=c(nyears, nages, nsexes, nregions, nsurveys+nfleets))
+    )
+
+    outputs <- listN(land_caa, disc_caa, caa, faa, naa, f, recruits, survey_preds, survey_obs)
+    return(outputs)
+    
+}
+
+update_output_matrices <- function(output_matrices, y, input, update_obs=FALSE){
+
+    # update state
+    output_matrices$land_caa[y,,,,] <- input$land_caa_tmp
+    output_matrices$disc_caa[y,,,,] <- input$disc_caa_tmp
+    output_matrices$caa[y,,,,] <- input$caa_tmp
+    output_matrices$faa[y,,,,] <- input$faa_tmp
+    output_matrices$naa[y+1,,,] <- input$naa_tmp
+    # output_matrices$recruits[y+1,,1,] <- apply(input$naa_tmp[,1,,,drop=FALSE], 3, sum)
+
+    output_matrices$f[y,,,,] <- input$F_f_tmp
+    # output_matrices$recruits[y+1,,,] <- rec
+
+    if(update_obs){
+        output_matrices$survey_preds$rpns[y,,,,] <- input$survey_preds$rpns
+        output_matrices$survey_preds$rpws[y,,,,] <- input$survey_preds$rpws
+        output_matrices$survey_preds$acs[y,,,,]  <- input$survey_preds$acs
+
+        output_matrices$survey_obs$catch[y,,,,] <- input$survey_obs$catch
+        output_matrices$survey_obs$rpns[y,,,,] <- input$survey_obs$rpns
+        output_matrices$survey_obs$rpws[y,,,,] <- input$survey_obs$rpws
+        output_matrices$survey_obs$acs[y,,,,]  <- input$survey_obs$acs
+    }
+    
+    return(output_matrices)
+}
