@@ -142,11 +142,21 @@ recruitment <- c(recruitment, recruitment[64])
 #' data you are providing as removals input.
 
 TACs <- (assessment$t.series[,"Catch_HAL"]+assessment$t.series[,"Catch_TWL"])
+catch_timeseries <- assessment$t.series[,c("Catch_HAL", "Catch_TWL")] %>% as.matrix
+catch_timeseries <- array(catch_timeseries, dim=c(nyears, 1, 1, 1, 2),
+                dimnames = list("time"=1:nyears,
+                                age="all",
+                                sex="all",
+                                "region"="alaska",
+                                "fleet"=c("Fixed", "Trawl")))
+catch_timeseries <- apply(catch_timeseries, 1, sum)
+fixed_perc <- assessment$t.series[,"Catch_HAL"]/(assessment$t.series[,"Catch_HAL"]+assessment$t.series[,"Catch_TWL"])
 # fixed_fleet_prop <- assessment$t.series[,"Catch_HAL"]/(assessment$t.series[,"Catch_HAL"]+assessment$t.series[,"Catch_TWL"])
 # trawl_fleet_prop <- 1-fixed_fleet_prop
 
 model_options <- setup_model_options(model_dimensions = model_params)
 model_options$random_apportion_recruits <- FALSE
+model_options$fleet_apportionment <- array(c(fixed_perc, 1-fixed_perc), dim=c(nyears, nfleets, nregions))
 # model_options <- list(
 #     region_apportionment = matrix(1, nrow=nyears, ncol=nregions),
 #     fleet_apportionment = matrix(rep(c(fixed_fleet_prop, trawl_fleet_prop), nyears), ncol=nfleets),
@@ -162,7 +172,16 @@ f_timeseries <- array(f_timeseries, dim=c(nyears, 1, 1, 1, 2),
                                 "region"="alaska",
                                 "fleet"=c("Fixed", "Trawl")))
 
-model_options$removals_input = "F"
+### HCR
+model_options$hcr <- list(
+    hcr_func = constant_catch_hcr,
+    hcr_pars = list(
+        c=0
+    )
+)
+# catch_timeseries = array(rep(10), dim=c(10, 1, 1, 1, 2))
+
+model_options$removals_input = "catch"
 
 #' 6. Define parameters for observation processes
 #' Observation process parameters include catchability coefficients
@@ -201,7 +220,7 @@ model_options$obs_pars <- obs_pars
 #' dimensionality.
 om_sim <- project(
             init_naa = init_naa, 
-            removals_timeseries = f_timeseries, 
+            removals_timeseries = TACs, 
             recruitment = recruitment, 
             dem_params = dem_params, 
             nyears = nyears, 

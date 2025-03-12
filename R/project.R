@@ -79,10 +79,10 @@ project <- function(init_naa, removals_timeseries, recruitment, dem_params, nyea
         #
         # TODO: Handle case where no HCR supplied and insufficient catch/F timeseries
         if(y > dim(c)[1] && !is.null(model_options$hcr)){
-            hcr_out <- apply_harvest_control_rule(model_dimensions, hcr_func=model_options$hcr$hcr_func, hcr_pars=model_options$hcr$hcr_pars)
-            new_c <- array(NA, dim=c(dim(c)[1]+1, 1, 1, nregions, nfleets))
-            new_c[1:dim(c)[1],,,,] <- c
-            new_c[y,,,,] <- hcr_out
+            hcr_out <- apply_harvest_control_rule(model_dimensions, hcr_func=model_options$hcr$hcr_func, hcr_pars=c(model_options$hcr$hcr_pars, list(naa=naa[y,,,,drop=FALSE], dem_params=dp.y)))
+            new_c <- array(NA, dim=c(dim(c)[1]+1, nfleets, nregions))
+            new_c[1:dim(c)[1],,] <- c
+            new_c[y,,] <- hcr_out
             c <- new_c
         }
         removals_input <- subset_matrix(c, y, d=1, drop=FALSE)
