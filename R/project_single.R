@@ -62,14 +62,7 @@ project_single <- function(removals, dem_params, prev_naa, recruitment, options=
 
     for(r in 1:model_params$nregions){
 
-        if(options$removals_input == "catch"){
-            # Apportion catch-based removals based on provided
-            # regional apportionment scheme.
-            remove <- subset_matrix(removals, r=r, d=3, drop=FALSE)
-        }else{
-            # Removals were input as F, subset to correct dimensions
-            remove <- subset_matrix(removals, r=r, d=4, drop=FALSE)
-        }
+        remove <- subset_matrix(removals, r=r, d=3, drop=FALSE)
 
         dp.r <- subset_dem_params(dem_params=dem_params, r=r, d=4, drop=FALSE)
         prev_naa.r <- subset_matrix(prev_naa, r=r, d=4, drop=FALSE)

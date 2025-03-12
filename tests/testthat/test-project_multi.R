@@ -16,12 +16,7 @@ test_that("project reproduces sablefish timeseries", {
     recruitment <- as.matrix(c(recruitment, recruitment[64]))
 
     f_timeseries <- assessment$t.series[,c("F_HAL", "F_TWL")] %>% as.matrix
-    f_timeseries <- array(f_timeseries, dim=c(dims$nyears, 1, 1, 1, 2), 
-                    dimnames = list("time"=1:dims$nyears, 
-                                    age="all",  
-                                    sex="all", 
-                                    "region"="alaska", 
-                                    "fleet"=c("Fixed", "Trawl")))
+    f_timeseries <- array(f_timeseries, dim=c(dims$nyears, 2, 1))
 
     model_options <- list(
         removals_input = "F",

@@ -56,7 +56,7 @@ simulate_catch <- function(removals, dem_params, naa, options){
             )
         }else{
             # Removals were input as F
-          F_f <- removals[,,,,f]
+          F_f <- removals[,f,]
         }
 
         # ret_faa <- retained_F(F_f, dem_params$sel[,,,,f], dem_params$ret[,,,,f])

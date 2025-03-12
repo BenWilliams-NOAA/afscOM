@@ -55,17 +55,13 @@ project <- function(init_naa, removals_timeseries, recruitment, dem_params, nyea
     #     nregions = nregions
     # )
 
-    if(model_options$removals_input == "catch"){
-        c <- apportion_catch(
-            catch_timeseries = removals_timeseries,
-            apportionment = model_options$fleet_apportionment,
-            nyears = nyears,
-            nfleets = nfleets,
-            nregions = nregions
-        )$full_catch
-    }else{
-        c <- removals_timeseries
-    }
+    c <- apportion_catch(
+        catch_timeseries = removals_timeseries,
+        apportionment = model_options$fleet_apportionment,
+        nyears = nyears,
+        nfleets = nfleets,
+        nregions = nregions
+    )$full_catch
 
     set.seed(model_options$seed)
     for(y in 1:nyears){

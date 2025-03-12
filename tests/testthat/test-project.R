@@ -88,7 +88,7 @@ test_that("1yr projection w F input", {
   rec[1,1,,1] <- 2*assessment$natage.female["1960",1]
 
   tac <- 3.114
-  f_timeseries <- array(c(0.006515313, 0.000000000), dim=c(1, 1, 1, 1, 2))
+  f_timeseries <- array(c(0.006515313, 0.000000000), dim=c(1, 2, 1))
   f_timeseries <- subset_matrix(f_timeseries, y, d=1, drop=FALSE)
   suppressWarnings({
     out_vars <- project_single(removals=f_timeseries, dem_params=dem_params, prev_naa=naa, recruitment=rec, options=model_options)
