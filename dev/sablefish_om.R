@@ -143,45 +143,28 @@ recruitment <- c(recruitment, recruitment[64])
 
 TACs <- (assessment$t.series[,"Catch_HAL"]+assessment$t.series[,"Catch_TWL"])
 catch_timeseries <- assessment$t.series[,c("Catch_HAL", "Catch_TWL")] %>% as.matrix
-catch_timeseries <- array(catch_timeseries, dim=c(nyears, 1, 1, 1, 2),
-                dimnames = list("time"=1:nyears,
-                                age="all",
-                                sex="all",
-                                "region"="alaska",
-                                "fleet"=c("Fixed", "Trawl")))
+catch_timeseries <- array(catch_timeseries, dim=c(nyears, nfleets, nregions),
+                            dimnames = list("time"=1:nyears,
+                                            "fleet"=c("Fixed", "Trawl"),
+                                            "region"="alaska"
+                                        )
+                        )
 catch_timeseries <- apply(catch_timeseries, 1, sum)
-fixed_perc <- assessment$t.series[,"Catch_HAL"]/(assessment$t.series[,"Catch_HAL"]+assessment$t.series[,"Catch_TWL"])
-# fixed_fleet_prop <- assessment$t.series[,"Catch_HAL"]/(assessment$t.series[,"Catch_HAL"]+assessment$t.series[,"Catch_TWL"])
-# trawl_fleet_prop <- 1-fixed_fleet_prop
+fixed_alloc <- assessment$t.series[,"Catch_HAL"]/(assessment$t.series[,"Catch_HAL"]+assessment$t.series[,"Catch_TWL"])
 
 model_options <- setup_model_options(model_dimensions = model_params)
 model_options$random_apportion_recruits <- FALSE
-model_options$fleet_apportionment <- array(c(fixed_perc, 1-fixed_perc), dim=c(nyears, nfleets, nregions))
-# model_options <- list(
-#     region_apportionment = matrix(1, nrow=nyears, ncol=nregions),
-#     fleet_apportionment = matrix(rep(c(fixed_fleet_prop, trawl_fleet_prop), nyears), ncol=nfleets),
-#     removals_input = "catch"
-# )
-
+# catch allocations by fleet
+model_options$fleet_apportionment <- array(c(fixed_alloc, 1-fixed_alloc), dim=c(nyears, nfleets, nregions))
 
 f_timeseries <- assessment$t.series[,c("F_HAL", "F_TWL")] %>% as.matrix
-f_timeseries <- array(f_timeseries, dim=c(nyears, 1, 1, 1, 2),
+f_timeseries <- array(f_timeseries, dim=c(nyears, nfleets, nregions),
                 dimnames = list("time"=1:nyears,
-                                age="all",
-                                sex="all",
-                                "region"="alaska",
-                                "fleet"=c("Fixed", "Trawl")))
+                                "fleet"=c("Fixed", "Trawl"),
+                                "region"="alaska"
+                                ))
 
-### HCR
-model_options$hcr <- list(
-    hcr_func = constant_catch_hcr,
-    hcr_pars = list(
-        c=0
-    )
-)
-# catch_timeseries = array(rep(10), dim=c(10, 1, 1, 1, 2))
-
-model_options$removals_input = "catch"
+model_options$removals_input = "F"
 
 #' 6. Define parameters for observation processes
 #' Observation process parameters include catchability coefficients
@@ -220,7 +203,7 @@ model_options$obs_pars <- obs_pars
 #' dimensionality.
 om_sim <- project(
             init_naa = init_naa, 
-            removals_timeseries = TACs, 
+            removals_timeseries = catch_timeseries, 
             recruitment = recruitment, 
             dem_params = dem_params, 
             nyears = nyears, 
