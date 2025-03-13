@@ -1,15 +1,17 @@
-constant_catch_hcr <- function(c){
+constant_catch_hcr <- function(c, ...){
     return(c)
 }
 
-constant_f_hcr <- function(f){
+constant_f_hcr <- function(f, ...){
     return(f)
 }
 
-threshold_f_hcr <- function(x, fmax, fmin, urp, lrp){
+threshold_f_hcr <- function(fmax, fmin, urp, lrp, naa, dem_params){
+    ssb <- as.numeric(compute_ssb(naa, dem_params))
+    x <- ssb
     if(x < lrp){
         return(fmin)
-    }else if(x > lrp){
+    }else if(x >= urp){
         return(fmax)
     }else{
         return(fmax*(x-lrp)/(urp-lrp)+fmin)
@@ -17,12 +19,10 @@ threshold_f_hcr <- function(x, fmax, fmin, urp, lrp){
 }
 
 
-hcr_func <- constant_catch_hcr
-hcr_pars <- list(c=15)
 apply_harvest_control_rule <- function(model_dimensions, hcr_func, hcr_pars){
-    expected_dim <- c(1, 1, 1, model_dimensions$nregions, model_dimensions$nfleets)
+    expected_dim <- c(1, model_dimensions$nfleets, model_dimensions$nregions)
     hcr_out <- do.call(hcr_func, hcr_pars)
-    if(!is.null(dim(hcr_out)) && dim(hcr_out) == expected_dim){
+    if(!is.null(dim(hcr_out)) && all(dim(hcr_out) == expected_dim)){
         return(hcr_out)
     }else{
         # If have to coerce into proper output format, breakup catch/F so thats its
