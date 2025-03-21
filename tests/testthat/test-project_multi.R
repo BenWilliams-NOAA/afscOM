@@ -60,8 +60,8 @@ test_that("project reproduces sablefish timeseries with catch timeseries", {
 
     TACs <- (assessment$t.series[,"Catch_HAL"]+assessment$t.series[,"Catch_TWL"])
     catch_timeseries <- assessment$t.series[,c("Catch_HAL", "Catch_TWL")] %>% as.matrix
-    catch_timeseries <- array(catch_timeseries, dim=c(nyears, nfleets, nregions),
-                    dimnames = list("time"=1:nyears,
+    catch_timeseries <- array(catch_timeseries, dim=c(dims$nyears, dims$nfleets, dims$nregions),
+                    dimnames = list("time"=1:dims$nyears,
                                     "fleet"=c("Fixed", "Trawl"),
                                     "region"="alaska")
     )
@@ -78,7 +78,7 @@ test_that("project reproduces sablefish timeseries with catch timeseries", {
             catch_timeseries, 
             recruitment, 
             dem_params, 
-            nyears, 
+            dims$nyears, 
             model_options
         )
     })
