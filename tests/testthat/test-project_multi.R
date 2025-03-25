@@ -13,7 +13,7 @@ test_that("project reproduces sablefish timeseries", {
     init_naa[,,2,] <- assessment$natage.male["1960",]
 
     recruitment <- assessment$natage.female[,1]*2
-    recruitment <- as.matrix(c(recruitment, recruitment[64]))
+    recruitment <- as.matrix(c(recruitment))
 
     f_timeseries <- assessment$t.series[,c("F_HAL", "F_TWL")] %>% as.matrix
     f_timeseries <- array(f_timeseries, dim=c(dims$nyears, 2, 1))
@@ -56,7 +56,7 @@ test_that("project reproduces sablefish timeseries with catch timeseries", {
     init_naa[,,2,] <- assessment$natage.male["1960",]
 
     recruitment <- assessment$natage.female[,1]*2
-    recruitment <- as.matrix(c(recruitment, recruitment[64]))
+    recruitment <- as.matrix(c(recruitment))
 
     TACs <- (assessment$t.series[,"Catch_HAL"]+assessment$t.series[,"Catch_TWL"])
     catch_timeseries <- assessment$t.series[,c("Catch_HAL", "Catch_TWL")] %>% as.matrix

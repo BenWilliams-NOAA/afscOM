@@ -34,7 +34,7 @@ apportion_recruitment_single <- function(recruits, apportionment, nregions){
     # if recruitment is entered as a vector of global recruitment and
     # regional recruitment apportionment
     full_recruitment <- recruits
-    if(!is.function(rec_props)){
+    if(!is.function(rec_props) && !(length(full_recruitment) > 1)){
         full_recruitment <- recruits*rec_props
     }
     full_recruitment <- array(full_recruitment, dim=c(1, nregions))

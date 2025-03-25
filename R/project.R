@@ -66,7 +66,10 @@ project <- function(init_naa, removals_timeseries, recruitment, dem_params, nyea
         if(is.function(recruitment)){
             r_y <- do.call(recruitment, c(list(naa=outputs$naa[y,,,,drop=FALSE], dem_params=dp.y), model_options$recruitment_pars))
         }else{
-            rs <- array(recruitment, dim=c(nyears+1, 1))
+            rs <- array(0, dim=c(nyears+1, nregions))
+            rs[1:nyears, 1:nregions] <- recruitment
+            # rs <- array(recruitment, dim=c(nyears, nregions))
+            # rs[y+1,] <- rep(0, nregions)
             r_y <- subset_matrix(rs, y+1, d=1, drop=FALSE)
         }
         r_y <- as.vector(r_y)
