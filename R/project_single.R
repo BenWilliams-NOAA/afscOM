@@ -128,7 +128,7 @@ project_single <- function(removals, dem_params, prev_naa, recruitment, options=
      # Handle movement matrix
     if(model_params$nregions > 1 & "movement" %in% names(dem_params)){
         if(!options$do_recruits_move){
-            dem_params$movement[,,1,] <- diag(nregions)
+            dem_params$movement[,,1,1,] <- diag(nregions)
         }
         v <- vapply(
             1:nages, 
@@ -137,7 +137,7 @@ project_single <- function(removals, dem_params, prev_naa, recruitment, options=
                 sapply(
                     1:model_params$nsexes,
                     # Apply movement to the sexes individually
-                    function(s) naa_tmp[1,a,s,] %*% dem_params$movement[,,a,s]
+                    function(s) naa_tmp[1,a,s,] %*% dem_params$movement[,,1,a,s]
                 )
             } , 
             FUN.VALUE = array(0, dim=c(model_params$nregions, model_params$nsexes))
