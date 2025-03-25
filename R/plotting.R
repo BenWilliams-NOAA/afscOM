@@ -202,7 +202,7 @@ plot_selret <- function(selret, is_selectivity=TRUE){
 }
 
 
-plot_ssb <- function(ssb){
+plot_ssb <- function(ssb, compare_ts=NULL){
 
     nregions <- ncol(ssb)
 
@@ -210,6 +210,15 @@ plot_ssb <- function(ssb){
         rownames_to_column("time") %>%
         mutate(time=as.numeric(time)) %>%
         pivot_longer(c(2:(nregions+1)), names_to="region", values_to="ssb")
+
+    if(!is.null(compare_ts)){
+        ssb_df <- ssb_df %>% left_join(
+            compare_ts %>% as_tibble() %>%
+                rownames_to_column("time") %>%
+                mutate(time=as.numeric(time)) %>%
+                pivot_longer(c(2:(nregions+1)), names_to="region", values_to="comp")
+        )
+    }
 
     xmax <- round(ssb_df %>% pull(time) %>% max, -1)
     ymax <- round(1.2*ssb_df %>% pull(ssb) %>% max, -1)
@@ -224,6 +233,10 @@ plot_ssb <- function(ssb){
             panel.grid.minor = element_blank()
         )
 
+    if(!is.null(compare_ts)){
+        plot <- plot + geom_line(aes(y=comp), color="red") 
+    }
+
     if(nregions > 1){
         plot <- plot + facet_wrap(~region)
     }
@@ -232,7 +245,7 @@ plot_ssb <- function(ssb){
 
  }
 
- plot_bio <- function(bio){
+ plot_bio <- function(bio, compare_ts=NULL){
 
     nregions <- ncol(bio)
 
@@ -240,6 +253,15 @@ plot_ssb <- function(ssb){
         rownames_to_column("time") %>%
         mutate(time=as.numeric(time)) %>%
         pivot_longer(c(2:(nregions+1)), names_to="region", values_to="bio")
+
+    if(!is.null(compare_ts)){
+        bio_df <- bio_df %>% left_join(
+            compare_ts %>% as_tibble() %>%
+                rownames_to_column("time") %>%
+                mutate(time=as.numeric(time)) %>%
+                pivot_longer(c(2:(nregions+1)), names_to="region", values_to="comp")
+        )
+    }
 
     xmax <- round(bio_df %>% pull(time) %>% max, -1)
     ymax <- round(1.2*bio_df %>% pull(bio) %>% max, -1)
@@ -255,6 +277,10 @@ plot_ssb <- function(ssb){
             panel.grid.minor = element_blank()
         )
 
+    if(!is.null(compare_ts)){
+        plot <- plot + geom_line(aes(y=comp), color="red") 
+    }
+
     if(nregions > 1){
         plot <- plot + facet_wrap(~region)
     }
@@ -263,7 +289,7 @@ plot_ssb <- function(ssb){
 
  }
 
- plot_catch <- function(catch){
+ plot_catch <- function(catch, compare_ts=NULL){
 
     nregions <- ncol(catch)
 
@@ -271,6 +297,15 @@ plot_ssb <- function(ssb){
         rownames_to_column("time") %>%
         mutate(time=as.numeric(time)) %>%
         pivot_longer(c(2:(nregions+1)), names_to="region", values_to="catch")
+
+    if(!is.null(compare_ts)){
+        catch_df <- catch_df %>% left_join(
+            compare_ts %>% as_tibble() %>%
+                rownames_to_column("time") %>%
+                mutate(time=as.numeric(time)) %>%
+                pivot_longer(c(2:(nregions+1)), names_to="region", values_to="comp")
+        )
+    }
 
     xmax <- round(catch_df %>% pull(time) %>% max, -1)
     ymax <- round(1.2*catch_df %>% pull(catch) %>% max, -1)
@@ -286,6 +321,10 @@ plot_ssb <- function(ssb){
             panel.grid.minor = element_blank()
         )
 
+    if(!is.null(compare_ts)){
+        plot <- plot + geom_line(aes(y=comp), color="red") 
+    }
+
     if(nregions > 1){
         plot <- plot + facet_wrap(~region)
     }
@@ -294,7 +333,7 @@ plot_ssb <- function(ssb){
 
  }
 
- plot_f <- function(f){
+ plot_f <- function(f, compare_ts=NULL){
 
     nregions <- ncol(f)
 
@@ -302,6 +341,15 @@ plot_ssb <- function(ssb){
         rownames_to_column("time") %>%
         mutate(time=as.numeric(time)) %>%
         pivot_longer(c(2:(nregions+1)), names_to="region", values_to="f")
+
+    if(!is.null(compare_ts)){
+        f_df <- f_df %>% left_join(
+            compare_ts %>% as_tibble() %>%
+                rownames_to_column("time") %>%
+                mutate(time=as.numeric(time)) %>%
+                pivot_longer(c(2:(nregions+1)), names_to="region", values_to="comp")
+        )
+    }
 
     xmax <- round(f_df %>% pull(time) %>% max, -1)
     ymax <- 1.2*round(f_df %>% pull(f) %>% max, 2)
@@ -316,6 +364,10 @@ plot_ssb <- function(ssb){
         theme(
             panel.grid.minor = element_blank()
         )
+
+    if(!is.null(compare_ts)){
+        plot <- plot + geom_line(aes(y=comp), color="red") 
+    }
 
     if(nregions > 1){
         plot <- plot + facet_wrap(~region)
