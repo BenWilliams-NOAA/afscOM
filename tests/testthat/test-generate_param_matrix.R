@@ -1,3 +1,6 @@
+good_dem_matrices <- afscOM::good_dem_matrices
+sablefish_assessment_data <- afscOM::sablefish_assessment_data
+
 test_that("fill by single value", {
 
   dimension.names <- list(
@@ -10,8 +13,6 @@ test_that("fill by single value", {
 
   v <- 0.1
   m <- generate_param_matrix(v, dimension_names = dimension.names)
-  load(file.path(here::here(), "data/good_dem_matrices.rda"))
-
   expect_equal(m, good_dem_matrices$single)
 
 })
@@ -28,8 +29,6 @@ test_that("fill by age", {
 
   v <- exp(-5.1560+0.7331*2:31)/(1+exp(-5.1560+0.7331*2:31))
   m <- generate_param_matrix(v, dimension_names = dimension.names, by="age")
-  load(file.path(here::here(), "data/good_dem_matrices.rda"))
-
   expect_equal(m, good_dem_matrices$age)
 
 })
@@ -53,9 +52,7 @@ test_that("fill by age and sex", {
   colnames(v) <- c("F", "M")
   rownames(v) <- 2:31
 
-  m <- generate_param_matrix(v, dimension_names = dimension.names, by=c("age", "sex")) 
-  load(file.path(here::here(), "data/good_dem_matrices.rda"))
-
+  m <- generate_param_matrix(v, dimension_names = dimension.names, by=c("age", "sex"))
   expect_equal(m, good_dem_matrices$age.sex)
 
 })
@@ -70,7 +67,6 @@ test_that("fill by age, sex, and fleet", {
     "fleet" = c("fixed", "trawl")
   )
 
-  load(file.path(here::here(), "data/sablefish_assessment_data.rda"))
 
   all_selex <- sablefish_assessment_data$agesel
   selex.f.ll_fish <- all_selex[,"fish1sel.f"]
@@ -85,7 +81,6 @@ test_that("fill by age, sex, and fleet", {
   v[,2,2] <- selex.m.tw_fish
 
   m <- generate_param_matrix(v, dimension_names = dimension.names, by=c("age", "sex", "fleet"))
-  load(file.path(here::here(), "data/good_dem_matrices.rda"))
 
   expect_equal(m, good_dem_matrices$age.sex.fleet, tolerance=1e-2)
 

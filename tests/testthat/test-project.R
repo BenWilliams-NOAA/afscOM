@@ -1,11 +1,11 @@
+dem_params <- afscOM::sablefish_dem_params
+
 test_that("1yr projection w/o movement", {
-  
-  load(file.path(here::here(), "data/sablefish_dem_params.rda"))
-  dem_params <- sablefish_dem_params
+
   model_params <- get_model_dimensions(dem_params$sel)
 
   fleet_apportionment <- array(
-    matrix(c(1, 0), nrow=model_params$nyears, ncol=model_params$nfleets, byrow=TRUE), 
+    matrix(c(1, 0), nrow=model_params$nyears, ncol=model_params$nfleets, byrow=TRUE),
     dim=c(model_params$nyears, model_params$nfleets, model_params$nregions)
   )
 
@@ -28,7 +28,7 @@ test_that("1yr projection w/o movement", {
   naa <- array(NA, dim=c(1, model_params$nages, model_params$nsexes, 1))
   naa[,,1,] <- assessment$natage.female["1960",]
   naa[,,2,] <- assessment$natage.male["1960",]
-  
+
   rec <- array(NA, dim=c(1, 1, model_params$nsexes, 1))
   rec[1,1,,1] <- 2*assessment$natage.female["1960",1]
 
@@ -45,9 +45,9 @@ test_that("1yr projection w/o movement", {
 
   suppressWarnings({
     out_vars <- project_single(
-        removals=removals_input, 
-        dem_params=dem_params, 
-        prev_naa=naa, 
+        removals=removals_input,
+        dem_params=dem_params,
+        prev_naa=naa,
         recruitment=rec,
         options=model_options
     )
@@ -61,9 +61,7 @@ test_that("1yr projection w/o movement", {
 })
 
 test_that("1yr projection w F input", {
-  
-  load(file.path(here::here(), "data/sablefish_dem_params.rda"))
-  dem_params <- sablefish_dem_params
+
   model_params <- get_model_dimensions(dem_params$sel)
   model_options <- list(
     regional_apportionment = c(1, 0),
@@ -83,7 +81,7 @@ test_that("1yr projection w F input", {
   naa <- array(NA, dim=c(1, model_params$nages, model_params$nsexes, 1))
   naa[,,1,] <- assessment$natage.female["1960",]
   naa[,,2,] <- assessment$natage.male["1960",]
-  
+
   rec <- array(NA, dim=c(1, 1, model_params$nsexes, 1))
   rec[1,1,,1] <- 2*assessment$natage.female["1960",1]
 

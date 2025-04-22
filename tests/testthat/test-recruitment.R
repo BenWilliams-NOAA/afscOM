@@ -1,3 +1,5 @@
+simple_om <- afscOM::simple_om
+
 test_that("Recruitment, single region", {
     nyears <- 10
     nregions <- 1
@@ -49,7 +51,7 @@ test_that("Recruitment array, fixed apportionment", {
     expect_equal(r$rec_props, matrix(c(0.5, 0.2, 0.1, 0.1, 0.1), nrow=nyears+1, ncol=nregions, byrow=TRUE))
     expect_equal(r$full_recruitment, matrix(c(10, 4, 2, 2, 2), nrow=nyears+1, ncol=nregions, byrow=TRUE))
 
-}) 
+})
 
 test_that("Recruitment array, time-varying apportionment", {
     nyears <- 4
@@ -79,7 +81,7 @@ test_that("Recruitment array, time-varying apportionment", {
     expect_equal(r$rec_props, apportionment_matrix)
     expect_equal(r$full_recruitment, true_recruitment)
 
-}) 
+})
 
 test_that("Recruitment array, apportionment function", {
     nyears <- 10
@@ -188,7 +190,7 @@ test_that("Get annual recuits, fixed apportionment stochastic", {
 })
 
 test_that("beverton-holt SRR", {
-    load(file.path(here::here(), "data/simple_om.rda"))
+
     naa <- simple_om$init_naa
     dp_y <- subset_dem_params(simple_om$dem_params, 1, d=1, drop=FALSE)
 
@@ -197,7 +199,7 @@ test_that("beverton-holt SRR", {
 })
 
 test_that("beverton-holt SRR", {
-    load(file.path(here::here(), "data/simple_om.rda"))
+
     naa <- simple_om$init_naa
     dp_y <- subset_dem_params(simple_om$dem_params, 1, d=1, drop=FALSE)
 

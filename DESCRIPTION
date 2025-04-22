@@ -35,10 +35,8 @@ LazyData: true
 Depends:
     R (>= 3.5.0),
 Imports:
-    here,
     dplyr,
     rlang,
-    methods,
     bbmle,
     abind,
     ggplot2,

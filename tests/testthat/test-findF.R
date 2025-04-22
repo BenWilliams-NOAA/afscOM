@@ -1,7 +1,7 @@
+dem_params <- afscOM::sablefish_dem_params.rda
+
 test_that("no catch required", {
 
-  load(file.path(here::here(), "data/sablefish_dem_params.rda"))
-  dem_params <- sablefish_dem_params
   y <- 1
   r <- 1
   f <- 1
@@ -11,7 +11,7 @@ test_that("no catch required", {
 
   tac <- 0.0
   F_f <- find_F(
-      f_guess = 0.05, 
+      f_guess = 0.05,
       naa     = naa,
       waa     = dem_params$waa,
       mort    = dem_params$mort,
@@ -27,8 +27,6 @@ test_that("no catch required", {
 
 test_that("Find F for TAC", {
 
-  load(file.path(here::here(), "data/sablefish_dem_params.rda"))
-  dem_params <- sablefish_dem_params
   model_params <- get_model_dimensions(dem_params$sel)
   y <- 1
   r <- 1
@@ -46,7 +44,7 @@ test_that("Find F for TAC", {
   tac <- 4900
   suppressWarnings(
     F_f <- find_F(
-      f_guess = 0.05, 
+      f_guess = 0.05,
       naa     = naa,
       waa     = dem_params$waa,
       mort    = dem_params$mort,
@@ -63,8 +61,6 @@ test_that("Find F for TAC", {
 
 test_that("Find F for TAC via bisection", {
 
-  load(file.path(here::here(), "data/sablefish_dem_params.rda"))
-  dem_params <- sablefish_dem_params
   model_params <- get_model_dimensions(dem_params$sel)
   y <- 1
   r <- 1
@@ -82,7 +78,7 @@ test_that("Find F for TAC via bisection", {
   tac <- 4900
   suppressWarnings({
     F_f_bisections <- findF_bisection(
-      f_guess = 0.05, 
+      f_guess = 0.05,
       naa     = naa,
       waa     = dem_params$waa,
       mort    = dem_params$mort,
@@ -90,10 +86,10 @@ test_that("Find F for TAC via bisection", {
       ret     = dem_params$ret[,,f],
       dmr     = dem_params$dmr[,,f],
       prov_catch = tac
-    ) 
+    )
 
     F_f_mle <- find_F(
-      f_guess = 0.05, 
+      f_guess = 0.05,
       naa     = naa,
       waa     = dem_params$waa,
       mort    = dem_params$mort,
@@ -111,8 +107,7 @@ test_that("Find F for TAC via bisection", {
 
 test_that("Compare FAA to Sablefish Assessment", {
 
-  load(file.path(here::here(), "data/sablefish_assessment_data.rda"))
-  assessment <- sablefish_assessment_data
+  assessment <- afscOM::sablefish_assessment_data
 
   TAC <- assessment$t.series[, "Catch_HAL"]
 
@@ -152,7 +147,7 @@ test_that("Compare FAA to Sablefish Assessment", {
   suppressWarnings({
     for(y in 1:64){
         F_f_bisections <- findF_bisection(
-          f_guess = 0.05, 
+          f_guess = 0.05,
           naa     = naa[y,,,,drop=FALSE],
           waa     = waa[y,,,,drop=FALSE],
           mort    = mort[y,,,,drop=FALSE],
@@ -160,12 +155,12 @@ test_that("Compare FAA to Sablefish Assessment", {
           ret     = subset_matrix(ret[y,,,,1, drop=FALSE], 1, d=5),
           dmr     = subset_matrix(dmr[y,,,,1, drop=FALSE], 1, d=5),
           prov_catch = TAC[y]
-        ) 
+        )
 
         fs[y] <- F_f_bisections
         faa[y,,,] <- retained_F(F_f_bisections, subset_matrix(sel[y,,,,1, drop=FALSE], 1, d=5), subset_matrix(ret[y,,,,1, drop=FALSE], 1, d=5))
         catch[y] <- baranov(
-          fy      = F_f_bisections, 
+          fy      = F_f_bisections,
           naa     = naa[y,,,,drop=FALSE],
           waa     = waa[y,,,,drop=FALSE],
           mort    = mort[y,,,,drop=FALSE],

@@ -1,11 +1,14 @@
+assessment <- afscOM::sablefish_assessment_data
+dem_params <- afscOM::sablefish_dem_params
+simple_om_spatial <- afscOM::simple_om_spatial
+
 test_that("single year age-structure population", {
 
-  load(file.path(here::here(), "data/sablefish_dem_params.rda"))
-  dem_params <- sablefish_dem_params
+
   model_params <- get_model_dimensions(dem_params$sel)
-  
+
   fleet_apportionment <- array(
-    matrix(c(0.7, 0.3), nrow=model_params$nyears, ncol=model_params$nfleets, byrow=TRUE), 
+    matrix(c(0.7, 0.3), nrow=model_params$nyears, ncol=model_params$nfleets, byrow=TRUE),
     dim=c(model_params$nyears, model_params$nfleets, model_params$nregions)
   )
 
@@ -22,12 +25,10 @@ test_that("single year age-structure population", {
   dem_params <- subset_dem_params(dem_params, y, d=1, drop=FALSE)
   dem_params <- subset_dem_params(dem_params, r, d=4, drop=FALSE)
 
-  load(file.path(here::here(), "data/sablefish_assessment_data.rda"))
-  assessment <- sablefish_assessment_data
   naa <- array(NA, dim=c(1, model_params$nages, model_params$nsexes, 1))
   naa[,,1,] <- assessment$natage.female["1960",]*1e6
   naa[,,2,] <- assessment$natage.male["1960",]*1e6
-  
+
   rec <- array(NA, dim=c(1, 1, model_params$nsexes, 1))
   rec[1,1,,1] <- 2*assessment$natage.female["1960",1] *1e6 * dem_params$sexrat[,1,,]
 
@@ -61,16 +62,15 @@ test_that("single year age-structure population", {
 
 test_that("single year population with two regions", {
 
-  load(file.path(here::here(), "data", "simple_om_spatial.rda"))
   dem_params <- simple_om_spatial$dem_params
   model_params <- get_model_dimensions(dem_params$sel)
   model_options <- simple_om_spatial$model_options
 
   y <- 1
   dem_params <- subset_dem_params(dem_params, y, d=1, drop=FALSE)
-  
+
   fleet_apportionment <- aperm(array(
-    matrix(c(0.5, 0.5), nrow=model_params$nyears, ncol=model_params$nregions, byrow=TRUE), 
+    matrix(c(0.5, 0.5), nrow=model_params$nyears, ncol=model_params$nregions, byrow=TRUE),
     dim=c(model_params$nyears, model_params$nregions, model_params$nfleets)
   ), c(1, 3, 2))
 
@@ -98,9 +98,9 @@ test_that("single year population with two regions", {
       dp.r <- subset_dem_params(dem_params, r, d=4, drop=FALSE)
       naa.r <- subset_matrix(simple_om_spatial$init_naa, r=r, d=4, drop=FALSE)
       catch_vars <- simulate_catch(
-        removals=remove, 
-        dem_params=dp.r, 
-        naa=naa.r, 
+        removals=remove,
+        dem_params=dp.r,
+        naa=naa.r,
         options=model_options
       )
       pop_vars <- simulate_population(prev_naa=naa.r, faa=catch_vars$faa_tmp, recruitment=60, dem_params=dp.r, options=options)

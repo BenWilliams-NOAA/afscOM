@@ -1,10 +1,8 @@
-test_that("project reproduces sablefish timeseries", {
-    
-    load(file.path(here::here(), "data/sablefish_assessment_data.rda"))
-    assessment <- sablefish_assessment_data
+assessment <- afscOM::sablefish_assessment_data
+dem_params <- afscOM::sablefish_dem_params
 
-    load(file.path(here::here(), "data/sablefish_dem_params.rda"))
-    dem_params <- sablefish_dem_params
+test_that("project reproduces sablefish timeseries", {
+
 
     dims <- get_model_dimensions(dem_params$sel)
 
@@ -26,11 +24,11 @@ test_that("project reproduces sablefish timeseries", {
     )
 
     om_sim <- project(
-        init_naa, 
-        f_timeseries, 
-        recruitment, 
-        dem_params, 
-        nyears, 
+        init_naa,
+        f_timeseries,
+        recruitment,
+        dem_params,
+        nyears,
         model_options
     )
 
@@ -42,12 +40,6 @@ test_that("project reproduces sablefish timeseries", {
 })
 
 test_that("project reproduces sablefish timeseries with catch timeseries", {
-    
-    load(file.path(here::here(), "data/sablefish_assessment_data.rda"))
-    assessment <- sablefish_assessment_data
-
-    load(file.path(here::here(), "data/sablefish_dem_params.rda"))
-    dem_params <- sablefish_dem_params
 
     dims <- get_model_dimensions(dem_params$sel)
 
@@ -74,15 +66,15 @@ test_that("project reproduces sablefish timeseries with catch timeseries", {
     )
     suppressWarnings({
         om_sim <- project(
-            init_naa, 
-            catch_timeseries, 
-            recruitment, 
-            dem_params, 
-            dims$nyears, 
+            init_naa,
+            catch_timeseries,
+            recruitment,
+            dem_params,
+            dims$nyears,
             model_options
         )
     })
-    
+
 
     om_ssb <- as.vector(apply(om_sim$naa[1:64,,1,]*dem_params$waa[,,1,]*dem_params$mat[,,1,], 1, sum))
     true_ssb <- assessment$t.series[,"spbiom"]
