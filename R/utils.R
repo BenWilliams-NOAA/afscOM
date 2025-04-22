@@ -133,7 +133,7 @@ extend_years <- function(dem_params, dimension, e, new.dimnames=NA){
         new.dimnames <- if(all(is.na(new.dimnames))) 1:e else new.dimnames
         t <- array(NA, dim=new.dims, dimnames = c("time"=list(new.dimnames), dimnames(dem_params[[n]])[2:length(dimnames(dem_params[[n]]))]))
         last <- subset_matrix(dem_params[[n]], r=nrow(dem_params[[n]]), d=1)
-        abind::`afill<-`(t) <- dem_params[[n]]
+        afill(t) <- dem_params[[n]]
 
         afill_dimensions <- as.vector(c(TRUE, rep(FALSE, ndims-1)), mode="list")
         for(i in which(afill_dimensions == FALSE)){
@@ -143,7 +143,7 @@ extend_years <- function(dem_params, dimension, e, new.dimnames=NA){
         afill_params$x <- t
         afill_params$value <- last
 
-        t <- do.call(abind::`afill<-`, afill_params)
+        t <- do.call(afill, afill_params)
         tmp[[n]] <- t
     }
     return(tmp)
