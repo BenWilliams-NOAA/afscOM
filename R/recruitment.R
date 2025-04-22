@@ -4,7 +4,7 @@
 #' historical recruitment timeseries.
 #'
 #' @param n number of samples to draw
-#' @param hist.rec historical recruitment vector
+#' @param hist_rec historical recruitment vector
 #' @param seed a random seed (optional)
 #'
 #' @return `n` random samples from the historical
@@ -68,17 +68,25 @@ cyclic_recruitment <- function(n, mu_rec, sd_rec, dur, start=1, seed=NA){
 
 }
 
-beverton_holt <- function(h, R0, S0){
-    function(ssb){
-        return(
-            (4*R0*h*ssb)/((1-h)*R0*(S0/R0) + (5*h - 1)*ssb)
-        )
-    }
+#' Beverton-Holt Stock Recruit Relationship
+#'
+#' Classic Beverton-Holt SRR parameterized using steepness,
+#' unfished recruitment (R0), and unfished spawning biomass
+#' (S0).
+#'
+#' @param naa numbers-at-age array (dimensions [1, nages, nsexes, nregions])
+#' @param dem_params demographic parameters list susbet to a
+#' single year (dimensions [1, nages, nsexes, nregions, nfleets])
+#'
+#' @export
+#'
+#' @example
+#'
+beverton_holt <- function(naa, dem_params, h, R0, S0, sigR, seed){
+  set.seed(seed)
+  ssb <- compute_ssb(naa, dem_params)[1,1]
+  bh <- (4*R0*h*ssb)/((1-h)*R0*(S0/R0) + (5*h - 1)*ssb)
+  rec <- rlnorm(1, meanlog = log(bh)-sigR*sigR/2, sdlog=sigR)
+  return(rec)
 }
 
-bh <- beverton_holt(0.7, 25, 300)
-
-bh
-is.function(bh)
-
-bh <- 1
