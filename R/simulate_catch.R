@@ -8,8 +8,11 @@
 #' @param naa the current numbers-at-age in the population
 #' @param option list of model options
 #'
-#' @export simulate_catch
-#'
+#' @export
+#' @examples
+#' /dontrun{
+#' simulate_catch(removals, dem_params, naa, options)
+#' }
 simulate_catch <- function(removals, dem_params, naa, options){
 
     model_params <- get_model_dimensions(dem_params$sel)

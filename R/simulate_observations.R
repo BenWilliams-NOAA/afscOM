@@ -1,6 +1,6 @@
 #' Simulate Observations from Fisheries and Surveys
 #'
-#' Simulate observations of a population from common Alaska surveys and 
+#' Simulate observations of a population from common Alaska surveys and
 #' from landed catch data.
 #'
 #' @param naa numbers-at-age array subset to 1 year (dim [1, nages, nsexes, nregions])
@@ -11,7 +11,11 @@
 #' @param obs_pars list of observation process parameters
 #' @param age_error an optional ageing error matrix
 #'
-#' @export simulate_observations
+#' @export
+#' @examples
+#' \dontrun{
+#' simulate_observations(naa, waa, selex, faa, zaa, caa, obs_pars, age_error=NA)
+#' }
 #'
 simulate_observations <- function(naa, waa, selex, faa, zaa, caa, obs_pars, age_error=NA){
 
@@ -22,7 +26,7 @@ simulate_observations <- function(naa, waa, selex, faa, zaa, caa, obs_pars, age_
     # twfish_faa <- subset_matrix(faa, r=2, d=5, drop=TRUE)
 
     model_params <- get_model_dimensions(selex)
-    
+
     catch_obs <- array(NA, c(1, 1, 1, model_params$nfleets))
     rpn_preds <- array(NA, c(1, 1, 1, model_params$nfleets))
     rpn_obs <- array(NA, c(1, 1, 1, model_params$nfleets))
@@ -40,7 +44,7 @@ simulate_observations <- function(naa, waa, selex, faa, zaa, caa, obs_pars, age_
             catch <- sum(caa[,,,,s])
             catch_obs[,,,s] <- simulate_lognormal_obs(catch, obs_pars$catch_cv[s])
         }
-        
+
         if(obs_pars$rpn[s]){
             rpn_preds[,,,s] <- simulate_rpn(obs_pars$qs[s], naa, surv_sel, zaa)
             rpn_obs[,,,s] <-  simulate_lognormal_obs(rpn_preds[,,,s], obs_pars$rpn_cv[s])
@@ -53,12 +57,12 @@ simulate_observations <- function(naa, waa, selex, faa, zaa, caa, obs_pars, age_
 
         if(obs_pars$acs[s]){
             if(obs_pars$is_survey[s]){
-                ac_preds[,,,s] <- simulate_ac(naa, surv_sel, aggregate_sex = obs_pars$acs_agg_sex[s])        
+                ac_preds[,,,s] <- simulate_ac(naa, surv_sel, aggregate_sex = obs_pars$acs_agg_sex[s])
             }else{
                 faa_small <- subset_matrix(faa, fishery, d=5, drop=TRUE)
                 ac_preds[,,,s] <- simulate_caa(naa, faa_small, zaa)
             }
-            
+
             # Perform multinomial draw for each sex
             ac_obs_tmp <- simulate_multinomial_obs(ac_preds[,,,s, drop=FALSE], obs_pars$ac_samps[s], aggregate_sex = obs_pars$acs_agg_sex[s], as_integers = obs_pars$ac_as_integers[s])
             ac_obs[,,,s] <- array(ac_obs_tmp, dim=c(model_params$nyears, model_params$nages, length(ac_obs_tmp)/model_params$nages, model_params$nregions), dimnames=dimnames(naa))

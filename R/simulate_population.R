@@ -4,7 +4,7 @@
 #'
 #' @param prev_naa numbers-at-age vector for previous year
 #' @param faa fishing mortality-at-age vector (dim [1, nages, nsexes, 1, nfleets])
-#' @param recruitment projected recruitment for the folliwing year
+#' @param recruitment projected recruitment for the following year
 #' @param dem_params demographic parameter matrices subsetted to 1 year and 1 region
 #' @param options model options list
 #'

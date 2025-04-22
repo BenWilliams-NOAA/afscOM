@@ -22,7 +22,11 @@ compute_naapr <- function(nages, mort, mat, waa, sel, ret, F){
 #'
 #' @export
 #'
-#' @example
+#' @examples
+#' \dontrun{
+#' compute_sbpr(nages, mort, mat, waa, sel, ret, F)
+#' }
+#'
 #'
 compute_sbpr <- function(nages, mort, mat, waa, sel, ret, F){
     naa <- compute_naapr(nages, mort, mat, waa, sel, ret, F)
@@ -31,8 +35,8 @@ compute_sbpr <- function(nages, mort, mat, waa, sel, ret, F){
 }
 
 #' Compute Spawning Potential Ratio (SPR)
-#' 
-#' Compute SPR, the ratio of spawning biomass under a 
+#'
+#' Compute SPR, the ratio of spawning biomass under a
 #' given leve of fishing mortality relative to unfished
 #' spawning biomass.
 #'
@@ -46,8 +50,10 @@ compute_sbpr <- function(nages, mort, mat, waa, sel, ret, F){
 #'
 #' @export
 #'
-#' @example
-#'
+#' @examples
+#' \dontrun{
+#' compute_spr(nages, mort, mat, waa, sel, ret, F)
+#' }
 compute_spr <- function(nages, mort, mat, waa, sel, ret, F){
     ssb_unfished <- compute_sbpr(nages, mort, mat, waa, sel, ret, F=0)
     ssb_fished   <- compute_sbpr(nages, mort, mat, waa, sel, ret, F)
@@ -55,7 +61,7 @@ compute_spr <- function(nages, mort, mat, waa, sel, ret, F){
 }
 
 #' Find F that yields a given SPR%
-#' 
+#'
 #' Use bisection algorithm to identify the level of
 #' fishing mortality required to yield an SPR of x%.
 #'
@@ -69,8 +75,10 @@ compute_spr <- function(nages, mort, mat, waa, sel, ret, F){
 #'
 #' @export
 #'
-#' @example
-#'
+#' @examples
+#' \dontrun{
+#' compute_fx(nages, mort, mat, waa, sel, ret, target_x=0.35)
+#' }
 compute_fx <- function(nages, mort, mat, waa, sel, ret, target_x=0.35){
     range <- vector(length=2)
     range[1] <- 0
@@ -93,7 +101,7 @@ compute_fx <- function(nages, mort, mat, waa, sel, ret, target_x=0.35){
 }
 
 #' Compute average SSB under a level of F
-#' 
+#'
 #' Compute average SSB under a given level of
 #' fishing mortality.
 #'
@@ -108,14 +116,16 @@ compute_fx <- function(nages, mort, mat, waa, sel, ret, target_x=0.35){
 #'
 #' @export
 #'
-#' @example
-#'
+#' @examples
+#' \dontrun{
+#' compute_bx(nages, mort, mat, waa, sel, ret, F, avg_rec)
+#' }
 compute_bx <- function(nages, mort, mat, waa, sel, ret, F, avg_rec){
   return(avg_rec*compute_sbpr(nages, mort, mat, waa, sel, ret, F))
 }
 
 #' Calculate NPFMC groundfish reference points
-#' 
+#'
 #' Calculate F_OFL (F_35%), F_ABC (F_40%), B40
 #' (SSB under F_ABC), and B0 (unfished SSB) reference
 #' points, using the traditional AFSC approach.
@@ -129,10 +139,12 @@ compute_bx <- function(nages, mort, mat, waa, sel, ret, F, avg_rec){
 #' @param avg_rec average recruitment
 #'
 #' @return list of F40, F35, and B40
-#' @export calculate_npfmc_ref_points
+#' @export
 #'
-#' @example
-#'
+#' @examples
+#' \dontrun{
+#' calculate_npfmc_ref_points(nages, mort, mat, waa, sel, ret, avg_rec)
+#' }
 calculate_npfmc_ref_points <- function(nages, mort, mat, waa, sel, ret, avg_rec){
   F35 <- compute_fx(nages, mort, mat, waa, sel, ret, target_x=0.35)
   F40 <- compute_fx(nages, mort, mat, waa, sel, ret, target_x=0.40)
@@ -143,15 +155,15 @@ calculate_npfmc_ref_points <- function(nages, mort, mat, waa, sel, ret, avg_rec)
 
 
 #' Calculate F/B Reference Points via SPR Methods
-#' 
-#' Calculate fishing mortality and biological 
+#'
+#' Calculate fishing mortality and biological
 #' fisheries reference points via traditional SPR
 #' methods.
 #'
 #' @param nages number of ages in age structure
-#' @param dem_params list of demographic parameters 
+#' @param dem_params list of demographic parameters
 #' subset to a single year
-#' @param joint_selret list of total selectivity and 
+#' @param joint_selret list of total selectivity and
 #' retention across all fleets, weighted by relative
 #' fleet-specific fishing mortality (compute using
 #' `calculate_joint_selret`)
@@ -159,10 +171,12 @@ calculate_npfmc_ref_points <- function(nages, mort, mat, waa, sel, ret, avg_rec)
 #' @param rec recruitment used to calculate BRP
 #'
 #' @return list of Fref and Bref
-#' @export calculate_spr_refpoints
+#' @export
 #'
-#' @example
-#'
+#' @examples
+#' \dontrun{
+#' calculate_spr_refpoints(nages, dem_params, joint_selret, spr_target, rec)
+#' }
 calculate_spr_refpoints <- function(nages, dem_params, joint_selret, spr_target, rec){
     mort <- dem_params$mort[,,1,]
     mat <- dem_params$mat[,,1,]
