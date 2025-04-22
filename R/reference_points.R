@@ -107,7 +107,7 @@ compute_fx <- function(nages, mort, mat, waa, sel, ret, target_x=0.35){
 #' @param waa weight-at-age vector
 #' @param sel total selectivity-at-age vector
 #' @param ret total retention-at-age vector
-#' @param F instantenous fishing mortality rate
+#' @param F instantaneous fishing mortality rate
 #' @param avg_rec average recruitment
 #'
 #' @export
