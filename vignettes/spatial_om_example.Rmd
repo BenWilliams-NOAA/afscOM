@@ -7,7 +7,9 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-Here we describe how to build a simple spatial model based on the demographic rates of Alaska sablefish. The example provided here is meant to illustrate how to set up the different components (demographic matrices, movement matrix, catch apportionment, etc.) of a spatially-explicit model, but is not designed to replicate any specific model outputs. Demographic parameters are derived from Goethel et al. (2021), while movement matrices are derived from Hanselmann et al. (2018). 
+Here we describe how to build a simple spatial model based on the demographic rates of Alaska sablefish. 
+The example provided here is meant to illustrate how to set up the different components (demographic matrices, movement matrix, catch apportionment, etc.) of a spatially-explicit model, but is not designed to replicate any specific model outputs. 
+Demographic parameters are derived from Goethel et al. (2021), while movement matrices are derived from Hanselman et al. (2018). 
 
 
 ### Model Setup
@@ -34,7 +36,9 @@ model_params <- set_model_params(nyears, nages, nsexes, nregions, nfleets)
 
 Next, specify demographic parameters matrices (for more information see the vignette on "Specifying Demographic Parameters").
 
-In brief, the demographic parameters specified here define a population with constant natural mortality across time, age, sex, and region, age-specific maturity, and age-sex specific weight at age. Selectivity differs across age, sex, and fleet for both fisheries and surveys. Fishery retention is 1 across all ages and sexes, indicating that no discarding occurs.
+In brief, the demographic parameters specified here define a population with constant natural mortality across time, age, sex, and region, age-specific maturity, and age-sex specific weight at age. 
+Selectivity differs across age, sex, and fleet for both fisheries and surveys. 
+Fishery retention is 1 across all ages and sexes, indicating that no discarding occurs.
 
 ```{r, demparams, eval=FALSE}
 load(file.path(here::here(), "data/sablefish_assessment_data.rda"))
@@ -88,7 +92,10 @@ survey_sel[(57:nyears),,1,,1] <- matrix(rep(assessment$agesel[, "srv10sel.f"], l
 survey_sel[(57:nyears),,2,,1] <- matrix(rep(assessment$agesel[, "srv10sel.m"], length(57:nyears)), ncol=nages, byrow=TRUE)
 ```
 
-Movement is defined based on estimates from Hanselmann et al. (2018) taht were derived from a long term tagging study. Movement is age and sex specific, but is not unique across all ages. Instead, ages are grouped together based loosely on the size of individuals at that age, and a unique movement matrix is defined for "small", "medium", and "large" fish (see Hanselmann et al. 2018 for details). The rows of the movement matrix indicate the source region and the columns indicating the destination regions for individuals in each time step.
+Movement is defined based on estimates from Hanselman et al. (2018) that were derived from a long term tagging study. 
+Movement is age and sex specific, but is not unique across all ages. 
+Instead, ages are grouped together based loosely on the size of individuals at that age, and a unique movement matrix is defined for "small", "medium", and "large" fish (see Hanselman et al. 2018 for details). 
+The rows of the movement matrix indicate the source region and the columns indicating the destination regions for individuals in each time step.
 
 ```{r, movement_matrix, eval=FALSE}
 # Movement matrices from Hanselman et al. 2018
@@ -150,7 +157,8 @@ dem_params <- list(
 )
 ```
 
-An initial numbers-at-age matrix is defined as is a timeseries of global recruitment. Global annual recruitment will be apportioned to indvidual regions equally (as is the default behavior).
+An initial numbers-at-age matrix is defined as is a timeseries of global recruitment. 
+Global annual recruitment will be apportioned to individual regions equally (as is the default behavior).
 
 ```{r, initnaa_recruitment, eval=FALSE}
 init_naa <- array(NA, dim=c(1, nages, nsexes, nregions), dimnames = list(1, 2:31, c("F", "M"), c("EGOA", "CGOA", "WGOA", "BS", "AI")))
@@ -162,7 +170,9 @@ recruitment <- as.matrix(sample(recruitment, size=nyears+1, replace=TRUE))
 ```
 
 ### Catch Apportionment
-An annual catch timeseries applicable to the entire model is defined as a vector (20mt of catch each year). Separate matrices define the proportion of the global catch that is apportioned to each spatial region (dimension `[nyears, nregions]`), and the proportion of each regional catch that is apportioned to each fishing fleet (dimension `[nyears, nfleets, nregions]`). Here, catch is divided equally amongst each spatial region, and fleet-specific catch is allocated 80% to fleet 1 and 20% to fleet 2.
+An annual catch timeseries applicable to the entire model is defined as a vector (20mt of catch each year).
+Separate matrices define the proportion of the global catch that is apportioned to each spatial region (dimension `[nyears, nregions]`), and the proportion of each regional catch that is apportioned to each fishing fleet (dimension `[nyears, nfleets, nregions]`). 
+Here, catch is divided equally amongst each spatial region, and fleet-specific catch is allocated 80% to fleet 1 and 20% to fleet 2.
 
 ```{r, catch, eval=FALSE}
 catch_timeseries <- matrix(rep(20, nyears), nrow=nyears)
