@@ -60,10 +60,10 @@ compute_spr <- function(nages, mort, mat, waa, sel, ret, F){
     return(ssb_fished/ssb_unfished)
 }
 
-#' Find F that yields a given SPR%
+#' Find F that yields a given SPR
 #'
 #' Use bisection algorithm to identify the level of
-#' fishing mortality required to yield an SPR of x%.
+#' fishing mortality required to yield an SPR of x.
 #'
 #' @param nages number of ages in age structure
 #' @param mort instantaneous natural mortality rate
@@ -72,12 +72,12 @@ compute_spr <- function(nages, mort, mat, waa, sel, ret, F){
 #' @param sel total selectivity-at-age vector
 #' @param ret total retention-at-age vector
 #' @param target_x desired SPR proportion
-#'
+#' @return A numeric value for the fishing mortality (F) that achieves the target SPR.
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' compute_fx(nages, mort, mat, waa, sel, ret, target_x=0.35)
+#'   compute_fx(nages, mort, mat, waa, sel, ret, target_x = 0.35)
 #' }
 compute_fx <- function(nages, mort, mat, waa, sel, ret, target_x=0.35){
     range <- c(0,2)

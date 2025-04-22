@@ -2,7 +2,7 @@
 % Please edit documentation in R/reference_points.R
 \name{compute_fx}
 \alias{compute_fx}
-\title{Find F that yields a given SPR%}
+\title{Find F that yields a given SPR}
 \usage{
 compute_fx(nages, mort, mat, waa, sel, ret, target_x = 0.35)
 }
@@ -21,12 +21,15 @@ compute_fx(nages, mort, mat, waa, sel, ret, target_x = 0.35)
 
 \item{target_x}{desired SPR proportion}
 }
+\value{
+A numeric value for the fishing mortality (F) that achieves the target SPR.
+}
 \description{
 Use bisection algorithm to identify the level of
-fishing mortality required to yield an SPR of x%.
+fishing mortality required to yield an SPR of x.
 }
 \examples{
 \dontrun{
-compute_fx(nages, mort, mat, waa, sel, ret, target_x=0.35)
+  compute_fx(nages, mort, mat, waa, sel, ret, target_x = 0.35)
 }
 }
