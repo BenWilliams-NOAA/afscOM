@@ -6,7 +6,7 @@
 #' @param naa numbers-at-age matrix [nyears, nages, nsexes, nregions]
 #' @param dem_params demagraphic parameters list
 #'
-#' @export compute_ssb
+#' @export
 #'
 
 #'
@@ -26,7 +26,7 @@ compute_ssb <- function(naa, dem_params){
 #' @param naa numbers-at-age matrix [nyears, nages, nsexes, nregions]
 #' @param dem_params demagraphic parameters list
 #'
-#' @export compute_bio
+#' @export
 #'
 
 #'
@@ -42,7 +42,7 @@ compute_bio <- function(naa, dem_params){
 #'
 #' @param caa catch-at-age matrix [nyears, nages, nsexes, nregions, nfleets]
 #'
-#' @export compute_total_catch
+#' @export
 #'
 
 #'
@@ -59,7 +59,7 @@ compute_total_catch <- function(caa){
 #'
 #' @param caa catch-at-age matrix [nyears, nages, nsexes, nregions, nfleets]
 #'
-#' @export compute_fleet_catch
+#' @export
 #'
 
 #'
@@ -75,9 +75,9 @@ compute_fleet_catch <- function(caa){
 #' Note that this is an approximation of total fishing mortality,
 #' and assumes that selectivity = 1 for some age class.
 #'
-#' @param faa fushing-mortality-at-age matrix [nyears, nages, nsexes, nregions, nfleets]
+#' @param faa fishing-mortality-at-age matrix [nyears, nages, nsexes, nregions, nfleets]
 #'
-#' @export compute_total_f
+#' @export
 #'
 
 #'

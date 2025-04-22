@@ -8,7 +8,7 @@
 #' @param sel selectivity-at-age vector
 #' @param zaa total mortality-at-age vector
 #'
-#' @export simulate_rpn
+#' @export
 #'
 #'
 simulate_rpn <- function(q, naa, sel, zaa){
@@ -27,7 +27,7 @@ simulate_rpn <- function(q, naa, sel, zaa){
 #' @param sel selectivity-at-age vector
 #' @param zaa total mortality-at-age vector
 #'
-#' @export simulate_rpw
+#' @export
 #'
 #'
 simulate_rpw <- function(q, naa, waa, sel, zaa){
@@ -43,9 +43,9 @@ simulate_rpw <- function(q, naa, waa, sel, zaa){
 #'
 #' @param naa numbers-at-age vector
 #' @param sel selectivity-at-age vector
-#' @param aggregate_sex whether to return sex-aggregated comps or not (default FALSE
+#' @param aggregate_sex whether to return sex-aggregated comps or not (default FALSE)
 #'
-#' @export simulate_ac
+#' @export
 #'
 #'
 simulate_ac <- function(naa, sel, aggregate_sex=FALSE){
@@ -82,7 +82,7 @@ simulate_ac <- function(naa, sel, aggregate_sex=FALSE){
 #' @param zaa total-mortality-at-age vector
 #' @param aggregate_sex whether to return sex-aggregated comps or not (default FALSE)
 #'
-#' @export simulate_caa
+#' @export
 #'
 #'
 simulate_caa <- function(naa, faa, zaa, aggregate_sex=FALSE){
@@ -125,7 +125,7 @@ simulate_caa <- function(naa, faa, zaa, aggregate_sex=FALSE){
 #' @param cv the real-space coefficient of variation about
 #' the predicted observation value
 #'
-#' @export simulate_lognormal_obs
+#' @export
 #'
 #' @examples
 #' \dontrun{
@@ -147,10 +147,10 @@ simulate_lognormal_obs <- function(pred, cv){
 #' optionally applied.
 #'
 #' @param pred the probability associated with each class
-#' @param samp_size multinomical sample size
-#' @param age_err whether to automaticaly apply ageing error
+#' @param samp_size multinomial sample size
+#' @param age_err whether to automatically apply ageing error
 #'
-#' @export simulate_multinomial_obs
+#' @export
 #'
 #' @examples
 #' \dontrun{

@@ -8,13 +8,13 @@
 #' @param fleet.props the proportion of the TAC allocated to each fleet
 #' @param dem_params list of demographic parameter matrices
 #' @param prev_naa the NAA in the previous timestep
-#' @param recruitment total recruiment to occurin this year
+#' @param recruitment total recruitment to occur in this year
 #' @param option additional model options
 #'
 #' @return list of derived quantities included landed catch-at-age,
 #' discarded catch-at-age, total catch-at-age, F-at-age, and numbers-at-age.
 #'
-#' @export project_single
+#' @export
 #'
 project_single <- function(removals, dem_params, prev_naa, recruitment, options=NA){
 
@@ -92,17 +92,17 @@ project_single <- function(removals, dem_params, prev_naa, recruitment, options=
 
         rec.r <- subset_matrix(rec, r=r, d=4, drop=FALSE)
         pop_vars <- simulate_population(
-                        prev_naa=prev_naa.r, 
-                        faa=catch_vars$faa_tmp, 
-                        recruitment=rec.r, 
-                        dem_params=dp.r, 
+                        prev_naa=prev_naa.r,
+                        faa=catch_vars$faa_tmp,
+                        recruitment=rec.r,
+                        dem_params=dp.r,
                         options=options
                     )
         naa_tmp[,,,r] <- pop_vars$naa
 
         if(!("simulate_observations" %in% names(options)) || options$simulate_observations){
             # concatenate fishery and survey selectivity matrices for convenience later
-            big_selex <- abind::abind(dp.r$sel, dp.r$surv_sel, along=5) 
+            big_selex <- abind::abind(dp.r$sel, dp.r$surv_sel, along=5)
             names(dim(big_selex)) <- names(dim(dp.r$sel))
             obs <- simulate_observations(
                 naa = prev_naa.r,
@@ -131,7 +131,7 @@ project_single <- function(removals, dem_params, prev_naa, recruitment, options=
             dem_params$movement[,,1,1,] <- diag(nregions)
         }
         v <- vapply(
-            1:nages, 
+            1:nages,
             # Apply movement to the ages individualy
             function(a) {
                 sapply(
@@ -139,7 +139,7 @@ project_single <- function(removals, dem_params, prev_naa, recruitment, options=
                     # Apply movement to the sexes individually
                     function(s) naa_tmp[1,a,s,] %*% dem_params$movement[,,1,a,s]
                 )
-            } , 
+            } ,
             FUN.VALUE = array(0, dim=c(model_params$nregions, model_params$nsexes))
         )
         moved_naa <- array(aperm(v, perm=c(3, 2, 1)), dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions))

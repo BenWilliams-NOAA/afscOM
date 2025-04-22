@@ -1,19 +1,19 @@
 #' Baranov Catch Equation
 #'
 #' An implementation of the Baranov catch equations allowing for
-#' fishery retenetion and discarding practices.
+#' fishery retention and discarding practices.
 #'
-#' @param fy an instantenous fishing mortality rate to apply to the population
+#' @param fy an instantaneous fishing mortality rate to apply to the population
 #' @param naa numbers-at-age in the population
 #' @param waa weight-at-age vector
-#' @param mort instanteous natural mortality (M) -at-age vector
+#' @param mort instantaneous natural mortality (M) -at-age vector
 #' @param selex selectivity-at-age vector
 #' @param ret retention-at-age vector (optional)
-#' @param dmr instanteous discard mortality rate -at-age vector (optional)
+#' @param dmr instantaneous discard mortality rate -at-age vector (optional)
 #'
 #' @return the amount of catch resulting from fishing the population at `fy`
 #'
-#' @export baranov
+#' @export
 #'
 #' @examples
 #' \dontrun{

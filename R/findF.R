@@ -1,6 +1,6 @@
 #' Find F given a desired level of catch
 #'
-#' Uses the Baranov catch equation to compute the instantenous
+#' Uses the Baranov catch equation to compute the instantaneous
 #' fishing mortality rate (F) that would yield a specific level of
 #' catch_
 #'
@@ -15,7 +15,7 @@
 #'
 #' @return the fishing mortality rate that yields the desired catch level
 #'
-#' @export find_F
+#' @export
 #'
 #' @examples
 #' \dontrun{

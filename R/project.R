@@ -11,7 +11,7 @@
 #' @param nyears number of projection yeas
 #' @param model_option list of additional model options
 #'
-#' @export project
+#' @export
 #'
 project <- function(init_naa, removals_timeseries, recruitment, dem_params, nyears, model_options){
 
@@ -27,7 +27,7 @@ project <- function(init_naa, removals_timeseries, recruitment, dem_params, nyea
     outputs$naa[1,,,] <- init_naa
 
     r <- apportion_recruitment(
-        rec_timeseries = recruitment, 
+        rec_timeseries = recruitment,
         apportionment = model_options$recruit_apportionment,
         nyears = nyears,
         nregions = nregions
@@ -47,7 +47,7 @@ project <- function(init_naa, removals_timeseries, recruitment, dem_params, nyea
         # Subset the demographic parameters list to only the current year
         # and DO NOT drop lost dimensions.
         dp.y <- subset_dem_params(dem_params = dem_params, y, d=1, drop=FALSE)
-        
+
         # Apply harvest control rule if insufficient catch/F timeseries is
         # provided as input...
         #
@@ -60,8 +60,8 @@ project <- function(init_naa, removals_timeseries, recruitment, dem_params, nyea
             c <- new_c
         }
         removals_input <- subset_matrix(c, y, d=1, drop=FALSE)
-        
-        
+
+
 
         if(is.function(recruitment)){
             r_y <- do.call(recruitment, c(list(naa=outputs$naa[y,,,,drop=FALSE], dem_params=dp.y), model_options$recruitment_pars))

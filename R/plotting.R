@@ -201,7 +201,13 @@ plot_selret <- function(selret, is_selectivity=TRUE){
     return(plot)
 }
 
-
+#' Plot Spawning stock biomass
+#'
+#'
+#' @param ssb
+#' @param compare_ts i don't know what this does - default:NULL
+#' @export
+#'
 plot_ssb <- function(ssb, compare_ts=NULL){
 
     nregions <- ncol(ssb)
@@ -212,8 +218,10 @@ plot_ssb <- function(ssb, compare_ts=NULL){
         pivot_longer(c(2:(nregions+1)), names_to="region", values_to="ssb")
 
     if(!is.null(compare_ts)){
-        ssb_df <- ssb_df %>% left_join(
-            compare_ts %>% as_tibble() %>%
+        ssb_df <- ssb_df %>%
+          left_join(
+            compare_ts %>%
+              as_tibble() %>%
                 rownames_to_column("time") %>%
                 mutate(time=as.numeric(time)) %>%
                 pivot_longer(c(2:(nregions+1)), names_to="region", values_to="comp")
@@ -234,7 +242,7 @@ plot_ssb <- function(ssb, compare_ts=NULL){
         )
 
     if(!is.null(compare_ts)){
-        plot <- plot + geom_line(aes(y=comp), color="red") 
+        plot <- plot + geom_line(aes(y=comp), color="red")
     }
 
     if(nregions > 1){
@@ -245,6 +253,13 @@ plot_ssb <- function(ssb, compare_ts=NULL){
 
  }
 
+#' Plot Total biomass
+#'
+#'
+#' @param bio
+#' @param compare_ts i don't know what this does - default:NULL
+#' @export
+#'
  plot_bio <- function(bio, compare_ts=NULL){
 
     nregions <- ncol(bio)
@@ -278,7 +293,7 @@ plot_ssb <- function(ssb, compare_ts=NULL){
         )
 
     if(!is.null(compare_ts)){
-        plot <- plot + geom_line(aes(y=comp), color="red") 
+        plot <- plot + geom_line(aes(y=comp), color="red")
     }
 
     if(nregions > 1){
@@ -289,6 +304,13 @@ plot_ssb <- function(ssb, compare_ts=NULL){
 
  }
 
+ #' Plot Catch
+ #'
+ #'
+ #' @param catch
+ #' @param compare_ts i don't know what this does - default:NULL
+ #' @export
+ #'
  plot_catch <- function(catch, compare_ts=NULL){
 
     nregions <- ncol(catch)
@@ -322,7 +344,7 @@ plot_ssb <- function(ssb, compare_ts=NULL){
         )
 
     if(!is.null(compare_ts)){
-        plot <- plot + geom_line(aes(y=comp), color="red") 
+        plot <- plot + geom_line(aes(y=comp), color="red")
     }
 
     if(nregions > 1){
@@ -333,6 +355,13 @@ plot_ssb <- function(ssb, compare_ts=NULL){
 
  }
 
+ #' Plot Fishing mortality biomass
+ #'
+ #'
+ #' @param f fishing mortality
+ #' @param compare_ts i don't know what this does - default:NULL
+ #' @export
+ #'
  plot_f <- function(f, compare_ts=NULL){
 
     nregions <- ncol(f)
@@ -366,7 +395,7 @@ plot_ssb <- function(ssb, compare_ts=NULL){
         )
 
     if(!is.null(compare_ts)){
-        plot <- plot + geom_line(aes(y=comp), color="red") 
+        plot <- plot + geom_line(aes(y=comp), color="red")
     }
 
     if(nregions > 1){
@@ -377,7 +406,12 @@ plot_ssb <- function(ssb, compare_ts=NULL){
 
 }
 
-
+ #' Plot Numbers at age
+ #'
+ #'
+ #' @param atage
+ #' @export
+ #'
 plot_atage <- function(atage){
     atage_df <- reshape2::melt(atage) %>% as_tibble() %>%
         group_by(time, age) %>%

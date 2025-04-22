@@ -9,7 +9,7 @@
 #'
 #' @return a named list indicating the dimensions of the model
 #'
-#' @export get_model_dimensions
+#' @export
 #'
 #'
 get_model_dimensions <- function(par_mat){
