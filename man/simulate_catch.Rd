@@ -13,9 +13,7 @@ simulate_catch(removals, dem_params, naa, options)
 
 \item{naa}{the current numbers-at-age in the population}
 
-\item{fleet.props}{the proportion of the TAC that should be taken by each fleet}
-
-\item{option}{list of model options}
+\item{options}{list of model options}
 }
 \description{
 Description

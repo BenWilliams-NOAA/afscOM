@@ -7,6 +7,7 @@
 #' @param waa weight-at-age array subset to 1 year (dim [1, nages, nsexes, nregions])
 #' @param selex selectivity-at-age array subset to 1 year (dim [1, nages, nsexes, nregions, nfleets])
 #' @param faa fishing mortality-at-age array subset to 1 year (dim [1, nages, nsexes, nregions, nfleets])
+#' @param caa total catch-at-age array subset to 1 year (dim [1, nages, nsexes, nregions, nfleets])
 #' @param zaa total mortality-at-age array subset to 1 year (dim [1, nages, nsexes, nregions])
 #' @param obs_pars list of observation process parameters
 #' @param age_error an optional ageing error matrix

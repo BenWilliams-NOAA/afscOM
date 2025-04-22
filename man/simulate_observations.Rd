@@ -17,6 +17,8 @@ simulate_observations(naa, waa, selex, faa, zaa, caa, obs_pars, age_error = NA)
 
 \item{zaa}{total mortality-at-age array subset to 1 year (dim [1, nages, nsexes, nregions])}
 
+\item{caa}{total catch-at-age array subset to 1 year (dim [1, nages, nsexes, nregions, nfleets])}
+
 \item{obs_pars}{list of observation process parameters}
 
 \item{age_error}{an optional ageing error matrix}

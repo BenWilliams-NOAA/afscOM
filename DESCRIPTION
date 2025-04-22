@@ -35,6 +35,7 @@ LazyData: true
 Depends:
     R (>= 3.5.0),
 Imports:
+    here,
     dplyr,
     rlang,
     methods,
@@ -43,7 +44,8 @@ Imports:
     ggplot2,
     tibble,
     reshape2,
-    stats
+    stats,
+    magrittr
 RoxygenNote: 7.3.2
 Suggests: 
     knitr,

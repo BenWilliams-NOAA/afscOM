@@ -4,13 +4,7 @@
 \alias{plot_demographic_parameters}
 \title{Plot demographic parameters}
 \usage{
-plot_demographic_parameters(
-  dem_params,
-  params = NA,
-  show_plots = TRUE,
-  out_dir = NA,
-  ...
-)
+plot_demographic_parameters(dem_params, params = NA, out_dir = NA, ...)
 }
 \arguments{
 \item{dem_params}{list of demographic parameter matrices}

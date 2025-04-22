@@ -134,7 +134,7 @@ simulate_caa <- function(naa, faa, zaa, aggregate_sex=FALSE){
 #'
 simulate_lognormal_obs <- function(pred, cv){
     sds <- sqrt(log(cv^2 + 1))
-    return(rlnorm(1, meanlog=log(pred)-(sds^2)/2, sdlog = sds))
+    return(stats::rlnorm(1, meanlog=log(pred)-(sds^2)/2, sdlog = sds))
 }
 
 #' Simulate observations from a multinomial distribution
@@ -148,6 +148,8 @@ simulate_lognormal_obs <- function(pred, cv){
 #'
 #' @param pred the probability associated with each class
 #' @param samp_size multinomial sample size
+#' @param aggregate_sex combine or separate? default: FALSE
+#' @param as_integers integer or proportions, default: FALSE
 #' @param age_err whether to automatically apply ageing error
 #'
 #' @export
@@ -157,7 +159,7 @@ simulate_lognormal_obs <- function(pred, cv){
 #' simulate_multinomial_obs(c(0.25, 0.50, 0.25), 100)
 #' }
 #'
-simulate_multinomial_obs <- function(pred, samp_size, aggregate_sex=FALSE, as_integers=FALSE, age_err=NA){
+simulate_multinomial_obs <- function(pred, samp_size, aggregate_sex=FALSE, as_integers=FALSE, age_err=NULL){
     multi <- array(0, dim=dim(pred), dimnames=dimnames(pred))
     p <- pred
     if(!all(p == 0)){
@@ -167,12 +169,12 @@ simulate_multinomial_obs <- function(pred, samp_size, aggregate_sex=FALSE, as_in
         }
 
         multi <- apply(p, 3, function(x){
-                tmp <- rmultinom(1, samp_size, prob=x)
+                tmp <- stats::rmultinom(1, samp_size, prob=x)
                 if(!as_integers){
                     tmp <- (tmp[,1]/sum(tmp[,1]))
                 }
                 # Include aging error if available
-                if(!all(is.na(age_err))){
+                if(!all(is.null(age_err))){
                     tmp <- tmp %*% age_err
                 }
                 return(tmp)

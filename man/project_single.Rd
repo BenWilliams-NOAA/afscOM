@@ -15,9 +15,7 @@ project_single(removals, dem_params, prev_naa, recruitment, options = NA)
 
 \item{recruitment}{total recruitment to occur in this year}
 
-\item{fleet.props}{the proportion of the TAC allocated to each fleet}
-
-\item{option}{additional model options}
+\item{options}{additional model options}
 }
 \value{
 list of derived quantities included landed catch-at-age,

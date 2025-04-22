@@ -6,15 +6,13 @@
 #' required dimensions.
 #'
 #' @param vals a single value, or a vector or matrix of values, to fill the output matrix with. If a vector or matrix, all dimensions must be named, and names must match with those specified with the `dimension.names` argument
-#' @param settings names list containing `model.params` that
+#' @param dimension_names names list containing `model_params` that
 #' @param by a character vector specifying which dimensions the input values correspond to
 #' @param include_fleet_dim whether to expand the output matrix to include a 5th dimension, indicating fleet structure
 #'
 #' @return a 4d or 5d array of dimensions (nyears, nages, nsexes, nregions, nfleets) filled across the specified dimensions by the specfied values.
 #'
 #' @export
-#'
-#'
 generate_param_matrix <- function(vals, dimension_names, by=NA, include_fleet_dim=FALSE){
 
     # if(any(is.na(model.params)) & !exists("model.params")){

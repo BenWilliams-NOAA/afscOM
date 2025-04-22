@@ -5,11 +5,10 @@
 #' determine the numbers-at-age present in the population for the following year.
 #'
 #' @param removals population removals (either in catch or F units)
-#' @param fleet.props the proportion of the TAC allocated to each fleet
 #' @param dem_params list of demographic parameter matrices
 #' @param prev_naa the NAA in the previous timestep
 #' @param recruitment total recruitment to occur in this year
-#' @param option additional model options
+#' @param options additional model options
 #'
 #' @return list of derived quantities included landed catch-at-age,
 #' discarded catch-at-age, total catch-at-age, F-at-age, and numbers-at-age.

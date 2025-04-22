@@ -1,5 +1,5 @@
-simulate_multiple <- function(nsims, seeds=NA, ...){
-    
+simulate_multiple <- function(nsims, seeds=NA, nyears, nages, nsexes, nregions, nfleets){
+
     land_caa    = array(NA, dim=c(nyears, nages, nsexes, nregions, nfleets, nsims))
     disc_caa    = array(NA, dim=c(nyears, nages, nsexes, nregions, nfleets, nsims))
     caa         = array(NA, dim=c(nyears, nages, nsexes, nregions, nfleets, nsims))
@@ -17,7 +17,7 @@ simulate_multiple <- function(nsims, seeds=NA, ...){
     )
 
     survey_obs <- list(
-        catch = array(NA, dim=c(nyears, 1, 1, nregions, nfleets, nsims)), 
+        catch = array(NA, dim=c(nyears, 1, 1, nregions, nfleets, nsims)),
         rpns = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys, nsims)),
         rpws = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys, nsims)),
         acs  = array(NA, dim=c(nyears, nages, nsexes, nregions, nsurveys+nfleets, nsims))

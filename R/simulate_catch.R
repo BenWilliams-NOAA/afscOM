@@ -3,10 +3,9 @@
 #' Description
 #'
 #' @param removals desired removals either in catch or F units
-#' @param fleet.props the proportion of the TAC that should be taken by each fleet
 #' @param dem_params demographic parameter matrices for population
 #' @param naa the current numbers-at-age in the population
-#' @param option list of model options
+#' @param options list of model options
 #'
 #' @export
 #' @examples

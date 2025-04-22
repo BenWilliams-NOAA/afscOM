@@ -9,7 +9,7 @@
 #' @param recruitment vector of recruitment of length nyears
 #' @param dem_params list of demographic parameter matrices
 #' @param nyears number of projection yeas
-#' @param model_option list of additional model options
+#' @param model_options list of additional model options
 #'
 #' @export
 #'

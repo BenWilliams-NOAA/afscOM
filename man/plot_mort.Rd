@@ -7,6 +7,8 @@
 plot_mort(mort, is_dmr = FALSE)
 }
 \arguments{
+\item{is_dmr}{title to discard mortality, default: FALSE = natural mortality}
+
 \item{waa}{four-dimensional mortality-at-age matrix}
 }
 \description{

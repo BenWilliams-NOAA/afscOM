@@ -19,7 +19,7 @@
 #' @export
 #'
 #'
-plot_demographic_parameters <- function(dem_params, params=NA, show_plots=TRUE, out_dir=NA, ...){
+plot_demographic_parameters <- function(dem_params, params=NA, out_dir=NA, ...){
 
     waa_plot  <- plot_waa(dem_params$waa)
     mat_plot  <- plot_mat(dem_params$mat)
@@ -28,16 +28,6 @@ plot_demographic_parameters <- function(dem_params, params=NA, show_plots=TRUE, 
     sel_plot  <- plot_selret(dem_params$sel, is_selectivity = TRUE)
     ret_plot  <- plot_selret(dem_params$ret, is_selectivity = FALSE)
     survsel_plot <- plot_selret(dem_params$surv_sel, is_selectivity = TRUE)
-
-    if(show_plots){
-        methods::show(waa_plot)
-        methods::show(mat_plot)
-        methods::show(mort_plot)
-        methods::show(dmr_plot)
-        methods::show(sel_plot)
-        methods::show(ret_plot)
-        methods::show(survsel_plot)
-    }
 
     if(!is.na(out_dir)){
         ggplot2::ggsave(filename=file.path(out_dir, "waa_plot.png"), plot=waa_plot, ...)
@@ -133,6 +123,7 @@ plot_mat <- function(mat){
 #' both natural and discard mortality
 #'
 #' @param waa four-dimensional mortality-at-age matrix
+#' @param is_dmr title to discard mortality, default: FALSE = natural mortality
 #'
 #' @export
 #'
@@ -429,7 +420,7 @@ plot_atage <- function(atage){
         dplyr::group_by(time) %>%
         dplyr::mutate(total_naa = sum(naa),
                       prop = naa/total_naa,
-                      avg_age = weighted.mean(age, prop))
+                      avg_age = stats::weighted.mean(age, prop))
 
 
     plot <- ggplot2::ggplot(atage_df)+

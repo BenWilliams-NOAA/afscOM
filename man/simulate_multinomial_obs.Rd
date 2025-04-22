@@ -16,13 +16,17 @@ simulate_multinomial_obs(
   samp_size,
   aggregate_sex = FALSE,
   as_integers = FALSE,
-  age_err = NA
+  age_err = NULL
 )
 }
 \arguments{
 \item{pred}{the probability associated with each class}
 
 \item{samp_size}{multinomial sample size}
+
+\item{aggregate_sex}{combine or separate? default: FALSE}
+
+\item{as_integers}{integer or proportions, default: FALSE}
 
 \item{age_err}{whether to automatically apply ageing error}
 }

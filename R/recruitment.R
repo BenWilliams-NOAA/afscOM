@@ -29,7 +29,7 @@ mean_recruitment <- function(n, log.mu, sd, seed=NA){
     if(!is.na(seed)){
         set.seed(seed)
     }
-    return(exp(log.mu + rnorm(n, 0, sd) - sd^2/2))
+    return(exp(log.mu + stats::rnorm(n, 0, sd) - sd^2/2))
 }
 
 #' Generate log-recruitment from two defined regimes of a specified length

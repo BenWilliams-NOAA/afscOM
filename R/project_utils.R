@@ -1,5 +1,5 @@
 apportion_recruitment <- function(rec_timeseries, apportionment, nyears, nregions){
-    
+
     rec_props <- NULL
     if(is.null(apportionment)){
         rec_props <- array(1/nregions, dim=c(nyears+1, nregions))
@@ -21,7 +21,7 @@ apportion_recruitment <- function(rec_timeseries, apportionment, nyears, nregion
 }
 
 apportion_recruitment_single <- function(recruits, apportionment, nregions){
-    
+
     rec_props <- NULL
     if(is.null(apportionment)){
         rec_props <- array(1/nregions, dim=c(1, nregions))
@@ -43,22 +43,22 @@ apportion_recruitment_single <- function(recruits, apportionment, nregions){
 }
 
 get_annual_recruitment <- function(recruitment, apportionment, apportion_random, apportionment_pars, nregions, ...){
-    
+
     rec_props <- array(NA, dim=c(1, nregions))
     if(!is.function(apportionment)){
         rec <- recruitment
         rec_props <- rec/sum(rec)
     }else {
         projected_rec_props <- do.call(
-            apportionment, 
+            apportionment,
             c(list(), apportionment_pars)
         )
         rec_props <- array(projected_rec_props, dim=c(1, nregions))
         rec <- array(recruitment*projected_rec_props, dim=c(1, nregions))
     }
-    
+
     if(apportion_random){
-        rand_rec_props <- rmultinom(1, size=30, prob = rec_props)
+        rand_rec_props <- stats::rmultinom(1, size=30, prob = rec_props)
         rand_rec_props <- t(rand_rec_props/sum(rand_rec_props))
         rec <- array(recruitment*rand_rec_props, dim=c(1, nregions))
     }
@@ -68,14 +68,14 @@ get_annual_recruitment <- function(recruitment, apportionment, apportion_random,
 }
 
 apportion_catch <- function(catch_timeseries, apportionment, nyears, nfleets, nregions){
-    
+
     # Derive the recruitment proportions from an input catch
     # matrix if provided
     nyears <- ifelse(is.array(catch_timeseries), dim(catch_timeseries)[1], length(catch_timeseries))
 
     if(length(dim(catch_timeseries)) == 3 && all(dim(catch_timeseries) == c(nyears, nfleets, nregions))){
         region_fleet_props <- vapply(
-            1:nyears, 
+            1:nyears,
             function(y){
                 catch_y <- catch_timeseries[y,,]
                 catch_y/sum(catch_y)

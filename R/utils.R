@@ -51,7 +51,8 @@ listN <- function(...){
 #'
 #' @param dem_params a list of arrays with more than 2 dimensions
 #' @param r the index along the first dimension to access
-#'
+#' @param d dimension index, default: 1
+#' @param drop controls whether singleton dimensions are dropped or preserved after subsetting default: TRUE
 #' @return a list with the same elements as dem_params but containing
 #' a single row from each list element
 #'

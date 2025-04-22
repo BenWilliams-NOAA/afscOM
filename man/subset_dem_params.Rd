@@ -10,6 +10,10 @@ subset_dem_params(dem_params, r, d = 1, drop = TRUE)
 \item{dem_params}{a list of arrays with more than 2 dimensions}
 
 \item{r}{the index along the first dimension to access}
+
+\item{d}{dimension index, default: 1}
+
+\item{drop}{controls whether singleton dimensions are dropped or preserved after subsetting default: TRUE}
 }
 \value{
 a list with the same elements as dem_params but containing

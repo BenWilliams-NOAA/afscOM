@@ -24,7 +24,7 @@ project(
 
 \item{nyears}{number of projection yeas}
 
-\item{model_option}{list of additional model options}
+\item{model_options}{list of additional model options}
 }
 \description{
 A wrapper function around the base `project` function that handles

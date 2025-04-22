@@ -14,11 +14,11 @@ generate_param_matrix(
 \arguments{
 \item{vals}{a single value, or a vector or matrix of values, to fill the output matrix with. If a vector or matrix, all dimensions must be named, and names must match with those specified with the `dimension.names` argument}
 
+\item{dimension_names}{names list containing `model_params` that}
+
 \item{by}{a character vector specifying which dimensions the input values correspond to}
 
 \item{include_fleet_dim}{whether to expand the output matrix to include a 5th dimension, indicating fleet structure}
-
-\item{settings}{names list containing `model.params` that}
 }
 \value{
 a 4d or 5d array of dimensions (nyears, nages, nsexes, nregions, nfleets) filled across the specified dimensions by the specfied values.
