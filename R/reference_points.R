@@ -80,9 +80,7 @@ compute_spr <- function(nages, mort, mat, waa, sel, ret, F){
 #' compute_fx(nages, mort, mat, waa, sel, ret, target_x=0.35)
 #' }
 compute_fx <- function(nages, mort, mat, waa, sel, ret, target_x=0.35){
-    range <- vector(length=2)
-    range[1] <- 0
-    range[2] <- 2
+    range <- c(0,2)
     n.iter <- 20
     i <- 1
     for(i in 1:n.iter) {
@@ -90,9 +88,7 @@ compute_fx <- function(nages, mort, mat, waa, sel, ret, target_x=0.35){
       spr <- compute_spr(nages, mort, mat, waa, sel, ret, F=midpoint)
       if(spr > target_x) {
         range[1] <- midpoint
-        range[2] <- range[2]
-      }else {
-        range[1] <- range[1]
+        }else {
         range[2] <- midpoint
       }
     }
