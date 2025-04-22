@@ -80,7 +80,11 @@ cyclic_recruitment <- function(n, mu_rec, sd_rec, dur, start=1, seed=NA){
 #'
 #' @export
 #'
-#' @example
+#' @examples
+#' \dontrun{
+#' beverton_holt(naa, dem_params, h, R0, S0, sigR, seed)
+#' }
+#'
 #'
 beverton_holt <- function(naa, dem_params, h, R0, S0, sigR, seed){
   set.seed(seed)

@@ -13,7 +13,7 @@ simulate_population(prev_naa, faa, recruitment, dem_params, options)
 
 \item{faa}{fishing mortality-at-age vector (dim [1, nages, nsexes, 1, nfleets])}
 
-\item{recruitment}{projected recruitment for the folliwing year}
+\item{recruitment}{projected recruitment for the following year}
 
 \item{dem_params}{demographic parameter matrices subsetted to 1 year and 1 region}
 

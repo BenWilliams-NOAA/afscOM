@@ -26,6 +26,6 @@ a 4d or 5d array of dimensions (nyears, nages, nsexes, nregions, nfleets) filled
 \description{
 Fills an empty matrix of the dimensions (nyears, nages, nsexes, nregions, nfleets)
 with a vector or matrix of values across the specified dimensions. This allows for
-quicky filling parameter matrices when parameters only vary across a subset of the
+quickly filling parameter matrices when parameters only vary across a subset of the
 required dimensions.
 }

@@ -9,6 +9,8 @@ plot_selret(selret, is_selectivity = TRUE)
 \arguments{
 \item{selret}{five-dimensional selectivity-at-age or
 retention-at-age matrix}
+
+\item{is_selectivity}{default: TRUE, otherwise retention is output}
 }
 \description{
 Generates plot of selectivity-at-age or retention-at-age

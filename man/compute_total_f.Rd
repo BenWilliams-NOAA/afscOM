@@ -7,7 +7,7 @@
 compute_total_f(faa)
 }
 \arguments{
-\item{faa}{fushing-mortality-at-age matrix [nyears, nages, nsexes, nregions, nfleets]}
+\item{faa}{fishing-mortality-at-age matrix [nyears, nages, nsexes, nregions, nfleets]}
 }
 \description{
 Compute total fishing mortality from a matrix of FAA.

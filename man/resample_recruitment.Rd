@@ -9,9 +9,9 @@ resample_recruitment(n, hist_rec, seed = NA)
 \arguments{
 \item{n}{number of samples to draw}
 
-\item{seed}{a random seed (optional)}
+\item{hist_rec}{historical recruitment vector}
 
-\item{hist.rec}{historical recruitment vector}
+\item{seed}{a random seed (optional)}
 }
 \value{
 `n` random samples from the historical

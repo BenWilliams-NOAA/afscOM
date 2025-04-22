@@ -4,7 +4,7 @@
 \alias{simulate_observations}
 \title{Simulate Observations from Fisheries and Surveys}
 \usage{
-simulate_observations(naa, waa, selex, faa, zaa, obs_pars, age_error = NA)
+simulate_observations(naa, waa, selex, faa, zaa, caa, obs_pars, age_error = NA)
 }
 \arguments{
 \item{naa}{numbers-at-age array subset to 1 year (dim [1, nages, nsexes, nregions])}
@@ -22,6 +22,12 @@ simulate_observations(naa, waa, selex, faa, zaa, obs_pars, age_error = NA)
 \item{age_error}{an optional ageing error matrix}
 }
 \description{
-Simulate observations of a population from common Alaska surveys and 
+Simulate observations of a population from common Alaska surveys and
 from landed catch data.
+}
+\examples{
+\dontrun{
+simulate_observations(naa, waa, selex, faa, zaa, caa, obs_pars, age_error=NA)
+}
+
 }

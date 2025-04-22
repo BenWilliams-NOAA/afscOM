@@ -22,9 +22,9 @@ simulate_multinomial_obs(
 \arguments{
 \item{pred}{the probability associated with each class}
 
-\item{samp_size}{multinomical sample size}
+\item{samp_size}{multinomial sample size}
 
-\item{age_err}{whether to automaticaly apply ageing error}
+\item{age_err}{whether to automatically apply ageing error}
 }
 \description{
 Simulate observations from a multinomial distribution

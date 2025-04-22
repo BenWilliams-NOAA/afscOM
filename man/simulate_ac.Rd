@@ -11,7 +11,7 @@ simulate_ac(naa, sel, aggregate_sex = FALSE)
 
 \item{sel}{selectivity-at-age vector}
 
-\item{aggregate_sex}{whether to return sex-aggregated comps or not (default FALSE}
+\item{aggregate_sex}{whether to return sex-aggregated comps or not (default FALSE)}
 }
 \description{
 Generate an age composition vector based on

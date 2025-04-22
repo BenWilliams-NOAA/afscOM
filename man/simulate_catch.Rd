@@ -20,3 +20,8 @@ simulate_catch(removals, dem_params, naa, options)
 \description{
 Description
 }
+\examples{
+/dontrun{
+simulate_catch(removals, dem_params, naa, options)
+}
+}

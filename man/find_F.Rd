@@ -27,7 +27,7 @@ find_F(f_guess, naa, waa, mort, selex, ret = NA, dmr = NA, prov_catch)
 the fishing mortality rate that yields the desired catch level
 }
 \description{
-Uses the Baranov catch equation to compute the instantenous
+Uses the Baranov catch equation to compute the instantaneous
 fishing mortality rate (F) that would yield a specific level of
 catch_
 }

@@ -8,7 +8,7 @@
 #'
 #' @return F, the corresponding instantaneous fishing mortality rate
 #'
-#' @export mu_to_F
+#' @export
 #'
 mu_to_F <- function(mu){
     return(-log(1-mu))
@@ -24,7 +24,7 @@ mu_to_F <- function(mu){
 #'
 #' @return mu, the corresponding harvest rate
 #'
-#' @export F_to_mu
+#' @export
 #'
 F_to_mu <- function(fy){
     return(1-exp(-fy))
@@ -37,7 +37,7 @@ F_to_mu <- function(fy){
 #'
 #' @param ... R variables containung values to be put in a list
 #'
-#' @export listN
+#' @export
 listN <- function(...){
     anonList <- list(...)
     names(anonList) <- as.character(substitute(list(...)))[-1]
@@ -55,7 +55,7 @@ listN <- function(...){
 #' @return a list with the same elements as dem_params but containing
 #' a single row from each list element
 #'
-#' @export subset_dem_params
+#' @export
 #'
 #'
 subset_dem_params <- function(dem_params, r, d=1, drop=TRUE){
@@ -86,7 +86,7 @@ subset_dem_params <- function(dem_params, r, d=1, drop=TRUE){
 #'
 #' @return a subsetted matrix or array
 #'
-#' @export subset_matrix
+#' @export
 #'
 #'
 subset_matrix <- function(mat, r, d=1, drop=TRUE){
@@ -119,7 +119,7 @@ subset_matrix <- function(mat, r, d=1, drop=TRUE){
 #' with the values from the last year in the original matrix continued for
 #' all future years
 #'
-#' @export extend_years
+#' @export
 #'
 #'
 extend_years <- function(dem_params, dimension, e, new.dimnames=NA){
@@ -180,25 +180,28 @@ setup_model_options <- function(model_dimensions){
 }
 
 #' Calculate Joint Selectivity and Retention Across Multiple Fleets
-#' 
+#'
 #' Computes the average selectivity-at-age and retention-at-age acting
 #' on a population when multiple fleets are present. Selectivity and
 #' retention are weighted based on user supplied weights.
 #'
-#' @param sel selectiviity-at-age ([1, nages, nesexes, nregions, nfleets])
+#' @param sel selectivity-at-age ([1, nages, nesexes, nregions, nfleets])
 #' @param ret retention-at-age ([1, nages, nsexes, nregions, nfleets])
 #' @param prop_fs fleet weights
 #'
-#' @export calculate_joint_selret
+#' @export
 #'
-#' @example
+#' @examples
+#' \dontrun{
+#' calculate_joint_selret(sel, ret, prop_fs=c(0.50, 0.50))
+#' }
 #'
 calculate_joint_selret <- function(sel, ret, prop_fs=c(0.50, 0.50)){
     joint_self <- apply(sweep(sel[,,1,,,drop=FALSE], 5, prop_fs, FUN="*"), c(1, 2), sum)/max(apply(sweep(sel[,,1,,,drop=FALSE], 5, prop_fs, FUN="*"), c(1, 2), sum))
     joint_selm <- apply(sweep(sel[,,2,,,drop=FALSE], 5, prop_fs, FUN="*"), c(1, 2), sum)/max(apply(sweep(sel[,,2,,,drop=FALSE], 5, prop_fs, FUN="*"), c(1, 2), sum))
     joint_retf <- apply(sweep(ret[,,1,,,drop=FALSE], 5, prop_fs, FUN="*"), c(1, 2), sum)/max(apply(sweep(ret[,,1,,,drop=FALSE], 5, prop_fs, FUN="*"), c(1, 2), sum))
     joint_retm <- apply(sweep(ret[,,2,,,drop=FALSE], 5, prop_fs, FUN="*"), c(1, 2), sum)/max(apply(sweep(ret[,,2,,,drop=FALSE], 5, prop_fs, FUN="*"), c(1, 2), sum))
-    
+
     joint_sel <- array(NA, dim=dim(sel)[1:4])
     joint_sel[,,1,] <- joint_self
     joint_sel[,,2,] <- joint_selm
@@ -210,6 +213,15 @@ calculate_joint_selret <- function(sel, ret, prop_fs=c(0.50, 0.50)){
     return(list(sel=joint_sel, ret=joint_ret))
 }
 
+
+#' Generate output matrices
+#' @param nyears number of years
+#' @param nages number of ages
+#' @param nsexes number of sexes
+#' @param nregions number of regions
+#' @param nfleets number of fishing fleets
+#' @param nsurveys number of surveys
+#' @export
 generate_output_matrices <- function(nyears, nages, nsexes, nregions, nfleets, nsurveys){
     land_caa    = array(NA, dim=c(nyears, nages, nsexes, nregions, nfleets))
     disc_caa    = array(NA, dim=c(nyears, nages, nsexes, nregions, nfleets))
@@ -228,7 +240,7 @@ generate_output_matrices <- function(nyears, nages, nsexes, nregions, nfleets, n
     )
 
     survey_obs <- list(
-        catch = array(NA, dim=c(nyears, 1, 1, nregions, nfleets)), 
+        catch = array(NA, dim=c(nyears, 1, 1, nregions, nfleets)),
         rpns = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
         rpws = array(NA, dim=c(nyears, 1, 1, nregions, nsurveys)),
         acs  = array(NA, dim=c(nyears, nages, nsexes, nregions, nsurveys+nfleets))
@@ -236,9 +248,22 @@ generate_output_matrices <- function(nyears, nages, nsexes, nregions, nfleets, n
 
     outputs <- listN(land_caa, disc_caa, caa, faa, naa, f, recruits, survey_preds, survey_obs)
     return(outputs)
-    
+
 }
 
+#' update matrices
+#'
+#' @param output_matrices previous OM output
+#' @param y year
+#' @param input inputs (land_caa_tmp, caa_tmp, naa_tmp, etc.)
+#' @param update_obs switch to also update the observation data, default: FALSE
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' update_output_matrices(output_matrices, y, input, update_obs=FALSE)
+#' }
 update_output_matrices <- function(output_matrices, y, input, update_obs=FALSE){
 
     # update state
@@ -262,6 +287,6 @@ update_output_matrices <- function(output_matrices, y, input, update_obs=FALSE){
         output_matrices$survey_obs$rpws[y,,,,] <- input$survey_obs$rpws
         output_matrices$survey_obs$acs[y,,,,]  <- input$survey_obs$acs
     }
-    
+
     return(output_matrices)
 }

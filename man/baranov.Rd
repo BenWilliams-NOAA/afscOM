@@ -7,26 +7,26 @@
 baranov(fy, naa, waa, mort, selex, ret = NA, dmr = NA)
 }
 \arguments{
-\item{fy}{an instantenous fishing mortality rate to apply to the population}
+\item{fy}{an instantaneous fishing mortality rate to apply to the population}
 
 \item{naa}{numbers-at-age in the population}
 
 \item{waa}{weight-at-age vector}
 
-\item{mort}{instanteous natural mortality (M) -at-age vector}
+\item{mort}{instantaneous natural mortality (M) -at-age vector}
 
 \item{selex}{selectivity-at-age vector}
 
 \item{ret}{retention-at-age vector (optional)}
 
-\item{dmr}{instanteous discard mortality rate -at-age vector (optional)}
+\item{dmr}{instantaneous discard mortality rate -at-age vector (optional)}
 }
 \value{
 the amount of catch resulting from fishing the population at `fy`
 }
 \description{
 An implementation of the Baranov catch equations allowing for
-fishery retenetion and discarding practices.
+fishery retention and discarding practices.
 }
 \examples{
 \dontrun{

@@ -169,7 +169,7 @@ plot_mort <- function(mort, is_dmr=FALSE){
 #'
 #' @param selret five-dimensional selectivity-at-age or
 #' retention-at-age matrix
-#'
+#' @param is_selectivity default: TRUE, otherwise retention is output
 #' @export
 #'
 plot_selret <- function(selret, is_selectivity=TRUE){
@@ -204,7 +204,7 @@ plot_selret <- function(selret, is_selectivity=TRUE){
 #' Plot Spawning stock biomass
 #'
 #'
-#' @param ssb
+#' @param ssb annual spawning biomass
 #' @param compare_ts i don't know what this does - default:NULL
 #' @export
 #'
@@ -256,7 +256,7 @@ plot_ssb <- function(ssb, compare_ts=NULL){
 #' Plot Total biomass
 #'
 #'
-#' @param bio
+#' @param bio annual total biomass
 #' @param compare_ts i don't know what this does - default:NULL
 #' @export
 #'
@@ -307,7 +307,7 @@ plot_ssb <- function(ssb, compare_ts=NULL){
  #' Plot Catch
  #'
  #'
- #' @param catch
+ #' @param catch annual catch
  #' @param compare_ts i don't know what this does - default:NULL
  #' @export
  #'
@@ -409,7 +409,7 @@ plot_ssb <- function(ssb, compare_ts=NULL){
  #' Plot Numbers at age
  #'
  #'
- #' @param atage
+ #' @param atage numbers at age
  #' @export
  #'
 plot_atage <- function(atage){

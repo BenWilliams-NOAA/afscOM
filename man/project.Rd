@@ -2,29 +2,32 @@
 % Please edit documentation in R/project.R
 \name{project}
 \alias{project}
-\title{Project population forward by 1 year}
+\title{Project Population Forward Multiple Years}
 \usage{
-project(removals, dem_params, prev_naa, recruitment, options = NA)
+project(
+  init_naa,
+  removals_timeseries,
+  recruitment,
+  dem_params,
+  nyears,
+  model_options
+)
 }
 \arguments{
-\item{removals}{population removals (either in catch or F units)}
+\item{init_naa}{numbers-at-age matrix in starting year ([1, nages, nsexes, nregions])}
+
+\item{removals_timeseries}{vector of removals (either catch of F) of length nyears}
+
+\item{recruitment}{vector of recruitment of length nyears}
 
 \item{dem_params}{list of demographic parameter matrices}
 
-\item{prev_naa}{the NAA in the previous timestep}
+\item{nyears}{number of projection yeas}
 
-\item{recruitment}{total recruiment to occurin this year}
-
-\item{fleet.props}{the proportion of the TAC allocated to each fleet}
-
-\item{option}{additional model options}
-}
-\value{
-list of derived quantities included landed catch-at-age,
-discarded catch-at-age, total catch-at-age, F-at-age, and numbers-at-age.
+\item{model_option}{list of additional model options}
 }
 \description{
-Given a TAC, the previous population age structure, demographic information
-(e.g. natural mortality, selectivity, retention, etc.), and recruitment,
-determine the numbers-at-age present in the population for the following year.
+A wrapper function around the base `project` function that handles
+projecting forward multiple years given a removals timeseries and a
+recruitment timeseries.
 }
