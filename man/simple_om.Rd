@@ -13,7 +13,7 @@ simple_om
 \description{
 Demographic parameters, initial population structure,
 recruitment timeseries, catch timeseries, and model
-options for running a simple 25-year age-sex-structured 
+options for running a simple 25-year age-sex-structured
 population simulation with one spatial region and one
 fishing fleet. The observation submodel is turned off
 in this example

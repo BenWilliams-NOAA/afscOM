@@ -7,7 +7,7 @@
 listN(...)
 }
 \arguments{
-\item{...}{R variables containung values to be put in a list}
+\item{...}{R variables containing values to be put in a list}
 }
 \description{
 Automatically use variable names as list object names when

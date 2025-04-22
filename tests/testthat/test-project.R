@@ -1,4 +1,5 @@
 dem_params <- afscOM::sablefish_dem_params
+assessment <- afscOM::sablefish_assessment_data
 
 test_that("1yr projection w/o movement", {
 
@@ -23,8 +24,6 @@ test_that("1yr projection w/o movement", {
   dem_params <- subset_dem_params(dem_params, y, d=1, drop=FALSE)
   dem_params <- subset_dem_params(dem_params, r, d=4, drop=FALSE)
 
-  load(file.path(here::here(), "data/sablefish_assessment_data.rda"))
-  assessment <- sablefish_assessment_data
   naa <- array(NA, dim=c(1, model_params$nages, model_params$nsexes, 1))
   naa[,,1,] <- assessment$natage.female["1960",]
   naa[,,2,] <- assessment$natage.male["1960",]
@@ -76,8 +75,6 @@ test_that("1yr projection w F input", {
   dem_params <- subset_dem_params(dem_params, y, d=1, drop=FALSE)
   dem_params <- subset_dem_params(dem_params, r, d=4, drop=FALSE)
 
-  load(file.path(here::here(), "data/sablefish_assessment_data.rda"))
-  assessment <- sablefish_assessment_data
   naa <- array(NA, dim=c(1, model_params$nages, model_params$nsexes, 1))
   naa[,,1,] <- assessment$natage.female["1960",]
   naa[,,2,] <- assessment$natage.male["1960",]

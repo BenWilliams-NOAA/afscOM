@@ -194,17 +194,17 @@ test_that("beverton-holt SRR", {
     naa <- simple_om$init_naa
     dp_y <- subset_dem_params(simple_om$dem_params, 1, d=1, drop=FALSE)
 
-    recruits <- beverton_holt(naa/10, dp_y, h=1, R0=25, S0=300)
-    expect_equal(recruits, 25)
+    recruits <- beverton_holt(naa/10, dp_y, h=1, R0=25, S0=300, sigR=0.5, seed=123)
+    expect_equal(recruits, 16.67046, tolerance=1e-4)
 })
 
-test_that("beverton-holt SRR", {
+test_that("beverton-holt SRR2", {
 
     naa <- simple_om$init_naa
     dp_y <- subset_dem_params(simple_om$dem_params, 1, d=1, drop=FALSE)
 
     ssb <- compute_ssb(naa/10, dp_y)[1,1]
 
-    recruits <- beverton_holt(naa/10, dp_y, h=0.5, R0=25, S0=300)
-    expect_equal(recruits, 22.12885, tolerance=1e-4)
+    recruits <- beverton_holt(naa/10, dp_y, h=0.5, R0=25, S0=300, sigR=0.5, seed=123)
+    expect_equal(recruits,14.75592, tolerance=1e-4)
 })

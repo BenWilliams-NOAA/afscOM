@@ -85,8 +85,7 @@ project <- function(init_naa, removals_timeseries, recruitment, dem_params, nyea
             apportionment = r$rec_props,
             apportion_random = model_options$recruit_apportionment_random,
             apportionment_pars = model_options$recruit_apportionment_pars,
-            nregions = nregions,
-            list(naa=outputs$naa[y,,,,drop=FALSE], dem_params=dp.y)
+            nregions = nregions
         )
 
         out_vars <- project_single(

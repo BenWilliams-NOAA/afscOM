@@ -1,5 +1,6 @@
 dem_params <- afscOM::sablefish_dem_params
 simple_om_spatial <- afscOM::simple_om_spatial
+assessment <- afscOM::sablefish_assessment_data
 
 test_that("single year catch simulation for one fleet", {
 
@@ -23,8 +24,6 @@ test_that("single year catch simulation for one fleet", {
   dem_params <- subset_dem_params(dem_params, y, d=1, drop=FALSE)
   dem_params <- subset_dem_params(dem_params, r, d=4, drop=FALSE)
 
-  load(file.path(here::here(), "data/sablefish_assessment_data.rda"))
-  assessment <- sablefish_assessment_data
   naa <- array(NA, dim=c(1, model_params$nages, model_params$nsexes, 1))
   naa[,,1,] <- assessment$natage.female["2023",]*1e6
   naa[,,2,] <- assessment$natage.male["2023",]*1e6
@@ -75,8 +74,6 @@ test_that("single year catch simulation for two fleets", {
   dem_params <- subset_dem_params(dem_params, y, d=1, drop=FALSE)
   dem_params <- subset_dem_params(dem_params, r, d=4, drop=FALSE)
 
-  load(file.path(here::here(), "data/sablefish_assessment_data.rda"))
-  assessment <- sablefish_assessment_data
   naa <- array(NA, dim=c(1, model_params$nages, model_params$nsexes, 1))
   naa[,,1,] <- assessment$natage.female["2023",]*1e6
   naa[,,2,] <- assessment$natage.male["2023",]*1e6
@@ -123,7 +120,7 @@ test_that("single year catch simulation with two regions and one fleet", {
 
   model_options$fleet_apportionment <- fleet_apportionment
 
-  caa_tmp         = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions, model_params$nfleets))
+  caa_tmp = array(NA, dim=c(1, model_params$nages, model_params$nsexes, model_params$nregions, model_params$nfleets))
 
   tac <- array(100, c(25, 1, 1))
   suppressWarnings({

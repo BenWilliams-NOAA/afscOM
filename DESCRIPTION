@@ -36,6 +36,7 @@ Depends:
     R (>= 3.5.0),
 Imports:
     dplyr,
+    tidyr,
     rlang,
     bbmle,
     abind,
@@ -48,6 +49,7 @@ RoxygenNote: 7.3.2
 Suggests: 
     knitr,
     rmarkdown,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    here
 Config/testthat/edition: 3
 VignetteBuilder: knitr

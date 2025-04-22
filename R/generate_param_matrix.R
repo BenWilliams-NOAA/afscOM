@@ -64,6 +64,6 @@ generate_param_matrix <- function(vals, dimension_names, by=NA, include_fleet_di
     afill_params$x <- tmp
     afill_params$value <- vals
 
-    tmp <- do.call(abind::"afill<-", afill_params)
+    tmp <- do.call(abind::`afill<-`, afill_params)
     return(tmp)
 }

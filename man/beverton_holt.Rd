@@ -4,13 +4,23 @@
 \alias{beverton_holt}
 \title{Beverton-Holt Stock Recruit Relationship}
 \usage{
-beverton_holt(naa, dem_params, h, R0, S0, sigR, seed)
+beverton_holt(naa, dem_params, h, R0, S0, sigR, seed = NULL)
 }
 \arguments{
 \item{naa}{numbers-at-age array (dimensions [1, nages, nsexes, nregions])}
 
 \item{dem_params}{demographic parameters list susbet to a
 single year (dimensions [1, nages, nsexes, nregions, nfleets])}
+
+\item{h}{steepness of the stock-recruit relationship (value between 0.2 and 1).}
+
+\item{R0}{unfished recruitment (recruits per year)}
+
+\item{S0}{unfished spawning biomass}
+
+\item{sigR}{standard deviation of recruitment lognormal deviations (recruitment variability)}
+
+\item{seed, }{random seed for reproducibility of stochastic recruitment, default: NULL}
 }
 \description{
 Classic Beverton-Holt SRR parameterized using steepness,
@@ -19,7 +29,7 @@ unfished recruitment (R0), and unfished spawning biomass
 }
 \examples{
 \dontrun{
-beverton_holt(naa, dem_params, h, R0, S0, sigR, seed)
+beverton_holt(naa, dem_params, h, R0, S0, sigR, seed=123)
 }
 
 

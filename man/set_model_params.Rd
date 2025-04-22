@@ -21,7 +21,7 @@ set_model_params(nyears, nages, nsexes = 1, nregions = 1, nfleets = 1)
 Setup model parameters
 }
 \examples{
-/dontrun{
+\dontrun{
 set_model_params(nyears, nages, nsexes=1, nregions=1, nfleets=1)
 }
 }

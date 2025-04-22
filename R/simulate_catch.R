@@ -9,7 +9,7 @@
 #'
 #' @export
 #' @examples
-#' /dontrun{
+#' \dontrun{
 #' simulate_catch(removals, dem_params, naa, options)
 #' }
 simulate_catch <- function(removals, dem_params, naa, options){

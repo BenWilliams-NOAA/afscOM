@@ -62,7 +62,7 @@ plot_waa <- function(waa){
         dplyr::distinct(value, .keep_all=TRUE) %>%
         dplyr::mutate(time_block = factor(time, labels=c(1:length(unique(time)))))
 
-    ymax <- round(1.2*waa_df %>% pull(value) %>% max, 2)
+    ymax <- round(1.2*waa_df %>% dplyr::pull(value) %>% max, 2)
 
     plot <- ggplot2::ggplot(waa_df, ggplot2::aes(x=age, y=value, color=sex, linetype=time_block))+
         ggplot2::geom_line(linewidth=1)+
@@ -122,7 +122,7 @@ plot_mat <- function(mat){
 #' and region as appropriate. This function can be used for
 #' both natural and discard mortality
 #'
-#' @param waa four-dimensional mortality-at-age matrix
+#' @param mort four-dimensional mortality-at-age matrix
 #' @param is_dmr title to discard mortality, default: FALSE = natural mortality
 #'
 #' @export
@@ -136,9 +136,9 @@ plot_mort <- function(mort, is_dmr=FALSE){
         dplyr::distinct(value, .keep_all=TRUE) %>%
         dplyr::mutate(time_block = factor(time, labels=c(1:length(unique(time)))))
 
-    ymax <- round(1.2*mort_df %>% pull(value) %>% max, 2)
+    ymax <- round(1.2*mort_df %>% dplyr::pull(value) %>% max, 2)
 
-    plot <- ggplot(mort_df, ggplot2::aes(x=age, y=value, color=sex, linetype=time_block))+
+    plot <- ggplot2::ggplot(mort_df, ggplot2::aes(x=age, y=value, color=sex, linetype=time_block))+
         ggplot2::geom_line(linewidth=1)+
         ggplot2::scale_y_continuous(limits=c(0, ymax), expand=c(0.01, 0.01))+
         ggplot2::scale_x_continuous(expand=c(0, 0))+
@@ -186,7 +186,7 @@ plot_selret <- function(selret, is_selectivity=TRUE){
     }else if(dimensions$nfleets > 1 & dimensions$nregions <= 1){
         plot <- plot + ggplot2::facet_wrap(~fleet, scales="free_y")
     }else if(dimensions$nfleets > 1 & dimensions$nregions > 1){
-        plot <- plot + ggplot2::facet_grid(rows=vars(region), cols=vars(fleet))
+        plot <- plot + ggplot2::facet_grid(rows=ggplot2::vars(region), cols=ggplot2::vars(fleet))
     }
 
     return(plot)
@@ -203,10 +203,11 @@ plot_ssb <- function(ssb, compare_ts=NULL){
 
     nregions <- ncol(ssb)
 
-    ssb_df <- ssb %>% as_tibble() %>%
-        rownames_to_column("time") %>%
-        mutate(time=as.numeric(time)) %>%
-        pivot_longer(c(2:(nregions+1)), names_to="region", values_to="ssb")
+    ssb_df <- ssb %>%
+      tibble::as_tibble() %>%
+        tibble::rownames_to_column("time") %>%
+        dplyr::mutate(time=as.numeric(time)) %>%
+        tidyr::pivot_longer(c(2:(nregions+1)), names_to="region", values_to="ssb")
 
     if(!is.null(compare_ts)){
         ssb_df <- ssb_df %>%
@@ -215,12 +216,12 @@ plot_ssb <- function(ssb, compare_ts=NULL){
               tibble::as_tibble() %>%
                 tibble::rownames_to_column("time") %>%
                 dplyr::mutate(time=as.numeric(time)) %>%
-                dplyr::pivot_longer(c(2:(nregions+1)), names_to="region", values_to="comp")
+                tidyr::pivot_longer(c(2:(nregions+1)), names_to="region", values_to="comp")
         )
     }
 
-    xmax <- round(ssb_df %>% pull(time) %>% max, -1)
-    ymax <- round(1.2*ssb_df %>% pull(ssb) %>% max, -1)
+    xmax <- round(ssb_df %>% dplyr::pull(time) %>% max, -1)
+    ymax <- round(1.2*ssb_df %>% dplyr::pull(ssb) %>% max, -1)
 
     plot <- ggplot2::ggplot(ssb_df, ggplot2::aes(x=time, y=ssb))+
         ggplot2::geom_line(linewidth=1)+
@@ -229,11 +230,11 @@ plot_ssb <- function(ssb, compare_ts=NULL){
         ggplot2::coord_cartesian(expand=0)+
         ggplot2::theme_bw()+
         ggplot2::theme(
-            panel.grid.minor = element_blank()
+            panel.grid.minor = ggplot2::element_blank()
         )
 
     if(!is.null(compare_ts)){
-        plot <- plot + ggplot2::geom_line(aes(y=comp), color="red")
+        plot <- plot + ggplot2::geom_line(ggplot2::aes(y=comp), color="red")
     }
 
     if(nregions > 1){
@@ -257,9 +258,9 @@ plot_ssb <- function(ssb, compare_ts=NULL){
 
     bio_df <- bio %>%
       tibble::as_tibble() %>%
-        dplyr::rownames_to_column("time") %>%
+        tibble::rownames_to_column("time") %>%
         dplyr::mutate(time=as.numeric(time)) %>%
-        dplyr::pivot_longer(c(2:(nregions+1)), names_to="region", values_to="bio")
+        tidyr::pivot_longer(c(2:(nregions+1)), names_to="region", values_to="bio")
 
     if(!is.null(compare_ts)){
         bio_df <- bio_df %>%
@@ -268,7 +269,7 @@ plot_ssb <- function(ssb, compare_ts=NULL){
               tibble::as_tibble() %>%
                 tibble::rownames_to_column("time") %>%
                 dplyr::mutate(time=as.numeric(time)) %>%
-                dplyr::pivot_longer(c(2:(nregions+1)), names_to="region", values_to="comp")
+                tidyr::pivot_longer(c(2:(nregions+1)), names_to="region", values_to="comp")
         )
     }
 
@@ -283,11 +284,11 @@ plot_ssb <- function(ssb, compare_ts=NULL){
         ggplot2::expand_limits(x=0, y=0) +
         ggplot2::theme_bw()+
         ggplot2::theme(
-            panel.grid.minor = element_blank()
+            panel.grid.minor = ggplot2::element_blank()
         )
 
     if(!is.null(compare_ts)){
-        plot <- plot + ggplot2::geom_line(aes(y=comp), color="red")
+        plot <- plot + ggplot2::geom_line(ggplot2::aes(y=comp), color="red")
     }
 
     if(nregions > 1){
@@ -313,7 +314,7 @@ plot_ssb <- function(ssb, compare_ts=NULL){
       tibble::as_tibble() %>%
         tibble::rownames_to_column("time") %>%
         dplyr::mutate(time=as.numeric(time)) %>%
-        dplyr::pivot_longer(c(2:(nregions+1)), names_to="region", values_to="catch")
+        tidyr::pivot_longer(c(2:(nregions+1)), names_to="region", values_to="catch")
 
     if(!is.null(compare_ts)){
         catch_df <- catch_df %>%
@@ -322,7 +323,7 @@ plot_ssb <- function(ssb, compare_ts=NULL){
               tibble::as_tibble() %>%
                 tibble::rownames_to_column("time") %>%
                 dplyr::mutate(time=as.numeric(time)) %>%
-                dplyr::pivot_longer(c(2:(nregions+1)), names_to="region", values_to="comp")
+                tidyr::pivot_longer(c(2:(nregions+1)), names_to="region", values_to="comp")
         )
     }
 
@@ -337,11 +338,11 @@ plot_ssb <- function(ssb, compare_ts=NULL){
         ggplot2::coord_cartesian(expand=0)+
         ggplot2::theme_bw()+
         ggplot2::theme(
-            panel.grid.minor = element_blank()
+            panel.grid.minor = ggplot2::element_blank()
         )
 
     if(!is.null(compare_ts)){
-        plot <- plot + ggplot2::geom_line(aes(y=comp), color="red")
+        plot <- plot + ggplot2::geom_line(ggplot2::aes(y=comp), color="red")
     }
 
     if(nregions > 1){
@@ -367,7 +368,7 @@ plot_ssb <- function(ssb, compare_ts=NULL){
       tibble::as_tibble() %>%
         tibble::rownames_to_column("time") %>%
         dplyr::mutate(time=as.numeric(time)) %>%
-        dplyr::pivot_longer(c(2:(nregions+1)), names_to="region", values_to="f")
+        tidyr::pivot_longer(c(2:(nregions+1)), names_to="region", values_to="f")
 
     if(!is.null(compare_ts)){
         f_df <- f_df %>%
@@ -376,7 +377,7 @@ plot_ssb <- function(ssb, compare_ts=NULL){
               tibble::as_tibble() %>%
                 tibble::rownames_to_column("time") %>%
                 dplyr::mutate(time=as.numeric(time)) %>%
-                dplyr::pivot_longer(c(2:(nregions+1)), names_to="region", values_to="comp")
+                tidyr::pivot_longer(c(2:(nregions+1)), names_to="region", values_to="comp")
         )
     }
 
@@ -391,11 +392,11 @@ plot_ssb <- function(ssb, compare_ts=NULL){
         ggplot2::coord_cartesian(expand=0)+
         ggplot2::theme_bw()+
         ggplot2::theme(
-            panel.grid.minor = element_blank()
+            panel.grid.minor = ggplot2::element_blank()
         )
 
     if(!is.null(compare_ts)){
-        plot <- plot + ggplot2::geom_line(aes(y=comp), color="red")
+        plot <- plot + ggplot2::geom_line(ggplot2::aes(y=comp), color="red")
     }
 
     if(nregions > 1){

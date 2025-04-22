@@ -5,14 +5,14 @@
 \alias{sablefish_dem_params}
 \title{Demographic parameter matrices for Alaska Sablefish}
 \format{
-A list containing demographic matrices
+An R data object.
 }
 \usage{
-sablefish_dem_params
+data(sablefish_dem_params)
 }
 \description{
 A dataset containing fully formed demographic
-parmeter matrices for Alaska sablefish, based on
+parameter matrices for Alaska sablefish, based on
 the 2023 sablefish assessment.
 }
 \keyword{datasets}

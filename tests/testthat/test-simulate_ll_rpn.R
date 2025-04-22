@@ -1,7 +1,6 @@
+assessment <- afscOM::sablefish_assessment_data
+
 test_that("domestic longline survey RPN calculation", {
-  
-  load(file.path(here::here(), "data/sablefish_assessment_data.rda"))
-  assessment <- sablefish_assessment_data
 
   ll_rpn_years <- as.numeric(rownames(assessment$obssrv3))
   ll_rpn_years <- ll_rpn_years-1960+1
@@ -27,7 +26,7 @@ test_that("domestic longline survey RPN calculation", {
   ll_surv_q <- assessment$parameters["q1"]
 
   ll_preds <- assessment$obssrv3[,"predsrv3"]
-  
+
   pred <- sapply(ll_rpn_years, function(y){
     simulate_rpn(ll_surv_q, naa[y,,,, drop=FALSE], subset_matrix(sel[y,,,,1, drop=FALSE], 1, d=5), zaa[y,,,, drop=FALSE])
   })

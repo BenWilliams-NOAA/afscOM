@@ -22,9 +22,10 @@ Draw `n` random samples, with replacement, from the
 historical recruitment timeseries.
 }
 \examples{
+\dontrun{
 set.seed(1120)
 n <- 100
 hist.rec <- c(100, 200, 50, 100, 120)
-resample.recruitment(n, hist.rec)
-
+resample_recruitment(n, hist.rec)
+}
 }

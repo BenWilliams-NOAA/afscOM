@@ -19,7 +19,7 @@ simulate_catch(removals, dem_params, naa, options)
 Description
 }
 \examples{
-/dontrun{
+\dontrun{
 simulate_catch(removals, dem_params, naa, options)
 }
 }

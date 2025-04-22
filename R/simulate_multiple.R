@@ -1,4 +1,4 @@
-simulate_multiple <- function(nsims, seeds=NA, nyears, nages, nsexes, nregions, nfleets){
+simulate_multiple <- function(nsims, seeds=NA, nyears, nages, nsexes, nregions, nfleets,...){
 
     land_caa    = array(NA, dim=c(nyears, nages, nsexes, nregions, nfleets, nsims))
     disc_caa    = array(NA, dim=c(nyears, nages, nsexes, nregions, nfleets, nsims))

@@ -42,7 +42,7 @@ apportion_recruitment_single <- function(recruits, apportionment, nregions){
     return(listN(rec_props, full_recruitment))
 }
 
-get_annual_recruitment <- function(recruitment, apportionment, apportion_random, apportionment_pars, nregions, ...){
+get_annual_recruitment <- function(recruitment, apportionment, apportion_random, apportionment_pars, nregions){
 
     rec_props <- array(NA, dim=c(1, nregions))
     if(!is.function(apportionment)){

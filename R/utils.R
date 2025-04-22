@@ -35,7 +35,7 @@ F_to_mu <- function(fy){
 #' Automatically use variable names as list object names when
 #' a sequence of variables is provided to a list constructor_
 #'
-#' @param ... R variables containung values to be put in a list
+#' @param ... R variables containing values to be put in a list
 #'
 #' @export
 listN <- function(...){
@@ -143,7 +143,7 @@ extend_years <- function(dem_params, dimension, e, new.dimnames=NA){
         afill_params$x <- t
         afill_params$value <- last
 
-        t <- do.call("afill<-", afill_params)
+        t <- do.call(`afill<-`, afill_params)
         tmp[[n]] <- t
     }
     return(tmp)

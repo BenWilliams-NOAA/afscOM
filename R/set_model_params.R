@@ -9,7 +9,7 @@
 #' @export
 #'
 #' @examples
-#' /dontrun{
+#' \dontrun{
 #' set_model_params(nyears, nages, nsexes=1, nregions=1, nfleets=1)
 #' }
 set_model_params <- function(nyears, nages, nsexes=1, nregions=1, nfleets=1){

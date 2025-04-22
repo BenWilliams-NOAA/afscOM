@@ -13,11 +13,12 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' set.seed(1120)
 #' n <- 100
 #' hist.rec <- c(100, 200, 50, 100, 120)
-#' resample.recruitment(n, hist.rec)
-#'
+#' resample_recruitment(n, hist.rec)
+#'}
 resample_recruitment <- function(n, hist_rec, seed=NA){
     if(!is.na(seed)){
         set.seed(seed)
@@ -77,17 +78,23 @@ cyclic_recruitment <- function(n, mu_rec, sd_rec, dur, start=1, seed=NA){
 #' @param naa numbers-at-age array (dimensions [1, nages, nsexes, nregions])
 #' @param dem_params demographic parameters list susbet to a
 #' single year (dimensions [1, nages, nsexes, nregions, nfleets])
-#'
+#' @param h steepness of the stock-recruit relationship (value between 0.2 and 1).
+#' @param R0 unfished recruitment (recruits per year)
+#' @param S0 unfished spawning biomass
+#' @param sigR standard deviation of recruitment lognormal deviations (recruitment variability)
+#' @param seed, random seed for reproducibility of stochastic recruitment, default: NULL
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' beverton_holt(naa, dem_params, h, R0, S0, sigR, seed)
+#' beverton_holt(naa, dem_params, h, R0, S0, sigR, seed=123)
 #' }
 #'
 #'
-beverton_holt <- function(naa, dem_params, h, R0, S0, sigR, seed){
-  set.seed(seed)
+beverton_holt <- function(naa, dem_params, h, R0, S0, sigR, seed=NULL){
+  if(!is.null(seed)){
+    set.seed(seed)
+  }
   ssb <- compute_ssb(naa, dem_params)[1,1]
   bh <- (4*R0*h*ssb)/((1-h)*R0*(S0/R0) + (5*h - 1)*ssb)
   rec <- stats::rlnorm(1, meanlog = log(bh)-sigR*sigR/2, sdlog=sigR)
