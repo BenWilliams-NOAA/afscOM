@@ -127,10 +127,10 @@ project_single <- function(removals, dem_params, prev_naa, recruitment, options=
      # Handle movement matrix
     if(model_params$nregions > 1 & "movement" %in% names(dem_params)){
         if(!options$do_recruits_move){
-            dem_params$movement[,,1,1,] <- diag(nregions)
+            dem_params$movement[,,1,1,] <- diag(model_params$nregions)
         }
         v <- vapply(
-            1:nages,
+            1:model_params$nages, 
             # Apply movement to the ages individualy
             function(a) {
                 sapply(

@@ -63,7 +63,7 @@ subset_dem_params <- function(dem_params, r, d=1, drop=TRUE){
     tmp <- rlang::duplicate(dem_params)
     ps <- names(tmp)
     for(n in ps){
-        if(any(is.na(dem_params[[n]]))) next;
+        # if(any(is.na(dem_params[[n]]))) next;
         if(n == "movement"){
             if(d > 3) next; # Dont allow subsetting by region or shit goes to hell
             tmp[[n]] <- subset_matrix(dem_params[[n]], r, d+2, drop)
