@@ -166,7 +166,8 @@ plot_catch(catch, matt_catch)
 plot_bio(bio, matt_bio)
 plot_f(f, matt_f)
 
-
+plot_ssb(ssb)
+plot_ssb(matt_ssb)
 # spatial_sablefish_inputs <- list(
 #     ssb = spatial_sablefish_estimates$SSB,
 #     naa = spatial_sablefish_estimates$NAA,

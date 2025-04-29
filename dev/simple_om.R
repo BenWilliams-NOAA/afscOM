@@ -21,11 +21,11 @@ model_dimensions <- get_model_dimensions(simple_om$dem_params$sel)
 simple_om$options$region_apportionment <- NULL
 simple_om$options$fleet_apportionment <- array(1, dim=c(model_dimensions$nyears, model_dimensions$nfleet, model_dimensions$nregions))
 simple_om$options$recruit_apportionment = array(1, dim=c(model_dimensions$nyears+1, 1))
-simple_om$options$random_apportion_recruits = FALSE
+simple_om$options$recruit_apportionment_random = FALSE
 simple_om$options$do_recruits_move = FALSE
 simple_om$options$simulate_observations = FALSE
 simple_om$options$recruitment_pars = list(
-    h = 0.75,
+    h = 0.5,
     R0 = 150,
     S0 = 2000,
     sigR = 1.04
@@ -35,7 +35,7 @@ simple_om$options$seed = 1120
 
 
 # run the om simulatino
-om_sim <- project_multi(
+om_sim <- project(
     init_naa = simple_om$init_naa, 
     removals_timeseries = simple_om$catch,
     recruitment = beverton_holt, 

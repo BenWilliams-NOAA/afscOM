@@ -78,6 +78,11 @@ selex_matrix[,,,5:6, 3:7] <- 0
 
 movement <- kapur2024_sablefish_data$movement
 
+full_movement <- array(NA, dim=c(nregions, nregions, nyears, nages, nsexes))
+for(i in 1:nyears){
+    full_movement[,,i,,] <- movement[,,1:71,]    
+}
+
 maturity_by_stock <- kapur2024_sablefish_data$maturity
 maturity_by_region <- maturity_by_stock %*% t(region_stock_matrix) # convert stock maturity to regional maturities
 maturity_matrix <- generate_param_matrix(maturity_by_region, dimension_names = dimension_names, by=c("age", "region"))
@@ -120,7 +125,7 @@ dem_params <- list(
     ret=retention_matrix,
     dmr=dmr_matrix,
     surv_sel=NA, # not needed as we aren't going to simulate observations
-    movement=movement
+    movement=full_movement
 )
 
 
@@ -185,12 +190,12 @@ model_options <- list()
 model_options$removals_input = "catch"
 model_options$fleet_apportionment = total_fleet_apportionment
 model_options$recruit_apportionment = recruit_apportionment
-model_options$random_apportion_recruits = FALSE
+model_options$recruit_apportionment_random = FALSE
 model_options$do_recruits_move = FALSE
 model_options$simulate_observations = FALSE
 
 # Run OM simulation
-om_sim <- project_multi(
+om_sim <- project(
     init_naa = init_naa, 
     removals_timeseries = as.matrix(catch_timeseries),
     recruitment = as.matrix(recruitment), 

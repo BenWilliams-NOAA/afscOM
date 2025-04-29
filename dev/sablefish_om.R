@@ -121,7 +121,7 @@ init_naa[,,2,] <- assessment$natage.male["1960",]
 
 # Multiply by 2 because two sexes
 recruitment <- assessment$natage.female[,1]*2
-recruitment <- c(recruitment, recruitment[64])
+# recruitment <- c(recruitment, recruitment[64])
 
 #' 5. Define catch history
 #' Catch histories are defined by three variables:
@@ -203,7 +203,7 @@ model_options$obs_pars <- obs_pars
 #' dimensionality.
 om_sim <- project(
             init_naa = init_naa, 
-            removals_timeseries = catch_timeseries, 
+            removals_timeseries = f_timeseries, 
             recruitment = recruitment, 
             dem_params = dem_params, 
             nyears = nyears, 

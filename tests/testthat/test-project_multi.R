@@ -3,7 +3,6 @@ dem_params <- afscOM::sablefish_dem_params
 
 test_that("project reproduces sablefish timeseries", {
 
-
     dims <- get_model_dimensions(dem_params$sel)
 
     init_naa <- array(NA, dim=c(1, dims$nages, dims$nsexes, dims$nregions), dimnames = list(1, 2:31, c("F", "M"), "alaska"))
@@ -82,3 +81,4 @@ test_that("project reproduces sablefish timeseries with catch timeseries", {
     expect_equal(om_ssb, true_ssb, tolerance=0.01)
 
 })
+
