@@ -67,22 +67,22 @@ project <- function(init_naa, removals_timeseries, recruitment, dem_params, nyea
             r_y <- do.call(recruitment, c(list(naa=outputs$naa[y,,,,drop=FALSE], dem_params=dp.y), model_options$recruitment_pars))
         }else{
             rs <- array(0, dim=c(nyears+1, nregions))
-            rs[1:nyears, 1:nregions] <- recruitment
+            rs[1:nyears, 1:nregions] <- r$full_recruitment[1:nyears,1:nregions]
             # rs <- array(recruitment, dim=c(nyears, nregions))
             # rs[y+1,] <- rep(0, nregions)
             r_y <- subset_matrix(rs, y+1, d=1, drop=FALSE)
         }
         r_y <- as.vector(r_y)
 
-        r <- apportion_recruitment_single(
+        input_r <- apportion_recruitment_single(
             recruits = as.vector(r_y),
             apportionment = subset_matrix(model_options$recruit_apportionment, y+1, d=1, drop=FALSE),
             nregions = nregions
         )
 
         rec <- get_annual_recruitment(
-            recruitment = r$full_recruitment,
-            apportionment = r$rec_props,
+            recruitment = input_r$full_recruitment,
+            apportionment = input_r$rec_props,
             apportion_random = model_options$recruit_apportionment_random,
             apportionment_pars = model_options$recruit_apportionment_pars,
             nregions = nregions
