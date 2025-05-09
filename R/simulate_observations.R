@@ -33,8 +33,8 @@ simulate_observations <- function(naa, waa, selex, faa, zaa, caa, obs_pars, age_
     rpn_obs <- array(NA, c(1, 1, 1, model_params$nfleets))
     rpw_preds <- array(NA, c(1, 1, 1, model_params$nfleets))
     rpw_obs <- array(NA, c(1, 1, 1, model_params$nfleets))
-    ac_preds <- array(NA, c(1, model_params$nages, ifelse(any(obs_pars$as_agg_sex), 1, 2), model_params$nfleets))
-    ac_obs <- array(NA, c(1, model_params$nages, ifelse(any(obs_pars$as_agg_sex), 1, 2), model_params$nfleets))
+    ac_preds <- array(NA, c(1, model_params$nages, ifelse(any(obs_pars$acs_agg_sex), 1, 2), model_params$nfleets))
+    ac_obs <- array(NA, c(1, model_params$nages, ifelse(any(obs_pars$acs_agg_sex), 1, 2), model_params$nfleets))
 
     fishery <- 0 # keep track of which fishery we are on for CAA simulation
     for(s in 1:model_params$nfleets){
