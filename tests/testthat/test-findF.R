@@ -1,4 +1,4 @@
-dem_params <- afscOM::sablefish_dem_params.rda
+dem_params <- afscOM::sablefish_dem_params
 
 test_that("no catch required", {
 
