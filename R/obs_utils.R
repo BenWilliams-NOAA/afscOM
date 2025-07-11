@@ -132,9 +132,9 @@ simulate_caa <- function(naa, faa, zaa, aggregate_sex=FALSE){
 #' simulate_lognormal_obs(10, 0.20)
 #' }
 #'
-simulate_lognormal_obs <- function(pred, cv){
+simulate_lognormal_obs <- function(pred, cv, n=1){
     sds <- sqrt(log(cv^2 + 1))
-    return(stats::rlnorm(1, meanlog=log(pred)-(sds^2)/2, sdlog = sds))
+    return(stats::rlnorm(n, meanlog=log(pred)-(sds^2)/2, sdlog = sds))
 }
 
 #' Simulate observations from a multinomial distribution
