@@ -1,11 +1,50 @@
+#' Constant Catch Harvest Control Rule
+#' 
+#' Return a constant level of harvest (c) in
+#' catch units.
+#' 
+#' @param c constant catch level
+#' 
+#' @return c
+#' 
+#' @export constant_catch_hcr 
+#'
 constant_catch_hcr <- function(c, ...){
     return(c)
 }
 
+#' Constant Fishing Mortality Harvest Control Rule
+#' 
+#' Return a constant level of fishing mortality (F) in
+#' catch units.
+#' 
+#' @param f constant catch level
+#' 
+#' @return f
+#' 
+#' @export constant_f_hcr
+#' 
 constant_f_hcr <- function(f, ...){
     return(f)
 }
 
+#' Threshold Fishing Mortality Harvest Control Rule
+#' 
+#' Return an allowable fishing mortality rate based on
+#' a threshold (hockey-stick) harvest control rule, using 
+#' spawning stock biomass (SSB) as the input.
+#' 
+#' @param fmax maximum F to apply
+#' @param fmin minimum F to apply
+#' @param urp SSB level above which fmax is applied
+#' @param lrp SSB level below which fmin is applied
+#' @param naa numbers-at-age vector (used to internally compute SSB)
+#' @param dem_params demographic parameters (used to internally compute SSB)
+#' 
+#' @return F as defined by SSB and the provided reference points
+#' 
+#' @export threshold_f_hcr 
+#' 
 threshold_f_hcr <- function(fmax, fmin, urp, lrp, naa, dem_params){
     ssb <- as.numeric(compute_ssb(naa, dem_params))
     x <- ssb
@@ -25,7 +64,7 @@ threshold_f_hcr <- function(fmax, fmin, urp, lrp, naa, dem_params){
 #' @param hcr_func the type of control rule
 #' @param hcr_pars the associated parameters
 #'
-#' @export
+#' @export apply_harvest_control_rule
 #'
 apply_harvest_control_rule <- function(model_dimensions, hcr_func, hcr_pars){
     expected_dim <- c(1, model_dimensions$nfleets, model_dimensions$nregions)
