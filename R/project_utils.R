@@ -1,3 +1,7 @@
+#' Apportion Recruitment 
+#' 
+#' @export apportion_recruitment
+#' 
 apportion_recruitment <- function(rec_timeseries, apportionment, nyears, nregions){
 
     # nyears <- ifelse(is.array(rec_timeseries), dim(rec_timeseries)[1], length(rec_timeseries))
@@ -32,6 +36,10 @@ apportion_recruitment <- function(rec_timeseries, apportionment, nyears, nregion
     return(listN(rec_props, full_recruitment))
 }
 
+#' Apportion Recruitment Single
+#' 
+#' @export apportion_recruitment_single
+#' 
 apportion_recruitment_single <- function(recruits, apportionment, nregions){
 
     rec_props <- NULL
@@ -54,6 +62,10 @@ apportion_recruitment_single <- function(recruits, apportionment, nregions){
     return(listN(rec_props, full_recruitment))
 }
 
+#' Get Annual Recruitment
+#' 
+#' @export get_annual_recruitment
+#' 
 get_annual_recruitment <- function(recruitment, apportionment, apportion_random, apportionment_pars, nregions){
 
     rec_props <- array(NA, dim=c(1, nregions))
@@ -78,7 +90,10 @@ get_annual_recruitment <- function(recruitment, apportionment, apportion_random,
     return(rec)
 
 }
-
+#' Apportion Catch
+#' 
+#' @export apportion_catch
+#' 
 apportion_catch <- function(catch_timeseries, apportionment, nyears, nfleets, nregions){
 
     # Derive the recruitment proportions from an input catch
