@@ -9,7 +9,7 @@ single random observation from a lognormal distribution
 centered on a predicted value (`pred`) and given a
 level of error (`cv`).}
 \usage{
-simulate_lognormal_obs(pred, cv)
+simulate_lognormal_obs(pred, cv, n = 1)
 }
 \arguments{
 \item{pred}{the predicted value of an observation}
