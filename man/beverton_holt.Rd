@@ -20,7 +20,7 @@ single year (dimensions [1, nages, nsexes, nregions, nfleets])}
 
 \item{sigR}{standard deviation of recruitment lognormal deviations (recruitment variability)}
 
-\item{seed, }{random seed for reproducibility of stochastic recruitment, default: NULL}
+\item{seed}{random seed for reproducibility of stochastic recruitment, default: NULL}
 }
 \description{
 Classic Beverton-Holt SRR parameterized using steepness,

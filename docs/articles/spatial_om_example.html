@@ -6,20 +6,19 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>A Spatial Model Example • afscOM</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="A Spatial Model Example">
-<meta property="og:description" content="afscOM">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -48,7 +47,7 @@
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
@@ -62,16 +61,22 @@
       <a href="../articles/multiyear_projections.html">Conducting Multiyear Projections</a>
     </li>
     <li>
-      <a href="../articles/observation_processes.html">Observation Processes</a>
-    </li>
-    <li>
-      <a href="../articles/specifying_demographic_parameters.html">Specifying Demographic Rates</a>
-    </li>
-    <li>
       <a href="../articles/nep_transboundary_sablefish.html">Example: Northeast Pacific Transboundary Sablefish Model</a>
     </li>
     <li>
+      <a href="../articles/observation_processes.html">Observation Processes</a>
+    </li>
+    <li>
+      <a href="../articles/recruitment.html">Recruitment</a>
+    </li>
+    <li>
+      <a href="../articles/removals.html">Removals</a>
+    </li>
+    <li>
       <a href="../articles/spatial_om_example.html">A Spatial Model Example</a>
+    </li>
+    <li>
+      <a href="../articles/specifying_demographic_parameters.html">Specifying Demographic Rates</a>
     </li>
   </ul>
 </li>
@@ -84,7 +89,7 @@
 </div>
 <!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
@@ -92,20 +97,30 @@
       <h1 data-toc-skip>A Spatial Model Example</h1>
             
       
-      
+
       <div class="hidden name"><code>spatial_om_example.Rmd</code></div>
 
     </div>
 
     
     
-<p>Here we describe how to build a simple spatial model based on the demographic rates of Alaska sablefish. The example provided here is meant to illustrate how to set up the different components (demographic matrices, movement matrix, catch apportionment, etc.) of a spatially-explicit model, but is not designed to replicate any specific model outputs. Demographic parameters are derived from Goethel et al. (2021), while movement matrices are derived from Hanselmann et al. (2018).</p>
+<p>Here we describe how to build a simple spatial model based on the
+demographic rates of Alaska sablefish. The example provided here is
+meant to illustrate how to set up the different components (demographic
+matrices, movement matrix, catch apportionment, etc.) of a
+spatially-explicit model, but is not designed to replicate any specific
+model outputs. Demographic parameters are derived from Goethel et
+al. (2021), while movement matrices are derived from Hanselman et
+al. (2018).</p>
 <div class="section level3">
 <h3 id="model-setup">Model Setup<a class="anchor" aria-label="anchor" href="#model-setup"></a>
 </h3>
-<p>Start by specifying the model dimensions, dimension names, and obtaining default values for all model options:</p>
+<p>Start by specifying the model dimensions, dimension names, and
+obtaining default values for all model options:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">nyears</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">afscOM</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">nyears</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
 <span><span class="va">nages</span>  <span class="op">&lt;-</span> <span class="fl">30</span></span>
 <span><span class="va">nsexes</span> <span class="op">&lt;-</span> <span class="fl">2</span></span>
 <span><span class="va">nregions</span> <span class="op">&lt;-</span> <span class="fl">5</span></span>
@@ -121,10 +136,16 @@
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">model_params</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_model_params.html">set_model_params</a></span><span class="op">(</span><span class="va">nyears</span>, <span class="va">nages</span>, <span class="va">nsexes</span>, <span class="va">nregions</span>, <span class="va">nfleets</span><span class="op">)</span></span></code></pre></div>
-<p>Next, specify demographic parameters matrices (for more information see the vignette on “Specifying Demographic Parameters”).</p>
-<p>In brief, the demographic parameters specified here define a population with constant natural mortality across time, age, sex, and region, age-specific maturity, and age-sex specific weight at age. Selectivity differs across age, sex, and fleet for both fisheries and surveys. Fishery retention is 1 across all ages and sexes, indicating that no discarding occurs.</p>
+<p>Next, specify demographic parameters matrices (for more information
+see the vignette on “Specifying Demographic Parameters”).</p>
+<p>In brief, the demographic parameters specified here define a
+population with constant natural mortality across time, age, sex, and
+region, age-specific maturity, and age-sex specific weight at age.
+Selectivity differs across age, sex, and fleet for both fisheries and
+surveys. Fishery retention is 1 across all ages and sexes, indicating
+that no discarding occurs.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"data/sablefish_assessment_data.rda"</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org/reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"data/sablefish_assessment_data.rda"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">assessment</span> <span class="op">&lt;-</span> <span class="va">sablefish_assessment_data</span></span>
 <span></span>
 <span><span class="co"># Mortality is constant across time, age, and region</span></span>
@@ -173,7 +194,14 @@
 <span><span class="va">survey_sel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/generate_param_matrix.html">generate_param_matrix</a></span><span class="op">(</span><span class="va">survey_selex_mat</span>, dimension_names <span class="op">=</span> <span class="va">dimension_names</span>, by<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age"</span>, <span class="st">"sex"</span>, <span class="st">"fleet"</span><span class="op">)</span>, include_fleet_dim <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">survey_sel</span><span class="op">[</span><span class="op">(</span><span class="fl">57</span><span class="op">:</span><span class="va">nyears</span><span class="op">)</span>,,<span class="fl">1</span>,,<span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">assessment</span><span class="op">$</span><span class="va">agesel</span><span class="op">[</span>, <span class="st">"srv10sel.f"</span><span class="op">]</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fl">57</span><span class="op">:</span><span class="va">nyears</span><span class="op">)</span><span class="op">)</span>, ncol<span class="op">=</span><span class="va">nages</span>, byrow<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">survey_sel</span><span class="op">[</span><span class="op">(</span><span class="fl">57</span><span class="op">:</span><span class="va">nyears</span><span class="op">)</span>,,<span class="fl">2</span>,,<span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">assessment</span><span class="op">$</span><span class="va">agesel</span><span class="op">[</span>, <span class="st">"srv10sel.m"</span><span class="op">]</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fl">57</span><span class="op">:</span><span class="va">nyears</span><span class="op">)</span><span class="op">)</span>, ncol<span class="op">=</span><span class="va">nages</span>, byrow<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p>Movement is defined based on estimates from Hanselmann et al. (2018) taht were derived from a long term tagging study. Movement is age and sex specific, but is not unique across all ages. Instead, ages are grouped together based loosely on the size of individuals at that age, and a unique movement matrix is defined for “small”, “medium”, and “large” fish (see Hanselmann et al. 2018 for details). The rows of the movement matrix indicate the source region and the columns indicating the destination regions for individuals in each time step.</p>
+<p>Movement is defined based on estimates from Hanselman et al. (2018)
+that were derived from a long term tagging study. Movement is age and
+sex specific, but is not unique across all ages. Instead, ages are
+grouped together based loosely on the size of individuals at that age,
+and a unique movement matrix is defined for “small”, “medium”, and
+“large” fish (see Hanselman et al. 2018 for details). The rows of the
+movement matrix indicate the source region and the columns indicating
+the destination regions for individuals in each time step.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Movement matrices from Hanselman et al. 2018</span></span>
 <span><span class="va">small_movement</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span></span>
@@ -212,10 +240,10 @@
 <span><span class="op">)</span></span>
 <span><span class="va">large_movement</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">large_movement</span>, <span class="fl">2</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">x</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">movement_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="cn">NA</span>, dim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">nregions</span>, <span class="va">nregions</span>, <span class="va">nages</span>, <span class="va">nsexes</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">movement_matrix</span><span class="op">[</span>,,<span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="op">]</span> <span class="op">&lt;-</span> <span class="va">small_movement</span></span>
-<span><span class="va">movement_matrix</span><span class="op">[</span>,,<span class="fl">4</span><span class="op">:</span><span class="fl">6</span>,<span class="op">]</span> <span class="op">&lt;-</span> <span class="va">medium_movement</span></span>
-<span><span class="va">movement_matrix</span><span class="op">[</span>,,<span class="fl">7</span><span class="op">:</span><span class="va">nages</span>,<span class="op">]</span> <span class="op">&lt;-</span> <span class="va">large_movement</span></span></code></pre></div>
+<span><span class="va">movement_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="cn">NA</span>, dim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">nregions</span>, <span class="va">nregions</span>, <span class="va">nyears</span>, <span class="va">nages</span>, <span class="va">nsexes</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">movement_matrix</span><span class="op">[</span>,,,<span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="op">]</span> <span class="op">&lt;-</span> <span class="va">small_movement</span></span>
+<span><span class="va">movement_matrix</span><span class="op">[</span>,,,<span class="fl">4</span><span class="op">:</span><span class="fl">6</span>,<span class="op">]</span> <span class="op">&lt;-</span> <span class="va">medium_movement</span></span>
+<span><span class="va">movement_matrix</span><span class="op">[</span>,,,<span class="fl">7</span><span class="op">:</span><span class="va">nages</span>,<span class="op">]</span> <span class="op">&lt;-</span> <span class="va">large_movement</span></span></code></pre></div>
 <p>All demographic matrices are added to a list object:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dem_params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -229,7 +257,9 @@
 <span>    surv_sel<span class="op">=</span><span class="va">survey_sel</span>,</span>
 <span>    movement<span class="op">=</span><span class="va">movement_matrix</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>An initial numbers-at-age matrix is defined as is a timeseries of global recruitment. Global annual recruitment will be apportioned to indvidual regions equally (as is the default behavior).</p>
+<p>An initial numbers-at-age matrix is defined as is a timeseries of
+global recruitment. Global annual recruitment will be apportioned to
+individual regions equally (as is the default behavior).</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">init_naa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="cn">NA</span>, dim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">nages</span>, <span class="va">nsexes</span>, <span class="va">nregions</span><span class="op">)</span>, dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">:</span><span class="fl">31</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"F"</span>, <span class="st">"M"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"EGOA"</span>, <span class="st">"CGOA"</span>, <span class="st">"WGOA"</span>, <span class="st">"BS"</span>, <span class="st">"AI"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">init_naa</span><span class="op">[</span>,,<span class="fl">1</span>,<span class="op">]</span> <span class="op">&lt;-</span> <span class="va">assessment</span><span class="op">$</span><span class="va">natage.female</span><span class="op">[</span><span class="st">"1960"</span>,<span class="op">]</span><span class="op">/</span><span class="va">nregions</span></span>
@@ -241,19 +271,26 @@
 <div class="section level3">
 <h3 id="catch-apportionment">Catch Apportionment<a class="anchor" aria-label="anchor" href="#catch-apportionment"></a>
 </h3>
-<p>An annual catch timeseries applicable to the entire model is defined as a vector (20mt of catch each year). Separate matrices define the proportion of the global catch that is apportioned to each spatial region (dimension <code>[nyears, nregions]</code>), and the proportion of each regional catch that is apportioned to each fishing fleet (dimension <code>[nyears, nfleets, nregions]</code>). Here, catch is divided equally amongst each spatial region, and fleet-specific catch is allocated 80% to fleet 1 and 20% to fleet 2.</p>
+<p>An annual catch timeseries applicable to the entire model is defined
+as a vector (20mt of catch each year). Separate matrices define the
+proportion of the global catch that is apportioned to each spatial
+region (dimension <code>[nyears, nregions]</code>), and the proportion
+of each regional catch that is apportioned to each fishing fleet
+(dimension <code>[nyears, nfleets, nregions]</code>). Here, catch is
+divided equally amongst each spatial region, and fleet-specific catch is
+allocated 80% to fleet 1 and 20% to fleet 2.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">catch_timeseries</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">20</span>, <span class="va">nyears</span><span class="op">)</span>, nrow<span class="op">=</span><span class="va">nyears</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">catch_timeseries</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">3</span>, <span class="va">nyears</span><span class="op">)</span>, nrow<span class="op">=</span><span class="va">nyears</span><span class="op">)</span></span>
 <span><span class="va">regional_catch_aportionment</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="va">nregions</span>, nrow<span class="op">=</span><span class="va">nyears</span>, ncol<span class="op">=</span><span class="va">nregions</span><span class="op">)</span></span>
 <span><span class="va">region_fleet_catch_apportionment</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="cn">NA</span>, dim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">nyears</span>, <span class="va">nfleets</span>, <span class="va">nregions</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">region_fleet_catch_apportionment</span><span class="op">[</span>,<span class="fl">1</span>,<span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0.80</span></span>
 <span><span class="va">region_fleet_catch_apportionment</span><span class="op">[</span>,<span class="fl">2</span>,<span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0.20</span></span></code></pre></div>
-<p>The apportionment matrices are added to the <code>model_options</code> list:</p>
+<p>The apportionment matrices are added to the
+<code>model_options</code> list:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model_options</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>        removals_input <span class="op">=</span> <span class="st">"catch"</span>,</span>
 <span>        simulate_observations <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>        region_apportionment <span class="op">=</span> <span class="va">regional_catch_aportionment</span>,</span>
 <span>        fleet_apportionment <span class="op">=</span> <span class="va">region_fleet_catch_apportionment</span>,</span>
 <span>        recruit_apportionment <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>        recruit_apportionment_random <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -265,7 +302,7 @@
 </h3>
 <p>Now, the model is projected forward with the following call:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">om1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/project_multi.html">project_multi</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">om1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/project.html">project</a></span><span class="op">(</span></span>
 <span>    init_naa <span class="op">=</span> <span class="va">init_naa</span>, </span>
 <span>    removals_timeseries <span class="op">=</span> <span class="va">catch_timeseries</span>,</span>
 <span>    recruitment <span class="op">=</span> <span class="va">recruitment</span>, </span>
@@ -273,6 +310,18 @@
 <span>    nyears <span class="op">=</span> <span class="va">nyears</span>, </span>
 <span>    model_options <span class="op">=</span> <span class="va">model_options</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="process-model-results">Process Model Results<a class="anchor" aria-label="anchor" href="#process-model-results"></a>
+</h3>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ssb</span> <span class="op">&lt;-</span> <span class="fu">afscOM</span><span class="fu">::</span><span class="fu"><a href="../reference/compute_ssb.html">compute_ssb</a></span><span class="op">(</span><span class="va">om1</span><span class="op">$</span><span class="va">naa</span>, <span class="va">dem_params</span><span class="op">)</span></span>
+<span><span class="va">bio</span> <span class="op">&lt;-</span> <span class="fu">afscOM</span><span class="fu">::</span><span class="fu"><a href="../reference/compute_bio.html">compute_bio</a></span><span class="op">(</span><span class="va">om1</span><span class="op">$</span><span class="va">naa</span>, <span class="va">dem_params</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/plot_ssb.html">plot_ssb</a></span><span class="op">(</span><span class="va">ssb</span><span class="op">)</span></span></code></pre></div>
+<p><img src="spatial_om_example_files/figure-html/model_results-1.png" width="700"></p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_bio.html">plot_bio</a></span><span class="op">(</span><span class="va">bio</span><span class="op">)</span></span></code></pre></div>
+<p><img src="spatial_om_example_files/figure-html/model_results-2.png" width="700"></p>
 </div>
   </div>
 
@@ -291,16 +340,16 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
 </div>
 
       </footer>
 </div>
 
-  
 
 
-  
+
+
 
   </body>
 </html>

@@ -1,5 +1,5 @@
-pandoc: 3.1.11
-pkgdown: 2.0.7
+pandoc: 3.6.2
+pkgdown: 2.1.2
 pkgdown_sha: ~
 articles:
   afscOM: afscOM.html
@@ -8,7 +8,8 @@ articles:
   multiyear_projections: multiyear_projections.html
   nep_transboundary_sablefish: nep_transboundary_sablefish.html
   observation_processes: observation_processes.html
+  recruitment: recruitment.html
+  removals: removals.html
   spatial_om_example: spatial_om_example.html
   specifying_demographic_parameters: specifying_demographic_parameters.html
-last_built: 2024-10-02T16:51Z
-
+last_built: 2025-08-22T22:25Z

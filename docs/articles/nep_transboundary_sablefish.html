@@ -6,20 +6,19 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Example: Northeast Pacific Transboundary Sablefish Model • afscOM</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="Example: Northeast Pacific Transboundary Sablefish Model">
-<meta property="og:description" content="afscOM">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -48,7 +47,7 @@
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
@@ -62,16 +61,22 @@
       <a href="../articles/multiyear_projections.html">Conducting Multiyear Projections</a>
     </li>
     <li>
-      <a href="../articles/observation_processes.html">Observation Processes</a>
-    </li>
-    <li>
-      <a href="../articles/specifying_demographic_parameters.html">Specifying Demographic Rates</a>
-    </li>
-    <li>
       <a href="../articles/nep_transboundary_sablefish.html">Example: Northeast Pacific Transboundary Sablefish Model</a>
     </li>
     <li>
+      <a href="../articles/observation_processes.html">Observation Processes</a>
+    </li>
+    <li>
+      <a href="../articles/recruitment.html">Recruitment</a>
+    </li>
+    <li>
+      <a href="../articles/removals.html">Removals</a>
+    </li>
+    <li>
       <a href="../articles/spatial_om_example.html">A Spatial Model Example</a>
+    </li>
+    <li>
+      <a href="../articles/specifying_demographic_parameters.html">Specifying Demographic Rates</a>
     </li>
   </ul>
 </li>
@@ -84,37 +89,99 @@
 </div>
 <!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Example: Northeast Pacific Transboundary Sablefish Model</h1>
+      <h1 data-toc-skip>Example: Northeast Pacific Transboundary
+Sablefish Model</h1>
             
       
-      
+
       <div class="hidden name"><code>nep_transboundary_sablefish.Rmd</code></div>
 
     </div>
 
     
     
-<p>Here we describe an implementation of the custom management strategy evaluation model built for the transboundary Northeast Pacific sablefish stock (Kapur 2023, Kapur et al. 2024) using the <code>afscOM</code> framework. The original model is a spatially-explicit, multi-stock, age- and sex-structured population model that spans the Northeast Pacific Ocean, from the U.S. - Mexico border to the Bering Sea and Aleutian Islands, and accounts for fishing by seven distinct fishing fleets across six spatial regions spanning three management regimes. For a full description of the original model, see Kapur et al. (2023) and Kapur et al. (2024).</p>
-<p>The transboundary sablefish model represents a useful case study for the <code>afscOM</code> package as it includes multiple unique “stocks” that share demographic rates, but can span across spatial units, as well as multiple fisheries that are active in only a subset of the spatial regions. As such, the original transboundary sablefish model is able to produce complex population dynamics that make use of a wide variety of the features implemented by <code>afscOM</code>.</p>
-<p>The level of complexity of the original model implementation is not fully reproducible by <code>afscOM</code> at current (July 2024). Major discrepencies include the <code>afscOM</code> treatement of growth (via weight-at-age), the original model’s use of sub-annual “seasonal” timesteps and the associated timing of natural morality, fishing mortality, movement, and recruitment processes, and the allocation of catch across fleets and regions. It is also notable that the original model utilized a different algorithm to solve for the fishing mortality that would yield a specific annual catch (Pope’s approximation) than what is implemented within <code>afscOM</code> (Baranov catch equation).</p>
+<p>Here we describe an implementation of the custom management strategy
+evaluation model built for the transboundary Northeast Pacific sablefish
+stock (Kapur 2023, Kapur et al. 2024) using the <code>afscOM</code>
+framework. The original model is a spatially-explicit, multi-stock, age-
+and sex-structured population model that spans the Northeast Pacific
+Ocean, from the U.S. - Mexico border to the Bering Sea and Aleutian
+Islands, and accounts for fishing by seven distinct fishing fleets
+across six spatial regions spanning three management regimes. For a full
+description of the original model, see Kapur et al. (2023) and Kapur et
+al. (2024).</p>
+<p>The transboundary sablefish model represents a useful case study for
+the <code>afscOM</code> package as it includes multiple unique “stocks”
+that share demographic rates, but can span across spatial units, as well
+as multiple fisheries that are active in only a subset of the spatial
+regions. As such, the original transboundary sablefish model is able to
+produce complex population dynamics that make use of a wide variety of
+the features implemented by <code>afscOM</code>.</p>
+<p>The level of complexity of the original model implementation is not
+fully reproducible by <code>afscOM</code> at current (July 2024). Major
+discrepencies include the <code>afscOM</code> treatment of growth (via
+weight-at-age), the original model’s use of sub-annual “seasonal”
+timesteps and the associated timing of natural morality, fishing
+mortality, movement, and recruitment processes, and the allocation of
+catch across fleets and regions. It is also notable that the original
+model utilized a different algorithm to solve for the fishing mortality
+that would yield a specific annual catch (Pope’s approximation) than
+what is implemented within <code>afscOM</code> (Baranov catch
+equation).</p>
 <p>Fleet and region names have been anonymized here.</p>
 <div class="section level3">
-<h3 id="implementing-the-transboundary-sablefish-model-in-afscom">Implementing the Transboundary Sablefish Model in <code>afscOM</code><a class="anchor" aria-label="anchor" href="#implementing-the-transboundary-sablefish-model-in-afscom"></a>
+<h3 id="implementing-the-transboundary-sablefish-model-in-afscom">Implementing the Transboundary Sablefish Model in
+<code>afscOM</code><a class="anchor" aria-label="anchor" href="#implementing-the-transboundary-sablefish-model-in-afscom"></a>
 </h3>
-<p>The full implementation of the transboundary sablefish model is quite similar to the process described in the “Simple Spatial OM Example”, though determination of the proper spatial and spatial-fleet catch apportionment was complicated. For more details on specifying a generic spatial OM using <code>afscOM</code> please see the “Simple Spatial OM Example”.</p>
+<p>The full implementation of the transboundary sablefish model is quite
+similar to the process described in the “Spatial OM Example”, though
+determination of the proper spatial and spatial-fleet catch
+apportionment was complicated. For more details on specifying a generic
+spatial OM using <code>afscOM</code> please see the “Spatial OM
+Example”.</p>
 </div>
 <div class="section level3">
 <h3 id="comparison">Comparison<a class="anchor" aria-label="anchor" href="#comparison"></a>
 </h3>
-<p>Despite some simplifications with regards to the treatment of seasonal event timing, growth, and small discrepencies in the exact region-fleet catch apportionment, the <code>afscOM</code> implementation was able to closely match the trend and scale of spawning biomass that was produced from the original model (Figure 1). Discrepencies, particularly in terms of scale, are believed to largely be the result of providing summarised, end-of-year, weight-at-age data to the <code>afscOM</code> model rather than using the more nuanced seasonal growth that occurred in the original model.</p>
-<p><img src="images/kapur2024_afscom_ssb_comparison.png" width="750px"> Figure 1: Side-by-side comparison of spawning biomass by spatial region from the NEP transboundary sablefish model (left) and the reimplementation using afscOM (right).</p>
-<p>Regional fishing mortality was also similar across the two model implementations, despite use of different algorithms to solve for the correct fishing mortality given annual catch allocations (Figure 2). The source of the large discrepency in fishing mortality for Fleet 4 and Fleet 5 between the two models is currently unkown, but is the subject of active investigation and testing.</p>
-<p><img src="images/kapur2024_afscom_fishmort_comparison.png" width="750px"> Figure 2: Comparison of fleet-specific fishing mortality between the NEP transboundary sablefish model (dashed lines) and the afscOM implementation (solid lines).</p>
+<p>Despite some simplifications with regards to the treatment of
+seasonal event timing, growth, and small discrepancies in the exact
+region-fleet catch apportionment, the <code>afscOM</code> implementation
+was able to closely match the trend and scale of spawning biomass that
+was produced from the original model (Figure 1). Discrepancies,
+particularly in terms of scale, are believed to largely be the result of
+providing summarised, end-of-year, weight-at-age data to the
+<code>afscOM</code> model rather than using the more nuanced seasonal
+growth that occurred in the original model.</p>
+<p><img src="images/kapur2024_afscom_ssb_comparison.png" width="750px">
+Figure 1: Side-by-side comparison of spawning biomass by spatial region
+from the NEP transboundary sablefish model (left) and the
+re-implementation using afscOM (right).</p>
+<p>Regional fishing mortality was also similar across the two model
+implementations, despite use of different algorithms to solve for the
+correct fishing mortality given annual catch allocations (Figure 2). The
+source of the large discrepency in fishing mortality for Fleet 4 and
+Fleet 5 between the two models is currently unknown, but is the subject
+of active investigation and testing.</p>
+<p><img src="images/kapur2024_afscom_fishmort_comparison.png" width="750px">
+Figure 2: Comparison of fleet-specific fishing mortality between the NEP
+transboundary sablefish model (dashed lines) and the afscOM
+implementation (solid lines).</p>
+</div>
+<div class="section level3">
+<h3 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h3>
+<p>Kapur, M.S., Haltuch, M.A., Connors, B.M., Berger, A.M., Holt, K.,
+Marshall, K.N., and Punt, A.E. 2024. Range-wide contrast in management
+outcomes for transboundary Northeast Pacific sablefish. Can. J. Fish.
+Aquat. Sci. NRC Research Press. <a href="doi:10.1139/cjfas-2024-0008" class="uri">doi:10.1139/cjfas-2024-0008</a>.</p>
+<p>Kapur, M.S. 2023. A Management Strategy Evaluation for Transboundary
+Sablefish in the Northeast Pacific Ocean. Dissertation, University of
+Washington, Seattle, WA.</p>
 </div>
   </div>
 
@@ -133,16 +200,16 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
 </div>
 
       </footer>
 </div>
 
-  
 
 
-  
+
+
 
   </body>
 </html>

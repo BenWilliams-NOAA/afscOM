@@ -7,62 +7,69 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-To parameterize a model built with `afscOM` to behave like a specific population, the user needs to specify a set of population demographic parameters. These parameters all take the same computational structure: a multi-dimensional array.
+To parameterize a model built with afscOM to behave like a specific population, the user needs to specify a set of population demographic parameters. These parameters all take the same computational structure: a multi-dimensional array.
 
-These multidimensional arrays MUST always follow the same dimension structure for `afscOM` to work correctly. Biological parameters, such as natural mortality, maturity, and weight-at-age should all have array dimensions: `[nyears, nages, nsexes, nregions]`. Fishery and survey fleet parameters, such as selectivity, retention, and discard mortality, should have array dimensions: `[nyears, nages, nsexes, nregions, nfleets]` (for fishing fleets) or `[nyears, nages, nsexes, nregions, nsurveys]` (for survey fleets).
+These multidimensional arrays MUST always follow the same dimension structure for afscOM to work correctly. Biological parameters, such as natural mortality, maturity, and weight-at-age should all have array dimensions: `[nyears, nages, nsexes, nregions]`. Fishery and survey fleet parameters, such as selectivity, retention, and discard mortality, should have array dimensions: `[nyears, nages, nsexes, nregions, nfleets]` (for fishing fleets) or `[nyears, nages, nsexes, nregions, nsurveys]` (for survey fleets).
 
-In this structure the first index along the "sex" dimension (dimension 3) will correspond to parameters for females, while the second index will correspond to parameters for males.
+In this structure the first index along the “sex” dimension (dimension 3) will correspond to parameters for females, while the second index will correspond to parameters for males.
 
 Required population parameters include:
 
-1. `mort`: Natural mortality `[nyears, nages, nsexes, nregions]`
-2. `mat`: Maturity `[nyears, nages, nsexes, nregions]`
-3. `waa`: Weight-at-age `[nyears, nages, nsexes, nregions]`
-4. `sexrat`: Population sex ratio `[nyears, nages, nsexes, nregions]`
-5. `sel`: Fishery selectivity `[nyears, nages, nsexes, nregions, nfleets]`
-6. `ret`: Fishery retention `[nyears, nages, nsexes, nregions, nfleets]`
-7. `dmr`: Fishery discard mortality (as an instantenous rate) `[nyears, nages, nsexes, nregions, nfleets]`
+| Parameter Name | Description | Dimensions | Notes |
+|----------------|-------------|------------|-------|
+| `mort`         | Natural mortality rate | `[nyears, nages, nsexes, nregions]` |  |
+| `mat`          | Maturity at age | `[nyears, nages, nsexes, nregions]` |  |
+| `waa`          | Weight-at-age | `[nyears, nages, nsexes, nregions]` |  |
+| `sexrat`       | Recruitment sex ratio | `[nyears, nages, nsexes, nregions]` |  |
+| `movement`    | Movement matrix | `[nregions, nregions, nyear, nages, nsexes]` | Only required for spatial models (nregions > 1) |
+| `sel`          | Fishery selectivity | `[nyears, nages, nexes, nregions, nfleets]` |  |
+| `ret`          | Fishery retention | `[nyears, nages, nsexes, nregions, nfleets]` |  |
+| `dmr`          | Fishery discard mortality (as an instantaneous rate) | `[nyears, nages, nsexes, nregions, nfleets]` |  |
+| `surv_sel`     | Survey selectivity | `[nyears, nages, nsexes, nregions, nsurveys]` | Only required if observations are being simulated | 
 
-If observations are being simulated, survey selectivity must also be specified:
-
-8. `surv_sel`: Survey selectivity `[nyears, nages, nsexes, nregions, nsurveys]`
-
-For spatial models (those where `nregions > 1`), a "movement" demographic matrix is also required as input. Movement can be specified to vary by age and sex, but can not currently vary through time. 
-
-9. `movement`: Movement matrix `[nregions, nregions, nages, nsexes]`
+Note that all parameters must have the minimum dimensions specified above. This includes maturity parameters, even though maturity is typically only considered in the context of females. Also note that parameters, *CANNOT*, be specified by length.
 
 #### Building Parameter Matrices
 To facilitate easier creation of these multi-dimensional parameter matrices, a helper function `generate_param_matrix(...)` has been provided. This function accepts as input a single value, a vector of values, or a matrix/array of values, and a list of dimensions over which to fill a fully-formed parameter matrix with that input.
 
-For example, if natural mortality (M) is assumed to be constant across time, age, sex, and space, the following code will create an `[nyears, nages, nsexes, nregions]` parameter matrix where every value is the same:
+For example, if natural mortality (`mort`) is assumed to be constant across time, age, sex, and space, the following code will create an `[nyears, nages, nsexes, nregions]` parameter matrix where every value is the same ( _0.113179_ in this case):
 
 ```{r eval=FALSE}
+nyears <- 10
+nages <- 11
+
 dimension_names <- list(
     "time" = 1:nyears,
-    "age"  = 2:31,
+    "age"  = 1:nages,
     "sex"  = c("F", "M"),
-    "region" = "alaska",
-    "fleet" = c("Fixed", "Trawl")
+    "region" = "Region 1",
+    "fleet" = c("Fleet 1", "Fleet 2")
 )
 
 M <- 0.113179
-mort <- generate_param_matrix(M, dimension_names = dimension_names)
+mort <- afscOM::generate_param_matrix(M, dimension_names = dimension_names)
+
+mort
 ```
 
-If maturity is assumed to vary by age, but is otherwise constant across time, sex, and space, the following code will create a properly formed parameter matrix where each age has a different maturity level:
+If maturity (`mat`) is assumed to vary by age, but is otherwise constant across time, sex, and space, the following code will create a properly formed parameter matrix where each age has a different maturity level:
 
 ```{r eval=FALSE}
 maturity <- c(0.0, 0.1, 0.3, 0.5, 0.7, 0.9, 1.0, 1.0, 1.0, 1.0, 1.0)
-mat <- generate_param_matrix(maturity, dimension_names = dimension_names, by="age")
+mat <- afscOM::generate_param_matrix(maturity, dimension_names = dimension_names, by="age")
+
+mat
 ```
 
-Finally, if weight-at-age (WAA) varies by both age and sex, the following code will create the appropriately formed parameter matrix with different values for WAA by age and sex, but repeated across time and space:
+Finally, if weight-at-age (`waa`) varies by both age and sex, the following code will create the appropriately formed parameter matrix with different values for WAA by age and sex, but repeated across time and space:
 
 ```{r, eval=FALSE}
 weight_mat <- matrix(NA, nrow=11, ncol=2, dimnames=dimension_names[c("age", "sex")])
 weight_mat[,1] <- c(2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22)
 weight_mat[,2] <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
-waa <- generate_param_matrix(weight_mat, dimension_names = dimension_names, by=c("age", "sex"))
+waa <- afscOM::generate_param_matrix(weight_mat, dimension_names = dimension_names, by=c("age", "sex"))
+
+waa
 ```
 
 The `generate_param_matrix` requires the user to specify as a parameter input the names of each dimension in the output matrix as a list. The function will work correctly regardless of the specific dimension names used, however, when filling across 2-or-more dimensions (as in the above example with weight-at-age), the input matrix (that is being used to fill the larger parameter matrix), must also have the same dimension names along the corresponding axes. 
@@ -79,7 +86,9 @@ selex_mat[,1,1] <- c(0.0, 0.1, 0.3, 0.5, 0.7, 0.9, 1.0, 1.0, 1.0, 1.0, 1.0)
 selex_mat[,2,1] <- c(0.0, 0.1, 0.2, 0.4, 0.6, 0.7, 0.8, 0.9, 1.0, 1.0, 1.0)
 selex_mat[,1,2] <- c(0.3, 0.7, 1.0, 1.0, 0.9, 0.7, 0.6, 0.5, 0.4, 0.4, 0.4)
 selex_mat[,2,2] <- c(0.2, 0.6, 1.0, 0.95, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.3)
-sel <- generate_param_matrix(selex_mat, dimension_names = dimension_names, by=c("age", "sex", "fleet"))
+sel <- afscOM::generate_param_matrix(selex_mat, dimension_names = dimension_names, by=c("age", "sex", "fleet"))
+
+sel
 ```
 
 Once these population parameter matrices have been defined, they need to be added to a list that will be passed as a parameter to the OM:
@@ -90,6 +99,7 @@ dem_params <- list(
     mat=mat,
     mort=mort,
     sexrat=sexrat,
+    movement=movement,
     sel=sel,
     ret=ret,
     dmr=dmr,

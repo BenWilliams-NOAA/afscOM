@@ -6,20 +6,19 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Model Options • afscOM</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="Model Options">
-<meta property="og:description" content="afscOM">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -48,7 +47,7 @@
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
@@ -62,16 +61,22 @@
       <a href="../articles/multiyear_projections.html">Conducting Multiyear Projections</a>
     </li>
     <li>
-      <a href="../articles/observation_processes.html">Observation Processes</a>
-    </li>
-    <li>
-      <a href="../articles/specifying_demographic_parameters.html">Specifying Demographic Rates</a>
-    </li>
-    <li>
       <a href="../articles/nep_transboundary_sablefish.html">Example: Northeast Pacific Transboundary Sablefish Model</a>
     </li>
     <li>
+      <a href="../articles/observation_processes.html">Observation Processes</a>
+    </li>
+    <li>
+      <a href="../articles/recruitment.html">Recruitment</a>
+    </li>
+    <li>
+      <a href="../articles/removals.html">Removals</a>
+    </li>
+    <li>
       <a href="../articles/spatial_om_example.html">A Spatial Model Example</a>
+    </li>
+    <li>
+      <a href="../articles/specifying_demographic_parameters.html">Specifying Demographic Rates</a>
     </li>
   </ul>
 </li>
@@ -84,7 +89,7 @@
 </div>
 <!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
@@ -92,133 +97,77 @@
       <h1 data-toc-skip>Model Options</h1>
             
       
-      
+
       <div class="hidden name"><code>model_options.Rmd</code></div>
 
     </div>
 
     
     
-<p>A variety of model options also need to be specified to ensure the projection model works as expected. Required options are:</p>
-<ul>
-<li>
-<code>removals_input</code>: input units of removals (either “catch” is inputs are a TAC, or “F” if an instantenous fishing mortality rate)</li>
-<li>
-<code>simulate_observations</code>: whethr to simulate observations from the OM (TRUE/FALSE)</li>
-</ul>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">model_options</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>  removals_input <span class="op">=</span> <span class="st">"catch"</span>,</span>
-<span>  simulate_observations <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<div class="section level3">
-<h3 id="catch-apportionment">Catch Apportionment<a class="anchor" aria-label="anchor" href="#catch-apportionment"></a>
-</h3>
-<p>If <code>removals_input="catch"</code>, then region and fleet-level apportionment must also be specified:</p>
-<ul>
-<li><p><code>region_apportionment</code>: a matrix of dimension [nyears, nregions] specifying the proportion of the TAC should be allocated to each region. Each row of this matrix should sum to 1.0, but this will not be checked internally.</p></li>
-<li><p><code>fleet_apportionment</code>: a 3D array of dimensions [nyears, nfleets, nregions] specifying the proprtion of the regional TAC that should be allocated to each fishing fleet in that region. Each row of each 2D regional matrix should sum to 1.0, but this will not be checked internally.</p></li>
-</ul>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Apportion TAC equally between the n spatial regions</span></span>
-<span><span class="va">model_options</span><span class="op">$</span><span class="va">regional_apportionment</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="va">nregions</span>, nrow<span class="op">=</span><span class="va">nyears</span>, ncol<span class="op">=</span><span class="va">nregions</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Apportion TAC equally amongst the n fleets within each region</span></span>
-<span><span class="va">model_options</span><span class="op">$</span><span class="va">fleet_apportionment</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="va">nfleets</span>, dim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">nyears</span>, <span class="va">nfleets</span>, <span class="va">nregions</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="recruitment-options">Recruitment Options<a class="anchor" aria-label="anchor" href="#recruitment-options"></a>
-</h3>
-<p>Like <code>region_apportionment</code> and <code>fleet_apportionment</code>, users also need to specify:</p>
-<ul>
-<li>
-<code>recruit_apportionment</code>: a matrix of dimensions [nyears, nregions] specifying the proportion of total recruits that should be allocated to each region. By default, recruitment is apportioned equally amongst regions.</li>
-<li>
-<code>recruit_apportionment_random</code>: whether recruitment apportionment should be fixed at the values provided by <code>recruit_apportionment</code>, or whether to perform a random multinomial sample using the <code>recruit_apportionment</code> input as the probability of recruitment to each region. Sample size for multinomial sample is 30.</li>
-<li>
-<code>do_recruits_move</code>: whether annual recruits are subject to movement in the year they recruit.</li>
-</ul>
-<p>Alternatively, <code>recruit_apportionment</code> can be a function that returns a matrix of dimension [1, nregions] specifying the proportion of total recruitment that should be allocated to each region. This function must take <code>naa</code> and <code>dem_params</code> as inputs. An example follows:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">age2_apportionment</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">naa</span>, <span class="va">dem_params</span><span class="op">)</span><span class="op">{</span></span>
-<span>    <span class="va">age2</span> <span class="op">&lt;-</span> <span class="va">naa</span><span class="op">[</span>,<span class="fl">1</span>,,<span class="op">]</span></span>
-<span>    <span class="va">age2_by_region</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">age2</span>, <span class="fl">2</span>, <span class="va">sum</span><span class="op">)</span></span>
-<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span></span>
-<span>        <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="va">age2_by_region</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">age2_by_region</span><span class="op">)</span>, dim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">age2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span>    <span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="va">model_options</span><span class="op">$</span><span class="va">recruit_apportionment</span> <span class="op">=</span> <span class="va">age2_apportionment</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="observation-processes">Observation Processes<a class="anchor" aria-label="anchor" href="#observation-processes"></a>
-</h3>
-<p>If <code>simulate_observations=TRUE</code>, then a set of parameters that govern how observations are simulated must also be defined. This option, <code>obs_pars</code> is a list of vectors, where each vector has length <code>nfleets+nsurveys</code>.</p>
-<p>Required items in the <code>obs_pars</code> list are:</p>
-<ul>
-<li>
-<code>is_survey</code>: indicates whether a given fleet is a fishing fleet or survey fleet (<code>0</code> indicates a fishing fleet, <code>1</code> indicates a scientific survey)</li>
-<li>
-<code>qs</code>: catchability coefficients</li>
-<li>
-<code>rpn</code>: whether to generate a relative population number (RPN) index (<code>0</code> = no, <code>1</code> = yes)</li>
-<li>
-<code>rpw</code>: whether to generate a relative population weight (RPW) index (<code>0</code> = no, <code>1</code> = yes)</li>
-<li>
-<code>rpn_cv</code>: a coefficient of variation (CV) to use when generating RPN observations</li>
-<li>
-<code>rpw_cv</code>: a coefficient of variation (CV) to use when generating RPW observations</li>
-<li>
-<code>acs</code>: whether to generate age composition observations (<code>0</code> = no, <code>1</code> = yes)</li>
-<li>
-<code>ac_samps</code>: number of samples to use when generating age composition observations</li>
-<li>
-<code>ac_as_integers</code>: whether age composition observations should be provided as integers or proportions (<code>0</code> = no, <code>1</code> = yes)</li>
-<li>
-<code>acs_agg_sex</code>: whether age composition observations should be aggregated by sex (<code>0</code> = no, <code>1</code> = yes)</li>
-</ul>
-<p>Below is an example <code>obs_pars</code> object that generates RPNs and RPWs for two surveys, and age composition observations for two fisheries and two surveys. Age compositions are not aggregated by sex and are returned as integers.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">obs_pars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>    <span class="co"># longline fishery, trawl fishery, longline survey, trawl survey</span></span>
-<span>    is_survey   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>,  <span class="co"># is this a survey (1) or fishery (0)</span></span>
-<span>    qs          <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">6.41</span>, <span class="fl">0.85</span><span class="op">)</span>, <span class="co"># catchability coefficient (q) for surveys</span></span>
-<span>    rpn         <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>, <span class="co"># should RPNs be computed (yes=1, no=0)</span></span>
-<span>    rpn_cv      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.1</span><span class="op">)</span>, <span class="co"># RPN CV</span></span>
-<span>    rpw         <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>, <span class="co"># should RPWs be computed (yes=1, no=0)</span></span>
-<span>    rpw_cv      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.1</span><span class="op">)</span>, <span class="co"># RPW CV</span></span>
-<span>    acs         <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>, <span class="co"># should age compositions be computed (yes=1, no=0)</span></span>
-<span>    ac_samps    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">50</span>, <span class="fl">30</span>, <span class="fl">50</span>, <span class="fl">30</span><span class="op">)</span>, <span class="co"># total sample size for age composition observations</span></span>
-<span>    ac_as_integers  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">TRUE</span>, <span class="cn">TRUE</span>, <span class="cn">TRUE</span><span class="op">)</span>, <span class="co"># return age comps as integers (TRUE) or proportions (FALSE)</span></span>
-<span>    acs_agg_sex     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span><span class="op">)</span> <span class="co"># should age comps be aggregated by sex</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<p>Every item in the list object must have length <code>nfleets+nsurveys</code>, even if observations are not being generated for some fleets or surveys. In the above example, even though RPN and RPW indices are not being generated for the two fishing fleets, catchability coefficients (<code>qs</code>) and CVs (<code>rpn_cv</code> and <code>rpw_cv</code>) are stil defined for those two fisheries. The observation submodel ignores these values internally when the <code><a href="../reference/simulate_observations.html">simulate_observations()</a></code> function runs.</p>
-<p>For items that require a binary “yes”/“no” entry, either 1/0 or TRUE/FALSE can be provided. These include: <code>is_survey</code>, <code>rpn</code>, <code>rpw</code>, <code>acs</code>, <code>acs_as_integers</code>, and <code>acs_agg_sex</code>.</p>
-<p>For additional information on how all of these parameters are used to generate observations, see <a href="observation_processes.html">“Observation Processes”</a>.</p>
-</div>
-<div class="section level3">
-<h3 id="default-options">Default Options<a class="anchor" aria-label="anchor" href="#default-options"></a>
-</h3>
-<p>A helper function, <code><a href="../reference/setup_model_options.html">setup_model_options()</a></code> will return a fully formed <code>model_options</code> list object with required parameters set to default values.</p>
-<p>The default values are as follows:</p>
-<ul>
-<li>
-<code>removals_input</code>: “catch”</li>
-<li>
-<code>simulate_observations</code>: TRUE</li>
-<li>
-<code>region_apportionment</code>: 1/nregions</li>
-<li>
-<code>fleet_apportionment</code>: 1/nfleets</li>
-<li>
-<code>recruit_apportionment</code>: 1/nregions</li>
-<li>
-<code>recruit_apportionment_random</code>: FALSE</li>
-<li>
-<code>do_recruits_move</code>: TRUE</li>
-</ul>
-<p>No default values are established for the <code>obs_pars</code> options at this time.</p>
-</div>
+<p>A variety of model options need to be specified to ensure the
+projection components of afscOM works as expected.</p>
+<table class="table">
+<colgroup>
+<col width="29%">
+<col width="22%">
+<col width="21%">
+<col width="26%">
+</colgroup>
+<thead><tr class="header">
+<th>Paraemeter Name</th>
+<th>Description</th>
+<th>Dimensions</th>
+<th>Default Value</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>removals_input</code></td>
+<td>input units of removals (either “catch” is inputs are a total weight
+of catch, or “F” if an instantaneous fishing mortality rate)</td>
+<td>-</td>
+<td>“catch”</td>
+</tr>
+<tr class="even">
+<td><code>fleet_apportionment</code></td>
+<td>Proportion of total catch allocated to each fishing fleet within
+each region</td>
+<td><code>[nyears, nfleets, nregions]</code></td>
+<td><code>1/nfleets/nregions</code></td>
+</tr>
+<tr class="odd">
+<td><code>simulate_observations</code></td>
+<td>Whether to simulate observations from the OM</td>
+<td>-</td>
+<td>TRUE</td>
+</tr>
+<tr class="even">
+<td><code>recruit_apportionment</code></td>
+<td>Proportion of total recruits allocated to each region</td>
+<td><code>[nyears, nregions]</code></td>
+<td><code>1/nregions</code></td>
+</tr>
+<tr class="odd">
+<td><code>recruit_apportionment_random</code></td>
+<td>Whether recruitment apportionment should be fixed at the values
+provided directly to the model, or whether to perform a random
+multinomial sample using the provided input as the probability of
+recruitment to each region. Sample size for multinomial sample is
+30.</td>
+<td>-</td>
+<td>FALSE</td>
+</tr>
+<tr class="even">
+<td><code>do_recruits_move</code></td>
+<td>Whether annual recruits are subject to movement in the year they
+recruit.</td>
+<td>-</td>
+<td>TRUE</td>
+</tr>
+</tbody>
+</table>
+<p>A helper function, <code><a href="../reference/setup_model_options.html">setup_model_options()</a></code> is provided to
+create a list of model options with the default values. This function
+does not set default values for observations parameters.</p>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -236,16 +185,16 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
 </div>
 
       </footer>
 </div>
 
-  
 
 
-  
+
+
 
   </body>
 </html>
