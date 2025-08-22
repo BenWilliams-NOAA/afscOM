@@ -328,7 +328,7 @@ plot_ssb <- function(ssb, compare_ts=NULL){
     }
 
     xmax <- round(catch_df %>% dplyr::pull(time) %>% max, -1)
-    ymax <- round(1.2*catch_df %>% dplyr::pull(catch) %>% max, -1)
+    ymax <- round(1.2*catch_df %>% dplyr::pull(catch) %>% max, 0)
 
     plot <- ggplot2::ggplot(catch_df, ggplot2::aes(x=time, y=catch))+
         ggplot2::geom_line(linewidth=1)+

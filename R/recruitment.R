@@ -82,7 +82,7 @@ cyclic_recruitment <- function(n, mu_rec, sd_rec, dur, start=1, seed=NA){
 #' @param R0 unfished recruitment (recruits per year)
 #' @param S0 unfished spawning biomass
 #' @param sigR standard deviation of recruitment lognormal deviations (recruitment variability)
-#' @param seed, random seed for reproducibility of stochastic recruitment, default: NULL
+#' @param seed random seed for reproducibility of stochastic recruitment, default: NULL
 #' @export
 #'
 #' @examples
