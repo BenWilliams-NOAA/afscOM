@@ -6,9 +6,7 @@
 #' @param naa numbers-at-age matrix [nyears, nages, nsexes, nregions]
 #' @param dem_params demagraphic parameters list
 #'
-#' @export
-#'
-
+#' @export compute_ssb
 #'
 compute_ssb <- function(naa, dem_params){
     return(
@@ -26,9 +24,7 @@ compute_ssb <- function(naa, dem_params){
 #' @param naa numbers-at-age matrix [nyears, nages, nsexes, nregions]
 #' @param dem_params demagraphic parameters list
 #'
-#' @export
-#'
-
+#' @export compute_bio
 #'
 compute_bio <- function(naa, dem_params){
     return(
@@ -42,9 +38,7 @@ compute_bio <- function(naa, dem_params){
 #'
 #' @param caa catch-at-age matrix [nyears, nages, nsexes, nregions, nfleets]
 #'
-#' @export
-#'
-
+#' @export compute_total_catch
 #'
 compute_total_catch <- function(caa){
     return(
@@ -59,9 +53,7 @@ compute_total_catch <- function(caa){
 #'
 #' @param caa catch-at-age matrix [nyears, nages, nsexes, nregions, nfleets]
 #'
-#' @export
-#'
-
+#' @export compute_fleet_catch
 #'
 compute_fleet_catch <- function(caa){
     return(
@@ -77,9 +69,7 @@ compute_fleet_catch <- function(caa){
 #'
 #' @param faa fishing-mortality-at-age matrix [nyears, nages, nsexes, nregions, nfleets]
 #'
-#' @export
-#'
-
+#' @export compute_total_f
 #'
 compute_total_f <- function(faa){
     return(
