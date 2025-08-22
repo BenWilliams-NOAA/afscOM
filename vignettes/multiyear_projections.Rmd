@@ -31,7 +31,7 @@ Rarely are catch levels or recruitment levels known in the future, but `project_
 Future versions of the `afscOM` may implement means to dynamically generate recruitment based on internal population state (such as a stock recruit relationship), as well as means of computing future catch levels from simple harvest control rules.
 
 #### Custom Multiyear Projection Frameworks
-The builtin `project_multi()` function will work fine for users interested in basic population projections. However, users with more complex needs (e.g. a custom observation generation process), will need to implement thir own multi-year projection framework. This is not difficult, as the `project_multi()` function is, essentially, only a for-loop wrapper around the single-year `project()` function, but some care must be taken to ensure that removals, recruitment, and demographic parameters are being approporiately applied. 
+The builtin `project_multi()` function will work fine for users interested in basic population projections. However, users with more complex needs (e.g. a custom observation generation process), will need to implement their own multi-year projection framework. This is not difficult, as the `project_multi()` function is, essentially, only a for-loop wrapper around the single-year `project()` function, but some care must be taken to ensure that removals, recruitment, and demographic parameters are being appropriately applied. 
 
 This is the basic skeleton of the `project_multi` function that should be reused for custom multiyear projection functions.
 ```{r, project_multi_explain, eval=FALSE}

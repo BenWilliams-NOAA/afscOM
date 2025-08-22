@@ -1,0 +1,58 @@
+---
+title: "Removals"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Specifying Removals}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Specifying Removals
+The projection functions require an annual removals input. This input can be provided in several ways, depending on the exact use case of the model. Notably, this input can be provided either in units of catch weight, or in units of fishing mortality (F), depending on the value of `model_options$removals_input`. Removals cannot currently be input as a “harvest rate”, though a helper function `mu_to_F` is available to approximately convert between fishing mortality and harvest rate units. 
+
+The simplest way to input removals is to provide a timeseries of removals by fleet and region, of dimension `[nyears, nfleets, nregions]`. When provided in this format, exactly the provided amount of catch (or F) will be used to determine removals from the population by each fleet within each region. 
+```{r, removals_catch, eval=FALSE}
+nyears <- 10
+nregions <- 1
+nfleets <- 2
+
+# Specify removals as a timeseries of catch
+removals <- array(10, dim = c(nyears, nfleets, nregions))
+model_options$removals_input <- "catch"
+
+out <- project(init_naa, removals_timeseries=removals, recruitment, dem_params, nyears, model_options)
+
+# OR specify removals as a fishing mortality timeseries
+fs <- array(0.04, dim = c(nyears, nfleets, nregions))
+model_options$removals_input <- "F"
+
+out <- project(init_naa, removals_timeseries=fs, recruitment, dem_params, nyears, model_options)
+
+```
+
+Alternatively, users can input removals as a timeseries of catch of dimension `nyears` (either a vector or array), alongside a fleet apportionment matrix (via `model_options$fleet_apportionment`) that specifies what portion of the total removals timeseries should be apportioned to each fleet within each region. 
+
+```{r, removals_apportionment, eval=FALSE}
+nyears <- 10
+nregions <- 1
+nfleets <- 2
+
+# Specify removals as a timeseries of global catch
+removals <- array(20, dim = c(nyears))
+
+# Apportion catch to the individual fleets as a 75-25 split
+fleet_removals_apportionment <- array(NA, dim = c(nyears, nfleets, nregions))
+fleet_removals_apportionment[, 1, 1] <- 0.75 # 75% of removals to fleet 1
+fleet_removals_apportionment[, 2, 1] <- 0.25 # 25% of removals to fleet 2
+model_options$removals_input <- "catch"
+model_options$fleet_apportionment <- fleet_removals_apportionment
+
+out <- project(init_naa, removals_timeseries=removals, recruitment, dem_params, nyears, model_options)
+```
+
+### Catch Control Rule Functions
+Often, it is useful to compute removals as a function of the current state of the population via some form of catch control rule (CCR; also harvest control rule, HCR). To do this, define an R function that accepts as parameters: 1) a `[1, nages, nsexes, nregions]` dimensional array of numbers-at-age; and 2) a list of demographic parameters subset to a single year (all demographic inputs will have dimension `[1, nages, nsexes, nregions, nfleets]`). Additional parameters can also be supplied to a user-defined CCR function, but only the current simulations timestep’s numbers-at-age array and demographic parameters are directly available to such function. All other parameters must be specified at the start of the simulation.
+
+Once defined, add a reference to this function to `model_options$hcr$hcr_func` and a named list of extra parameter values to `model_options$hcr$hcr_pars`. Upon reaching the end of a provided removals timeseries (which can be of length 0), the projection function will automatically begin using the supplied function to determine future removals. If using a CCR alongside a removals timeseries, the output units of the CCR function must match those of the removals timeseries (defined by `model_options$removals_input`). Below are two example of using CCRs – one defining a complex threshold scaling function and one defining a simple constant catch rule:
+…
+

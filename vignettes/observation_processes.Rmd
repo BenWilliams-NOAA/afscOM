@@ -7,70 +7,73 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-Users can optionally request for `afscOM` to simulate observations from fishery catch or scientific surveys, by specifying `simulate_observations=TRUE` in the `model_options` list object. The observation submodel is currently developed based on surveys used by NOAA AFSC assessment scientists, but may be generalized in the future.
+In addition to simulating populations based on demographic parameters, afscOM can also generate observations of the underlying population. Currently supported observation types include: catch observations, relative population abundance indices (RPNs), relative biomass abundance indices (RPWs), and age compositions (age comps). Each observation type can be generated for any number of combination of fishery and survey fleets, based on the `obs_pars` list.
 
-_NOTE: The observation submodel has not been tested when the model contains multiple spatial regions._
+Catch, RPN, and RPW index observations are all generated based on a random sample from a lognormal distribution parameterized by a mean value calculated from the current population state, and a user supplied CV. For each type of index observation, the mean is calculated as follow:
 
-#### Scientific Surveys
-The observation submodel generates relative population number (RPN) abundance indices, relative population weight (RPW) abundance indices, and age composition data from two scientific surveys: the Alaska longline survey [_citation_] and the NOAA bottom trawl survey [_citation_]. Data generated from each survey is representative of the entire coastwide population (even though some regions of Alaska are only sampled by the longline survey in alternating years). Surveys are assumed to occur halfay through the projection year, and survey catches are not removed from the population.
+### Catch, RPN, and RPW Observations
 
-Abundance indices (RPNs and RPWs) are log-normally distributed. For RPNs, the predicted abundance index is: 
+Catch: $C_y = \sum{C_{a,s}}$
 
-$I_y = q^{ll}\sum{N_{y,a,s}\exp{(-Z_{y,a,s}/2})v^{ll}_{y,a,s}}$ 
+RPN: $I_y = q\sum{N_{a,s}\exp{(-Z_{a,s}/2})v_{a,s}}$ 
 
-And for RPWs is:
-
-$I_y = q^{trwl}\sum{N_{y,a,s}\exp{(-Z_{y,a,s}/2})v^{trwl}_{y,a,s}w_{y,a,s}}$.
+RPW: $I_y = q\sum{N_{a,s}\exp{(-Z_{a,s}/2})v_{a,s}w_{a,s}}$.
 
 For both surveys $q$ represents the catchability coefficient for the specific survey and $v$ represents the survey selectivity. For RPWs, $w$ represents weight-at-age-and-sex. R functions for computing RPNs and RPWs according to the above equations are available as `simulate_rpn()` and `simulate_rpw()`.
 
-Observations are lognorally distributed around the predicted log abundance index (i.e. $log(I_y)$). Lognormal observations are bias-corrected to ensure that the log-mean and arithemtic-mean are consistent. Users must specify a coefficient of variation (CV) for abundance index observations for each survey. The underlying function that yields lognormal observations is as follows:
+Lognormal samples are each bias corrected (`rlnrom(1, meanlog=log(mu)-sd^2/2`), where the standard deviation is calculated as `sd=sqrt(log(CV+1))`. 
 
-```{r lognomal_obs, eval=FALSE}
-# pred is the predicted abudnance index as described above
-# cv is a user input model_option
-simulate_lognormal_obs <- function(pred, cv){
-    sds <- sqrt(log(cv^2 + 1))
-    return(rlnorm(1, meanlog=log(pred)-(sds^2)/2, sdlog = sds))
-}
+### Age Composition Observations
+
+Age composition observations are generated based on a random sample from a multinomial distribution with a user supplied sample size. Age composition observations from fishery fleets use standardized catch-at-age (C_a/∑C_a) as the multinomial bin proportions, while age comp observations from survey fleets use year-end standardized selected numbers-at-age (N_a v_a/∑N_a v_a). User can optionally specify whether to generate sex aggregated age composition observations (male and female individuals combined), and whether for observations to reported as proportions or in integer values per bin. An R function for computing age composition predictions is available as `simulate_ac()`.
+
+### Observation Process options
+
+If `simulate_observations=TRUE`, then a set of parameters that govern how observations are simulated must also be defined. This option, `obs_pars` is a list of vectors, where each vector has length `nfleets+nsurveys`.
+
+Required items in the `obs_pars` list are:
+
+| Parameter Name | Description | Dimensions | Notes |
+|----------------|-------------|------------|-------|
+| `is_survey`    | Whether each fleet is a survey or fishery fleet | `[nfleets+nsurveys]` |  |
+| `qs`           | Catchability coefficients | `[nfleets+nsurveys]` | |
+| `rpn`          | Whether to generate an RPN index | `[nfleets+nsurveys]` | `0` for "no", `1` for "yes" |
+| `rpw`          | Whether to generate an RPW index | `[nfleets+nsurveys]` | `0` for "no", `1` for "yes" |
+| `rpn_cv`      | A CV to use when genrating RPN indices | `[nfleets+nsurveys]` |  |
+| `rpw_cv`      | A CV to use when genrating RPW indices | `[nfleets+nsurveys]` |  |
+| `acs`           | Whether to generate age composition observations | `[nfleets+nsurveys]` | `0` for "no", `1` for "yes" |   
+| `ac_samps`      | Number of samples to use when generating age comp observations | `[nfleets+nsurveys]` |  |
+| `ac_as_integers` | Whether to return age comp observations as integers or proportions | `[nfleets+nsurveys]` | `0` for "proportions", `1` for "integers" |
+| `acs_agg_sex` | Whether age comp observations should be aggregated by sex | `[nfleets+nsurveys]` | `0` for "no", `1` for "yes" |
+
+Below is an example `obs_pars` object that generates RPNs and RPWs for two surveys, and age composition observations for two fisheries and two surveys. Age compositions are not aggregated by sex and are returned as integers.
+
+```{r, example_obspars, eval=FALSE}
+nfleets <- 2
+nsurveys <- 2
+
+obs_pars <- list(
+    is_survey = c(0, 0, 1, 1), # first two fleets are fisheries, last two are surveys
+    qs = c(0, 0, 6, 0.8), # catchability coefficients
+    rpn = c(0, 0, 1, 1), # generate RPNs for the two survey fleets
+    rpw = c(0, 0, 1, 1), # generate RPWs for the two survey fleets
+    rpn_cv = c(0, 0, 0.1. 0.1), # CV for RPNs
+    rpw_cv = c(0, 0, 0.1. 0.1), # CV for RPWs
+    acs = c(1, 1, 1, 1), # generate age comps for all fleets
+    ac_samps = c(100, 50, 100, 50), # sample sizes for age comps
+    ac_as_integers = c(1, 1, 1, 1), # return age comps as integers
+    acs_agg_sex = c(0, 0, 0, 0) # do not aggregate age comps
+)
+
+model_options$obs_pars <- obs_pars
 ```
 
-Age composition data is multinomially distributed. Predicted age compositions are calculated as the proportion of the population that is each age (e.g. $p_y = N_{y,a,s}/\sum_a{N_{y,a,s}}$). Users can, optionally, specify whether age composition data should be generate in a sex-aggregated or sex-disaggregated (the default) fashion. Is disaggregated comps are requested, prediction compoistions represent the proportion of population in each age, of each sex. An R function for computing age composition predictions is available as `simulate_ac()`.
+### Custom Observation Processes
+The observation submodel currently built-in to `afscOM` is designed to emulate common data sources and data types for NOAA stock assessment biologists, but does not cover the full scope of possible observation data types. For example, there is not currently support for generating fishery CPUE indices or egg productions indices. For more complex observation processes, users can create custom observation submodels to generate additional data. 
 
-Observations are multinomially distributed about the prediction age compositions. A user supplied number of multinomially samples ($n$) regulates how many random draws are taken from the multinomial distribution. Users can specify if the returned observations are in proportions, or integer format (which is necesarry for some estimation models), through the `as_integers` model option. As with the predictions, observations can be either sex-aggregated or sex-disaggregated (the default). An optional aging error matrix can also be applied to observation (_though this hs not been thoroughly tested_). The underlying function that yields multinomial observations is as follows:
+To implement a custom observation submodel, turn off the default observation model by setting `model_options$simulate_observations=FALSE` (this ensures that the `project` function won't generate its own observations). From there, you can define any type of function necessary, and provide, as input, outputs from the `project()` function. For example:
 
-```{r, multinomial_obs, eval=FALSE}
-simulate_multinomial_obs <- function(pred, samp_size, aggregate_sex=FALSE, as_integers=FALSE, age_err=NA){
-    multi <- array(0, dim=dim(pred), dimnames=dimnames(pred))
-    p <- pred
-    if(!all(p == 0)){
-        # [...]
-        multi <- apply(p, 3, function(x){
-                tmp <- rmultinom(1, samp_size, prob=x)
-                if(!as_integers){
-                    tmp <- (tmp[,1]/sum(tmp[,1]))
-                }
-                # Include aging error if available
-                if(!all(is.na(age_err))){
-                    tmp <- tmp %*% age_err
-                }
-                return(tmp)
-            })
-        # [...]
-    }
-    return(multi)
-}
-```
-
-#### Fisheries Data
-At present, only catch-at-age data is generated from fisheries catch. The age composition data is generated in same way as for surveys, except that data is representative of catch-at-age from the whole system rather than population numbers-at-age. An R function for computing predicted catch-at-age observations is available as `simulate_caa()`. Like with survey age compositions, fisheries catch-at-age is multinomially distributed.
-
-
-#### Custom Observation Processes
-The observation submodel currently built-in to `afcsOM` is designed to emulate common data sources and data types for NOAA stock assessment biologists, but does not cover the full scope of possible observation data types. For example, there is not currently support for generating fishery CPUE indices or egg productions indices. For more complex observation processes, users can author custom observation submodels to generate additional data. 
-
-To implement a custom observation submodel, turn off the defalt observation model by setting `model_options$simulate_observations=FALSE` (this ensures that the `project` function wont generate its own observations). From there, you can define any type of function necesarry, and provide, as input, outputs from the `project()` function. For example:
-
+Below is an example of a custom observation process that generates observations of the population sex ratio from a normal distribution for each year.
 ```{r, custom_obs_model, eval=FALSE}
 model_options$obs_pars$sex_rat$sd <- 0.05
 custom_observation_process <- function(naa, model_options){
@@ -85,13 +88,15 @@ custom_observation_process <- function(naa, model_options){
 }
 
 model_options$simulate_observations = FALSE # turn off default simulations
-out <- project(removals, fleet.props, dem_params, prev_naa, recruitment, options=model_options)
+out <- afscOM::project_single(removals, fleet.props, prev_naa, recruitment, options=model_options)
 
 naa <- out$naa_tmp
 propmale_obs <- custom_observation_process(naa, model_options)
 
+propmale_obs
+
 ```
 
-If users want to simply augment the current set of observations (as is being done in the above example), setting `model_options$simulate_observations=FALSE` is not strictly necesarry.
+If users want to simply augment the current set of observations (as is being done in the above example), setting `model_options$simulate_observations=FALSE` is not strictly necessary.
 
 For multiyear simulations, users will need to implement their own multiyear simulation framework with the custom observation model. See the ["Multiyear Projections"](multiyear_projections.html) page for additional information.

@@ -15,7 +15,9 @@ Demographic parameters are derived from Goethel et al. (2021), while movement ma
 ### Model Setup
 Start by specifying the model dimensions, dimension names, and obtaining default values for all model options:
 
-```{r, setup, eval=FALSE}
+```{r, setup, eval=TRUE}
+library(afscOM)
+
 nyears <- 100
 nages  <- 30
 nsexes <- 2
@@ -40,7 +42,7 @@ In brief, the demographic parameters specified here define a population with con
 Selectivity differs across age, sex, and fleet for both fisheries and surveys. 
 Fishery retention is 1 across all ages and sexes, indicating that no discarding occurs.
 
-```{r, demparams, eval=FALSE}
+```{r, demparams, eval=TRUE}
 load(file.path(here::here(), "data/sablefish_assessment_data.rda"))
 assessment <- sablefish_assessment_data
 
@@ -97,7 +99,7 @@ Movement is age and sex specific, but is not unique across all ages.
 Instead, ages are grouped together based loosely on the size of individuals at that age, and a unique movement matrix is defined for "small", "medium", and "large" fish (see Hanselman et al. 2018 for details). 
 The rows of the movement matrix indicate the source region and the columns indicating the destination regions for individuals in each time step.
 
-```{r, movement_matrix, eval=FALSE}
+```{r, movement_matrix, eval=TRUE}
 # Movement matrices from Hanselman et al. 2018
 small_movement <- matrix(
     c(
@@ -135,15 +137,15 @@ large_movement <- matrix(
 )
 large_movement <- t(apply(large_movement, 2, \(x) x/sum(x)))
 
-movement_matrix <- array(NA, dim=c(nregions, nregions, nages, nsexes))
-movement_matrix[,,1:3,] <- small_movement
-movement_matrix[,,4:6,] <- medium_movement
-movement_matrix[,,7:nages,] <- large_movement
+movement_matrix <- array(NA, dim=c(nregions, nregions, nyears, nages, nsexes))
+movement_matrix[,,,1:3,] <- small_movement
+movement_matrix[,,,4:6,] <- medium_movement
+movement_matrix[,,,7:nages,] <- large_movement
 ```
 
 All demographic matrices are added to a list object:
 
-```{r, dp_list, eval=FALSE}
+```{r, dp_list, eval=TRUE}
 dem_params <- list(
     waa=waa,
     mat=mat,
@@ -160,7 +162,7 @@ dem_params <- list(
 An initial numbers-at-age matrix is defined as is a timeseries of global recruitment. 
 Global annual recruitment will be apportioned to individual regions equally (as is the default behavior).
 
-```{r, initnaa_recruitment, eval=FALSE}
+```{r, initnaa_recruitment, eval=TRUE}
 init_naa <- array(NA, dim=c(1, nages, nsexes, nregions), dimnames = list(1, 2:31, c("F", "M"), c("EGOA", "CGOA", "WGOA", "BS", "AI")))
 init_naa[,,1,] <- assessment$natage.female["1960",]/nregions
 init_naa[,,2,] <- assessment$natage.male["1960",]/nregions
@@ -174,8 +176,8 @@ An annual catch timeseries applicable to the entire model is defined as a vector
 Separate matrices define the proportion of the global catch that is apportioned to each spatial region (dimension `[nyears, nregions]`), and the proportion of each regional catch that is apportioned to each fishing fleet (dimension `[nyears, nfleets, nregions]`). 
 Here, catch is divided equally amongst each spatial region, and fleet-specific catch is allocated 80% to fleet 1 and 20% to fleet 2.
 
-```{r, catch, eval=FALSE}
-catch_timeseries <- matrix(rep(20, nyears), nrow=nyears)
+```{r, catch, eval=TRUE}
+catch_timeseries <- matrix(rep(3, nyears), nrow=nyears)
 regional_catch_aportionment <- matrix(1/nregions, nrow=nyears, ncol=nregions)
 region_fleet_catch_apportionment <- array(NA, dim=c(nyears, nfleets, nregions))
 region_fleet_catch_apportionment[,1,] <- 0.80
@@ -184,11 +186,11 @@ region_fleet_catch_apportionment[,2,] <- 0.20
 
 The apportionment matrices are added to the `model_options` list:
 
-```{r, model_options, eval=FALSE}
+```{r, model_options, eval=TRUE}
 model_options <- list(
         removals_input = "catch",
         simulate_observations = FALSE,
-        fleet_apportionment = sweep(region_fleet_catch_apportionment, c(1, 3), region_fleet_catch_apportionment, FUN+"*"),
+        fleet_apportionment = region_fleet_catch_apportionment,
         recruit_apportionment = NULL,
         recruit_apportionment_random = FALSE,
         do_recruits_move = FALSE
@@ -198,8 +200,8 @@ model_options <- list(
 ### Run the Model
 Now, the model is projected forward with the following call:
 
-```{r, om, eval=FALSE}
-om1 <- project_multi(
+```{r, om, eval=TRUE, results="hide", warning=FALSE}
+om1 <- project(
     init_naa = init_naa, 
     removals_timeseries = catch_timeseries,
     recruitment = recruitment, 
@@ -207,4 +209,13 @@ om1 <- project_multi(
     nyears = nyears, 
     model_options = model_options
 )
+```
+
+### Process Model Results
+
+```{r, model_results, eval=TRUE}
+ssb <- afscOM::compute_ssb(om1$naa, dem_params)
+bio <- afscOM::compute_bio(om1$naa, dem_params)
+plot_ssb(ssb)
+plot_bio(bio)
 ```

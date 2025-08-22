@@ -1,0 +1,85 @@
+---
+title: "Recruitment"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Specifying Recruitment}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Specifying Recruitment
+
+The projection functions require an annual recruitment input. This input can be provided in several ways, depending on the exact use case of the model. 
+
+The simplest way is to provide a direct timeseries of recruitment of dimensions `[nyears, nregions]`. If done in this way, the underlying projection module will use EXACTLY the provided recruitment to simulate the population, with each region being allocated exactly the specified amount of recruits. This is most useful for replicating existing models. If a model is composed of a single region, recruitment timeseries can alternatively be provided as a vector of length `nyears`.
+
+```{r, simple_recruitment, eval=FALSE}
+
+nyears <- 100
+nregions <- 2
+
+simple_recruitment <- array(30, dim=c(nyears, nregions))
+
+out <- project(init_naa, removals_timeseries, recruitment=simple_recruitment, dem_params, nyears, model_options)
+
+```
+
+### Recruitment in Multiple Region Models
+If a multi-region model is being parameterized users can also specify a 1D vector of annual recruitment (that will be taken as system wide recruitment) and a matrix of annual recruitment apportionment (via `model_options$recruit_apportionment)` of dimensions `[nyears, nregions]`, which will allocate the total number of recruits (the input vector) across regions based on the provided apportionment scheme. The rows of the apportionment matrix should sum to 1.0, but this will not be checked internally. 
+
+```{r, recruit_apportionment, eval=FALSE}
+
+nyears <- 100
+nregions <- 2
+
+# Global recruitment timeseries (recruits across all regions)
+rec_timeseries <- array(30, dim=c(nyears))
+
+# Alocate 75% of recruits to region 1 and 25% to region 2
+recruit_apportionment <- matrix(c(0.75, 0.25), nrow=nyears, ncol=nregions, byrow=TRUE)
+model_options$recruit_apportionment <- recruit_apportionment
+
+out <- project(init_naa, removals_timeseries, recruitment=rec_timeseries, dem_params, nyears, model_options)
+
+```
+
+In multi-region models, users can also specify whether regional recruitment apportionment should be stochastic via the `model_options$recruit_apportion_random`. If `TRUE`, the model will perform a multinomial sample from the provided apportionment matrix (see description above), using a sample size of 30, thus adding some stochasticity to annual recruitment apportionment. This feature is most useful when performing multiple simulations using the `simulate_multiple` projection wrapper. Additionally, users can specify whether recruits are subject to recruitment in the year of recruitment via `model_options$do_recruits_move`.
+```{r, recruit_apportionment2, eval=FALSE}
+
+nyears <- 100
+nregions <- 2
+
+# Global recruitment timeseries (recruits across all regions)
+rec_timeseries <- array(30, dim=c(nyears))
+
+# Alocate 75% of recruits to region 1 and 25% to region 2
+recruit_apportionment <- matrix(c(0.75, 0.25), nrow=nyears, ncol=nregions, byrow=TRUE)
+model_options$recruit_apportionment <- recruit_apportionment
+model_options$recruit_apportion_random <- TRUE # Add stochsticty around 75-25 recruitment split
+
+out <- project(init_naa, removals_timeseries, recruitment=rec_timeseries, dem_params, nyears, model_options)
+
+```
+
+### Recruitment Functions
+The final way that recruitment can be specified is through a recruitment function. Many fisheries population dynamics model assume a stock-recruit relationship relating current stock size to future recruitment. To specify recruitment in this way, users should define an R function that accepts as input: 1) a `[1, nages, nsexes, nregions]` dimensional array of numbers-at-age; and 2) a list of demographic parameters subset to a single year (all demographic inputs will have dimension `[1, nages, nsexes, nregions, nfleets]`). Additional parameters can also be supplied to a user-defined recruitment function, but only the current simulations timestep's numbers-at-age array and demographic parameters are directly available to such function. All other parameters must be specified at the start of the simulation. 
+
+Once defined, a reference to this function is provided to the projection function in lieu of a direct timeseries of recruitment. The projection function internally handles passing the annual population state as a parameter to the function. To specify the values of additional stock-recruit parameters (e.g., steepness or unfished recruitment in a Beverton-holt function), users must create a named list of said parameters and their respective values and assign it to `model_options$recruitment_pars`. Below is an example defining a Beverton-Holt stock recruit function, and building the appropriate parameter options list.
+
+```{r, bevholt_recruitment, eval=FALSE}
+
+nyears <- 100
+nregions <- 2
+
+recruit_function <- beverton_holt
+model_options$recruitment_pars <- list(
+    h = 0.75,
+    R0 = 25,
+    S0 = 300,
+    sigR = 1.2
+)
+
+out <- project(init_naa, removals_timeseries, recruitment=recruit_function, dem_params, nyears, model_options)
+
+```
+
