@@ -2,14 +2,15 @@ pandoc: 3.6.2
 pkgdown: 2.1.2
 pkgdown_sha: ~
 articles:
+  01_model_dimensions: 01_model_dimensions.html
+  02_specifying_demographic_parameters: 02_specifying_demographic_parameters.html
+  03_recruitment: 03_recruitment.html
+  04_removals: 04_removals.html
+  05_model_options: 05_model_options.html
+  06_observation_processes: 06_observation_processes.html
+  07_multiyear_projections: 07_multiyear_projections.html
+  08_alaska_sablefish: 08_alaska_sablefish.html
+  09_spatial_om_example: 09_spatial_om_example.html
+  10_nep_transboundary_sablefish: 10_nep_transboundary_sablefish.html
   afscOM: afscOM.html
-  model_dimensions: model_dimensions.html
-  model_options: model_options.html
-  multiyear_projections: multiyear_projections.html
-  nep_transboundary_sablefish: nep_transboundary_sablefish.html
-  observation_processes: observation_processes.html
-  recruitment: recruitment.html
-  removals: removals.html
-  spatial_om_example: spatial_om_example.html
-  specifying_demographic_parameters: specifying_demographic_parameters.html
-last_built: 2025-08-22T22:25Z
+last_built: 2025-08-26T21:25Z

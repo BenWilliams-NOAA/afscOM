@@ -56,3 +56,38 @@ Often, it is useful to compute removals as a function of the current state of th
 Once defined, add a reference to this function to `model_options$hcr$hcr_func` and a named list of extra parameter values to `model_options$hcr$hcr_pars`. Upon reaching the end of a provided removals timeseries (which can be of length 0), the projection function will automatically begin using the supplied function to determine future removals. If using a CCR alongside a removals timeseries, the output units of the CCR function must match those of the removals timeseries (defined by `model_options$removals_input`). Below are two example of using CCRs – one defining a complex threshold scaling function and one defining a simple constant catch rule:
 …
 
+```{r, ccr, eval=FALSE}
+# Example 1: Complex threshold scaling function
+model_options$hcr$hcr_func <- threshold_f_hcr
+model_options$hcr$hcr_pars <- list(
+    fmax = 0.1,         # Maximum F
+    fmin = 0.0,         # Minimum F,
+    urp = 100,          # Upper reference point (SSB)
+    lrp = 5             # Lower reference point (SSB)
+)
+
+out <- project(
+  init_naa = init_naa,
+  removals_timeseries = c(0),
+  recruitment = recruitment,
+  dem_params = dem_params,
+  nyears = nyears,
+  model_options = model_options
+)
+
+# Example 1: Constant catch rule
+model_options$hcr$hcr_func <- constant_catch_hcr
+model_options$hcr$hcr_pars <- list(
+    c = 5
+)
+
+out <- project(
+  init_naa = init_naa,
+  removals_timeseries = c(0),
+  recruitment = recruitment,
+  dem_params = dem_params,
+  nyears = nyears,
+  model_options = model_options
+)
+
+```

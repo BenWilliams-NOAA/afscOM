@@ -43,7 +43,6 @@ Selectivity differs across age, sex, and fleet for both fisheries and surveys.
 Fishery retention is 1 across all ages and sexes, indicating that no discarding occurs.
 
 ```{r, demparams, eval=TRUE}
-load(file.path(here::here(), "data/sablefish_assessment_data.rda"))
 assessment <- sablefish_assessment_data
 
 # Mortality is constant across time, age, and region
@@ -79,10 +78,7 @@ selex_mat[,2,1] <- assessment$agesel[,"fish1sel.m"]
 selex_mat[,1,2] <- assessment$agesel[,"fish3sel.f"]
 selex_mat[,2,2] <- assessment$agesel[,"fish3sel.m"]
 sel <- generate_param_matrix(selex_mat, dimension_names = dimension_names, by=c("age", "sex", "fleet"), include_fleet_dim = TRUE)
-sel[(36:56),,1,,1] <- matrix(rep(assessment$agesel[, "fish4sel.f"], length(36:56)), ncol=nages, byrow=TRUE)
-sel[(36:56),,2,,1] <- matrix(rep(assessment$agesel[, "fish4sel.m"], length(36:56)), ncol=nages, byrow=TRUE)
-sel[(57:nyears),,1,,1] <- matrix(rep(assessment$agesel[, "fish5sel.f"], length(57:nyears)), ncol=nages, byrow=TRUE)
-sel[(57:nyears),,2,,1] <- matrix(rep(assessment$agesel[, "fish5sel.m"], length(57:nyears)), ncol=nages, byrow=TRUE)
+
 
 survey_selex_mat <- array(NA, dim=c(nages, nsexes, 2), dimnames=dimension_names[c("age", "sex", "fleet")])
 survey_selex_mat[,1,1] <- assessment$agesel[,"srv1sel.f"]
@@ -90,8 +86,7 @@ survey_selex_mat[,2,1] <- assessment$agesel[,"srv1sel.m"]
 survey_selex_mat[,1,2] <- assessment$agesel[,"srv7sel.f"]
 survey_selex_mat[,2,2] <- assessment$agesel[,"srv7sel.m"]
 survey_sel <- generate_param_matrix(survey_selex_mat, dimension_names = dimension_names, by=c("age", "sex", "fleet"), include_fleet_dim = TRUE)
-survey_sel[(57:nyears),,1,,1] <- matrix(rep(assessment$agesel[, "srv10sel.f"], length(57:nyears)), ncol=nages, byrow=TRUE)
-survey_sel[(57:nyears),,2,,1] <- matrix(rep(assessment$agesel[, "srv10sel.m"], length(57:nyears)), ncol=nages, byrow=TRUE)
+
 ```
 
 Movement is defined based on estimates from Hanselman et al. (2018) that were derived from a long term tagging study. 
