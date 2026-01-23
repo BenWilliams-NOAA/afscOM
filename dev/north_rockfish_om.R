@@ -6,8 +6,10 @@
 library(devtools)
 devtools::load_all()
 
-data <- readRDS("~/Downloads/dat.RDS")
-assessment <- readRDS("~/Downloads/m24.RDS")
+load("data/norock_data.rda")
+
+data <- northrock_inputs$data
+assessment <- northrock_inputs$assessment
 
 nyears <- length(data$years)
 nages  <- 50
@@ -25,7 +27,7 @@ dimension_names <- list(
     "fleet" = "F1"
 )
 
-model_params <- set_model_params(nyears, nages, nlengths, nsexes, nregions, nfleets)
+model_params <- set_model_params(nyears, nages, nsexes, nregions, nfleets)
 model_options <- setup_model_options(model_params)
 
 #' 1. Setup demographic rates
