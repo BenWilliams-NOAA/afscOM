@@ -66,7 +66,7 @@ threshold_f_hcr <- function(fmax, fmin, urp, lrp, naa, dem_params){
 #'
 #' @export apply_harvest_control_rule
 #'
-apply_harvest_control_rule <- function(model_dimensions, hcr_func, hcr_pars){
+apply_harvest_control_rule <- function(model_dimensions, hcr_func, hcr_pars, model_options){
     expected_dim <- c(1, model_dimensions$nfleets, model_dimensions$nregions)
     hcr_out <- do.call(hcr_func, hcr_pars)
     if(!is.null(dim(hcr_out)) && all(dim(hcr_out) == expected_dim)){
@@ -75,7 +75,8 @@ apply_harvest_control_rule <- function(model_dimensions, hcr_func, hcr_pars){
         # If have to coerce into proper output format, breakup catch/F so that it's
         # equivalent across regions and fleets. If a more nuanced apportionment is
         # required, users must handle that themselves.
-        hcr_out_array <- array(hcr_out/model_dimensions$nregions/model_dimensions$nfleets, dim=expected_dim)
+        # hcr_out_array <- array(hcr_out/model_dimensions$nregions/model_dimensions$nfleets, dim=expected_dim)
+        hcr_out_array <- array(hcr_out*model_options$fleet_apportionment, dim=expected_dim)
         return(hcr_out_array)
     }
 }
