@@ -76,6 +76,9 @@ project <- function(init_naa, removals_timeseries, recruitment, dem_params, nyea
 
         if(is.function(recruitment)){
             r_y <- do.call(recruitment, c(list(naa=outputs$naa[y,,,,drop=FALSE], dem_params=dp.y), model_options$recruitment_pars))
+            if(!is.null(model_options$recruitment_devs)){
+                r_y <- r_y * exp(model_options$recruitment_devs[y])
+            }
         }else{
             rs <- array(0, dim=c(nyears+1, nregions))
             rs[1:nyears, 1:nregions] <- r$full_recruitment[1:nyears,1:nregions]
