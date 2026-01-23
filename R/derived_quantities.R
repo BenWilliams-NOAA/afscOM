@@ -14,6 +14,26 @@ compute_ssb <- function(naa, dem_params){
     )
 }
 
+#' Compute Spawning Stock Output
+#'
+#' Compute SO (egg production) from a matrix of NAA and a set 
+#' of demographic parameters.
+#'
+#' @param naa numbers-at-age matrix [nyears, nages, nsexes, nregions]
+#' @param dem_params demagraphic parameters list
+#'
+#' @export compute_so
+#'
+compute_so <- function(naa, dem_params, use_fec=TRUE){
+    o <- dem_params$waa
+    if(use_fec==TRUE && !is.null(dem_params$fec)){
+       o <- dem_params$fec
+    }
+    return(
+        apply(naa[1:nrow(o),,1,,drop=FALSE]*o[,,1,,drop=FALSE]*dem_params$mat[,,1,,drop=FALSE], c(1, 4), sum)
+    )
+}
+
 #' Compute Total Stock Biomass
 #'
 #' Compute biomass from a matrix of NAA and a set of demographic
