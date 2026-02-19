@@ -11,7 +11,8 @@
 #' @export
 #'
 retained_F <- function(fy, selex, ret){
-    return(fy*selex*ret)
+    # return(fy*selex*ret)
+    return(sweep(selex*ret, 5, array(fy), "*"))
 }
 
 #' Discarded Fishing Mortality Rate
@@ -27,7 +28,8 @@ retained_F <- function(fy, selex, ret){
 #' @export
 #'
 discard_F <- function(dmr, selex, ret){
-    return(selex*(1-ret)*dmr)
+    # return(selex*(1-ret)*dmr)
+    return(sweep(selex*(1-ret), 5, array(dmr), "*"))
 }
 
 #' Catch-at-age
@@ -48,6 +50,24 @@ catch_at_age <- function(faa, naa, waa, mort){
     if(all(sapply(list(faa, naa, waa, mort), length) != length(naa))){
         stop("One or more inputs is of different dimensions.")
     }
-    zaa <- faa + mort
-    return((faa / zaa) * naa * (1 - exp(-zaa)) * waa)
+
+    nfleets <- dim(faa)[length(dim(faa))]
+
+    pred_catches <- array(NA, dim=dim(faa))
+
+    for(f in 1:nfleets) {
+        # F-at-age for this fleet
+        FAA <- subset_matrix(faa, f, d=5, drop=TRUE)
+
+        # Total Z includes F from ALL fleets
+        ZAA_total <- mort
+        for(ff in 1:nfleets) {
+            ZAA_total <- ZAA_total + subset_matrix(faa, ff, d=5, drop=TRUE)
+        }
+
+        # Predicted catch for this fleet (Baranov catch equation)
+        pred_catches[,,,,f] <- (FAA / ZAA_total * naa * (1 - exp(-ZAA_total))) * waa
+    }
+    # return((faa / zaa) * naa * (1 - exp(-zaa)) * waa)
+    return(pred_catches)
 }

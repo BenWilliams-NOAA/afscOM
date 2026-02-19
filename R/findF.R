@@ -104,3 +104,38 @@ findF_bisection <- function(f_guess, naa, waa, mort, selex, ret=NA, dmr=NA, prov
     Fmort <- midpoint
     return(Fmort)
 }
+
+findF_multifleet <- function(target_catch, naa, waa, mort, selex, f_guess=0.05){
+
+    n_fleets <- length(target_catch)
+
+    # Expand f_init if scalar
+    if(length(f_guess) == 1) f_guess <- rep(f_guess, n_fleets)
+
+    # Function to minimize: difference between predicted and target catch for all fleets
+    catch_diff <- function(f_vec) {
+        pred_catches <- numeric(n_fleets)
+
+        for(f in 1:n_fleets) {
+            # F-at-age for this fleet
+            FAA <- f_vec[f] * selex[, , , 1, f]
+
+            # Total Z includes F from ALL fleets
+            ZAA_total <- mort[,,,1]
+            for(ff in 1:n_fleets) {
+                ZAA_total <- ZAA_total + f_vec[ff] * selex[, , , 1, ff]
+            }
+
+            # Predicted catch for this fleet (Baranov catch equation)
+            pred_catches[f] <- sum((FAA / ZAA_total * naa[,,,1] * (1 - exp(-ZAA_total))) * waa[,,,1])
+        }
+
+        return(pred_catches - target_catch)  # Difference from target
+    }
+
+    # Solve for F vector
+    result <- nleqslv::nleqslv(f_guess, catch_diff, control = list(btol = 1e-12))
+
+    return(result$x)
+
+}

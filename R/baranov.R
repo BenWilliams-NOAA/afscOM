@@ -37,8 +37,26 @@ baranov <- function(fy, naa, waa, mort, selex, ret=NA, dmr=NA) {
     }
 
     faa <- retained_F(fy, selex, ret) + discard_F(dmr, selex, ret)
-    zaa <- faa + mort
-    caa <- naa*faa*(1-exp(-zaa))/zaa
-    catch <- sum(caa*waa)
+    # zaa <- faa + mort
+    # caa <- naa*faa*(1-exp(-zaa))/zaa
+    nfleets <- dim(selex)[length(dim(selex))]
+
+    pred_catches <- array(NA, dim=dim(faa))
+
+    for(f in 1:nfleets) {
+        # F-at-age for this fleet
+        FAA <- subset_matrix(faa, f, d=5, drop=TRUE)
+
+        # Total Z includes F from ALL fleets
+        ZAA_total <- mort
+        for(ff in 1:nfleets) {
+            ZAA_total <- ZAA_total + subset_matrix(faa, ff, d=5, drop=TRUE)
+        }
+
+        # Predicted catch for this fleet (Baranov catch equation)
+        pred_catches[,,,,f] <- (FAA / ZAA_total * naa * (1 - exp(-ZAA_total))) * waa
+    }
+
+    catch <- sum(pred_catches)
     return(catch)
 }
