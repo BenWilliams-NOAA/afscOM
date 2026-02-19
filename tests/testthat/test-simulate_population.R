@@ -53,6 +53,7 @@ test_that("single year age-structure population", {
   expect_equal(total_catch, tac, tolerance=1e-6)
 
   fleet_catch <- apply(catch_vars$caa_tmp, c(1, 5), sum)
+  names(dim(fleet_catch)) <- NULL
   expect_equal(fleet_catch, matrix(c(2180017, 934293), nrow=1), tolerance=1e-5)
 
   ssb <- sum(pop_vars$naa[,,1,]*dem_params$waa[,,1,]*dem_params$mat[,,1,])/1e6

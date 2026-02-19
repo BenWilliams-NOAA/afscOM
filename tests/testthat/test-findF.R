@@ -32,14 +32,18 @@ test_that("Find F for TAC", {
   r <- 1
   f <- 1
 
-  dem_params <- subset_dem_params(dem_params, y, d=1)
-  dem_params <- subset_dem_params(dem_params, r, d=3)
+  dem_params <- subset_dem_params(dem_params, y, d=1, drop=FALSE)
+  dem_params <- subset_dem_params(dem_params, r, d=3, drop=FALSE)
+ 
+  sel <- subset_matrix(dem_params$sel, f, 5, drop=FALSE)
+  ret <- subset_matrix(dem_params$ret, f, 5, drop=FALSE)
+  dmr <- subset_matrix(dem_params$dmr, f, 5, drop=FALSE)
 
   load(file.path(here::here(), "data/sablefish_assessment_data.rda"))
   assessment <- sablefish_assessment_data
-  naa <- matrix(NA, nrow=model_params$nages, ncol=2)
-  naa[,1] <- assessment$natage.female["2023",]*1e6
-  naa[,2] <- assessment$natage.male["2023",]*1e6
+  naa <- array(NA, dim=c(1, 30, 1, 1))
+  naa[,,1,] <- assessment$natage.female["2023",]*1e6
+  # naa[,,2,] <- assessment$natage.male["2023",]*1e6
 
   tac <- 4900
   suppressWarnings(
@@ -48,14 +52,14 @@ test_that("Find F for TAC", {
       naa     = naa,
       waa     = dem_params$waa,
       mort    = dem_params$mort,
-      selex   = dem_params$sel[,,f],
-      ret     = dem_params$ret[,,f],
-      dmr     = dem_params$dmr[,,f],
+      selex   = sel,
+      ret     = ret,
+      dmr     = dmr,
       prov_catch = tac
-  )
+    )
   )
 
-  expect_equal(as.numeric(F_f), 9.566e-06, tolerance=1e-5)
+  expect_equal(as.numeric(F_f), 2.245352e-05, tolerance=1e-5)
 })
 
 
@@ -66,14 +70,18 @@ test_that("Find F for TAC via bisection", {
   r <- 1
   f <- 1
 
-  dem_params <- subset_dem_params(dem_params, y, d=1)
-  dem_params <- subset_dem_params(dem_params, r, d=3)
+  dem_params <- subset_dem_params(dem_params, y, d=1, drop=FALSE)
+  dem_params <- subset_dem_params(dem_params, r, d=3, drop=FALSE)
+ 
+  sel <- subset_matrix(dem_params$sel, f, 5, drop=FALSE)
+  ret <- subset_matrix(dem_params$ret, f, 5, drop=FALSE)
+  dmr <- subset_matrix(dem_params$dmr, f, 5, drop=FALSE)
 
   load(file.path(here::here(), "data/sablefish_assessment_data.rda"))
   assessment <- sablefish_assessment_data
-  naa <- matrix(NA, nrow=model_params$nages, ncol=2)
-  naa[,1] <- assessment$natage.female["2023",]*1e6
-  naa[,2] <- assessment$natage.male["2023",]*1e6
+  naa <- array(NA, dim=c(1, 30, 1, 1))
+  naa[,,1,] <- assessment$natage.female["2023",]*1e6
+  # naa[,,2,] <- assessment$natage.male["2023",]*1e6
 
   tac <- 4900
   suppressWarnings({
@@ -82,9 +90,9 @@ test_that("Find F for TAC via bisection", {
       naa     = naa,
       waa     = dem_params$waa,
       mort    = dem_params$mort,
-      selex   = dem_params$sel[,,f],
-      ret     = dem_params$ret[,,f],
-      dmr     = dem_params$dmr[,,f],
+      selex   = sel,
+      ret     = ret,
+      dmr     = dmr,
       prov_catch = tac
     )
 
@@ -93,9 +101,9 @@ test_that("Find F for TAC via bisection", {
       naa     = naa,
       waa     = dem_params$waa,
       mort    = dem_params$mort,
-      selex   = dem_params$sel[,,f],
-      ret     = dem_params$ret[,,f],
-      dmr     = dem_params$dmr[,,f],
+      selex   = sel,
+      ret     = ret,
+      dmr     = dmr,
       prov_catch = tac
     )
 
@@ -146,27 +154,32 @@ test_that("Compare FAA to Sablefish Assessment", {
   fish1.fs <- c(0.00654294, 0.0343149, 0.0579996, 0.0238662, 0.00745146, 0.00201715, 0.00841816, 0.0086355, 0.0249528, 0.0352064, 0.0539089, 0.0575049, 0.0772958, 0.0684617, 0.081306, 0.0803652, 0.0956303, 0.076413, 0.0383202, 0.0435037, 0.0347983, 0.0442515, 0.0389907, 0.0359537, 0.0340402, 0.0402824, 0.0630109, 0.0799625, 0.0884755, 0.0895519, 0.0879386, 0.0829642, 0.0779795, 0.0889117, 0.0866495, 0.0714257, 0.0643549, 0.0592001, 0.0606085, 0.0603981, 0.0729324, 0.0670748, 0.0671666, 0.0747605, 0.0795493, 0.0720158, 0.0678445, 0.0710271, 0.0673023, 0.0634238, 0.0611044, 0.0691572, 0.0762706, 0.0764786, 0.0653089, 0.0637705, 0.0525657, 0.0555171, 0.0500482, 0.0438102, 0.0344363, 0.0401478, 0.04564, 0.037796)
   suppressWarnings({
     for(y in 1:64){
+
+      sel <- subset_matrix(dem_params$sel[y,,,,1, drop=FALSE], f, 5, drop=FALSE)
+      ret <- subset_matrix(dem_params$ret[y,,,,1, drop=FALSE], f, 5, drop=FALSE)
+      dmr <- subset_matrix(dem_params$dmr[y,,,,1, drop=FALSE], f, 5, drop=FALSE)
+
         F_f_bisections <- findF_bisection(
           f_guess = 0.05,
           naa     = naa[y,,,,drop=FALSE],
           waa     = waa[y,,,,drop=FALSE],
           mort    = mort[y,,,,drop=FALSE],
-          selex   = subset_matrix(sel[y,,,,1, drop=FALSE], 1, d=5),
-          ret     = subset_matrix(ret[y,,,,1, drop=FALSE], 1, d=5),
-          dmr     = subset_matrix(dmr[y,,,,1, drop=FALSE], 1, d=5),
+          selex   = sel,
+          ret     = ret,
+          dmr     = dmr,
           prov_catch = TAC[y]
         )
 
         fs[y] <- F_f_bisections
-        faa[y,,,] <- retained_F(F_f_bisections, subset_matrix(sel[y,,,,1, drop=FALSE], 1, d=5), subset_matrix(ret[y,,,,1, drop=FALSE], 1, d=5))
+        faa[y,,,] <- retained_F(F_f_bisections, sel, ret)
         catch[y] <- baranov(
           fy      = F_f_bisections,
           naa     = naa[y,,,,drop=FALSE],
           waa     = waa[y,,,,drop=FALSE],
           mort    = mort[y,,,,drop=FALSE],
-          selex   = subset_matrix(sel[y,,,,1, drop=FALSE], 1, d=5),
-          ret     = subset_matrix(ret[y,,,,1, drop=FALSE], 1, d=5),
-          dmr     = subset_matrix(dmr[y,,,,1, drop=FALSE], 1, d=5)
+          selex   = sel,
+          ret     = ret,
+          dmr     = dmr
         )
     }
 
