@@ -44,7 +44,8 @@ Imports:
     tibble,
     reshape2,
     stats,
-    magrittr
+    magrittr,
+    nleqslv
 RoxygenNote: 7.3.2
 Suggests: 
     knitr,

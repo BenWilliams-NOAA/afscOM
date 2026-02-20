@@ -105,6 +105,29 @@ findF_bisection <- function(f_guess, naa, waa, mort, selex, ret=NA, dmr=NA, prov
     return(Fmort)
 }
 
+#' Find F for Multiple Fleets
+#' Uses multi-fleet Baranov catch equation to compute the instantaneous
+#' fishing mortality rate (F) that would yield a specific level of
+#' catch_
+#'
+#' @param target_catch desired catch level
+#' @param naa numbers-at-age
+#' @param waa weight-at-age
+#' @param mort natural-mortality-at-age
+#' @param selex selectivity-at-age
+#' @param ret retention-at-age (optional)
+#' @param dmr instantaneous discard mortality rate (optional)
+#' @param f_guess initial guess for F
+#' 
+#' @return the fishing mortality rate that yields the desired catch level
+#'
+#' @export findF_multifleet
+#'
+#' @examples
+#' \dontrun{
+#' find_F(f_guess=0.1, naa=naa, waa=waa, mort=mort, selex=selex, prov_catch=0.12)
+#' }
+#' 
 findF_multifleet <- function(target_catch, naa, waa, mort, selex, f_guess=0.05){
 
     n_fleets <- length(target_catch)
